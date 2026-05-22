@@ -518,6 +518,16 @@
       <div class="demo-grid">
         <article class="demo-block">
           <h3>Presets</h3>
+          <div class="theme-controls" style="margin-top:0; margin-bottom:8px;">
+            <div>
+              <label for="themeMode" style="display:block; margin-bottom:4px;">Theme mode</label>
+              <select id="themeMode">
+                <option value="system">system</option>
+                <option value="light">light</option>
+                <option value="dark">dark</option>
+              </select>
+            </div>
+          </div>
           <div class="theme-presets">
             <button type="button" class="theme-chip-btn" data-theme-preset="balanced">Balanced</button>
             <button type="button" class="theme-chip-btn" data-theme-preset="ocean">Ocean</button>
@@ -681,6 +691,8 @@
       var themeCode = document.getElementById("themeCode");
       var rootStyle = document.documentElement.style;
       var rootEl = document.documentElement;
+      var themeModeSelect = document.getElementById("themeMode");
+      var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
       var themeVars = {
         balanced: {
           calendarBg: "#ffffff",
@@ -739,8 +751,23 @@
         return luminance(hex) > 0.45 ? "#0f1725" : "#ffffff";
       }
 
+      function resolveThemeMode() {
+        if (themeModeSelect.value === "dark") return "dark";
+        if (themeModeSelect.value === "light") return "light";
+        return systemThemeQuery.matches ? "dark" : "light";
+      }
+
+      function applyThemeModeAttribute() {
+        if (themeModeSelect.value === "system") {
+          rootEl.removeAttribute("data-a11y-datetime-theme");
+        } else {
+          rootEl.setAttribute("data-a11y-datetime-theme", themeModeSelect.value);
+        }
+      }
+
       function buildThemePalette(core) {
-        var isDark = luminance(core.calendarBg) < 0.32;
+        var mode = resolveThemeMode();
+        var isDark = mode === "dark";
         var calendarBg = core.calendarBg;
         var calendarBorder = core.calendarBorder;
         var dayFg = core.dayFg;
@@ -777,8 +804,7 @@
 
       function applyThemeVars(name, coreVars) {
         var vars = buildThemePalette(coreVars);
-        var mode = luminance(coreVars.calendarBg) < 0.32 ? "dark" : "light";
-        rootEl.setAttribute("data-a11y-datetime-theme", mode);
+        applyThemeModeAttribute();
 
         Object.keys(vars).forEach(function(key) {
           rootStyle.setProperty(key, vars[key]);
@@ -810,6 +836,18 @@
       document.getElementById("resetTheme").addEventListener("click", function() {
         applyThemeVars("balanced", themeVars.balanced);
       });
+
+      themeModeSelect.addEventListener("change", function() {
+        applyThemeVars("balanced", themeVars.balanced);
+      });
+
+      if (systemThemeQuery && systemThemeQuery.addEventListener) {
+        systemThemeQuery.addEventListener("change", function() {
+          if (themeModeSelect.value === "system") {
+            applyThemeVars("balanced", themeVars.balanced);
+          }
+        });
+      }
 
       applyThemeVars("balanced", themeVars.balanced);
     })();
