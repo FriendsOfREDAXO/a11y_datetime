@@ -93,6 +93,24 @@
       background: rgba(14, 38, 74, 0.35);
     }
 
+    .hero-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-top: 0.9rem;
+    }
+
+    .hero-links a {
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      background: rgba(255, 255, 255, 0.95);
+      color: #0f3d70;
+      border-radius: 999px;
+      padding: 0.32rem 0.72rem;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
     .panel {
       border: 1px solid var(--border);
       border-radius: 14px;
@@ -257,6 +275,10 @@
         <span class="badge">Screen-reader friendly</span>
         <span class="badge">Reduced motion aware</span>
         <span class="badge">Themeable via CSS variables</span>
+      </div>
+      <div class="hero-links" aria-label="Project links">
+        <a href="https://github.com/FriendsOfREDAXO/a11y_datetime" target="_blank" rel="noopener noreferrer">GitHub</a>
+        <a href="https://friendsofredaxo.github.io/a11y_datetime/" target="_blank" rel="noopener noreferrer">Website</a>
       </div>
     </header>
 
