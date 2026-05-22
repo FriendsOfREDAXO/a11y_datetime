@@ -1,1012 +1,798 @@
-<!doctype html>
-<html lang="de">
+<!DOCTYPE html>
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>a11y_datetime - Full Demo</title>
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>a11y_datetime demo</title>
+
+  <link rel="stylesheet" href="dist/a11y_datetime.css" />
+  <link rel="stylesheet" href="dist/ie.css" />
+
   <style>
     :root {
-      --bg: #edf2f8;
-      --panel: #ffffff;
-      --panel-soft: #f6f9fd;
-      --ink: #1d2f49;
-      --sub: #4d617e;
-      --line: #ced9e8;
-      --brand: #2f78c4;
-      --brand-2: #3ea0db;
-      --control-bg: #ffffff;
-      --control-border: #b6c7de;
-      --theme-code-bg: #eef4fd;
-      --theme-code-fg: #1f416a;
-      --shadow: 0 14px 36px rgba(28, 46, 79, 0.14);
+      --surface: #edf2f8;
+      --card: #ffffff;
+      --text: #1d2f49;
+      --muted: #4d617e;
+      --border: #ced9e8;
+      --ring: #2f78c4;
+      --demo-bg-start: #c9ddf7;
+      --demo-bg-mid: #edf2f8;
+      --demo-bg-end: #d7ebff;
+      --section-gap: 1.25rem;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0c1224;
-        --panel: #121d35;
-        --panel-soft: #182742;
-        --ink: #e9f1ff;
-        --sub: #b4c4df;
-        --line: #2b3f63;
-        --brand: #58a9ff;
-        --brand-2: #22c2e6;
-        --control-bg: #0f1a31;
-        --control-border: #36527c;
-        --theme-code-bg: #0d1a34;
-        --theme-code-fg: #d0e4ff;
-        --shadow: 0 16px 44px rgba(1, 6, 18, 0.56);
+        --surface: #0c1224;
+        --card: #121d35;
+        --text: #e9f1ff;
+        --muted: #b4c4df;
+        --border: #2b3f63;
+        --ring: #58a9ff;
+        --demo-bg-start: #213464;
+        --demo-bg-mid: #0c1224;
+        --demo-bg-end: #114b7b;
       }
-    }
-
-    * {
-      box-sizing: border-box;
     }
 
     body {
       margin: 0;
-      font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
-      color: var(--ink);
-      color-scheme: light dark;
+      color: var(--text);
+      font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
       background:
-        radial-gradient(circle at 8% -15%, #c9ddf7 0%, transparent 40%),
-        radial-gradient(circle at 100% 0%, #d7ebff 0%, transparent 36%),
-        var(--bg);
-      line-height: 1.5;
+        radial-gradient(circle at 15% 8%, var(--demo-bg-start) 0, rgba(255, 255, 255, 0) 40%),
+        radial-gradient(circle at 90% 20%, #dce9ff 0, rgba(220, 233, 255, 0) 35%),
+        linear-gradient(135deg, var(--demo-bg-mid), var(--demo-bg-end));
+      min-height: 100vh;
     }
 
-    .skip-link {
-      position: absolute;
-      left: 12px;
-      top: -44px;
-      z-index: 1000;
-      padding: 8px 12px;
-      border-radius: 8px;
-      background: #0f3d70;
-      color: #ffffff;
-      text-decoration: none;
-      font-weight: 700;
-      transition: top 0.15s ease;
-    }
-
-    .skip-link:focus {
-      top: 12px;
-    }
-
-    .shell {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 24px;
+    .wrap {
+      max-width: 1080px;
+      margin: 2.25rem auto;
+      padding: 0 1rem 2rem;
     }
 
     .hero {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.25rem 1.25rem 1rem;
       background: linear-gradient(135deg, #2a69ad 0%, #2f78c4 55%, #3ea0db 100%);
       color: #eef4ff;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: var(--shadow);
+      box-shadow: 0 18px 42px rgba(16, 30, 58, 0.2);
+      margin-bottom: var(--section-gap);
     }
 
     .hero h1 {
-      margin: 0 0 10px;
-      font-size: clamp(1.7rem, 3vw, 2.4rem);
-      letter-spacing: 0.2px;
-    }
-
-    .hero p {
       margin: 0;
-      max-width: 75ch;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      line-height: 1.15;
+    }
+
+    .meta {
       color: #d8e7ff;
+      margin: 0.5rem 0 0;
+      max-width: 70ch;
     }
 
-    .links {
+    .badge-row {
       display: flex;
+      gap: 0.5rem;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 18px;
+      margin-top: 0.9rem;
     }
 
-    .links a {
-      display: inline-block;
-      text-decoration: none;
-      color: #0f3d70;
-      background: rgba(255, 255, 255, 0.96);
-      border: 1px solid rgba(255, 255, 255, 0.92);
+    .badge {
+      border: 1px solid rgba(255, 255, 255, 0.5);
       border-radius: 999px;
-      padding: 9px 14px;
-      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+      padding: 0.25rem 0.65rem;
+      color: #e8f2ff;
+      background: rgba(14, 38, 74, 0.35);
     }
 
-    a:focus-visible,
-    button:focus-visible,
-    input:focus-visible,
-    select:focus-visible,
-    .theme-chip-btn:focus-visible {
-      outline: 3px solid #ffbf47;
-      outline-offset: 2px;
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      padding: 1rem;
+      margin-bottom: var(--section-gap);
     }
 
-    @media (prefers-color-scheme: dark) {
-      body {
-        background:
-          radial-gradient(circle at 12% -18%, #213464 0%, transparent 38%),
-          radial-gradient(circle at 96% -8%, #0f6e8b 0%, transparent 35%),
-          var(--bg);
-      }
-
-      .hero {
-        background: linear-gradient(145deg, #0f2c59 0%, #114b7b 45%, #0a6b72 100%);
-      }
-
-      .links a {
-        color: #d7e8ff;
-        background: rgba(10, 20, 40, 0.55);
-        border-color: rgba(134, 178, 241, 0.45);
-      }
+    .panel h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.05rem;
     }
 
-    .layout {
-      margin-top: 22px;
+    .controls {
       display: grid;
-      grid-template-columns: 1.1fr 0.9fr;
-      gap: 18px;
-    }
-
-    .card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 18px;
-      box-shadow: 0 6px 24px rgba(26, 37, 65, 0.08);
-    }
-
-    h2 {
-      margin: 0 0 12px;
-      font-size: 1.25rem;
-    }
-
-    h3 {
-      margin: 0 0 8px;
-      font-size: 1rem;
-      color: var(--brand);
-    }
-
-    .lang {
-      margin-bottom: 14px;
-      padding-bottom: 12px;
-      border-bottom: 1px dashed var(--line);
-    }
-
-    .lang:last-child {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: none;
-    }
-
-    ul {
-      margin: 8px 0 0;
-      padding-left: 18px;
-      color: var(--sub);
-    }
-
-    .inline-demo {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.8rem;
     }
 
     .demo-grid {
       display: grid;
-      gap: 12px;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
     }
 
-    .demo-block {
-      border: 1px solid var(--line);
+    .card {
+      border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 12px;
-      background: var(--panel-soft);
+      background: #ffffff;
+      padding: 0.9rem;
+      box-shadow: 0 8px 26px rgba(18, 31, 55, 0.06);
     }
 
-    .demo-block h3 {
-      margin: 0 0 10px;
-    }
-
-    .control-grid {
-      display: grid;
-      gap: 8px;
-      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-      margin-top: 8px;
-    }
-
-    .control-grid label {
+    .card h3 {
       margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      gap: 8px;
-      font-size: 0.88rem;
-      color: var(--sub);
+      font-size: 1.02rem;
     }
 
-    select,
-    button {
-      border: 1px solid var(--control-border);
-      border-radius: 10px;
-      padding: 9px 10px;
-      font-size: 0.95rem;
-      background: var(--control-bg);
-      color: var(--ink);
-    }
-
-    button {
-      background: var(--brand);
-      border-color: var(--brand);
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .mobile-note {
-      margin-top: 8px;
-      font-size: 0.85rem;
-      color: var(--sub);
-    }
-
-    .variant-grid {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      margin-top: 10px;
-    }
-
-    .variant-item {
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 10px;
-      background: var(--panel);
-    }
-
-    .variant-item strong {
-      display: block;
-      font-size: 0.86rem;
-      color: #3e4b65;
-      margin-bottom: 6px;
-    }
-
-    .variant-value {
-      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-      font-size: 0.95rem;
-      color: #102447;
-      word-break: break-word;
-    }
-
-    .theme-presets {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 8px;
-    }
-
-    .theme-chip-btn {
-      border: 1px solid var(--control-border);
-      background: var(--control-bg);
-      color: var(--ink);
-      border-radius: 999px;
-      padding: 7px 12px;
-      cursor: pointer;
-      font-size: 0.86rem;
-      font-weight: 700;
-    }
-
-    .theme-controls {
-      display: grid;
-      gap: 10px;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      margin-top: 10px;
-    }
-
-    .theme-code {
-      margin-top: 12px;
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      background: var(--theme-code-bg);
-      padding: 10px;
-      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
-      font-size: 0.84rem;
-      color: var(--theme-code-fg);
-      white-space: pre-wrap;
+    .card .desc {
+      margin: 0.3rem 0 0.75rem;
+      color: var(--muted);
+      font-size: 0.9rem;
     }
 
     label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
       font-size: 0.92rem;
-      color: var(--sub);
-      display: block;
-      margin-bottom: 6px;
     }
 
-    input[type="text"] {
+    input,
+    select,
+    textarea {
       width: 100%;
-      border: 1px solid var(--control-border);
+      border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 0.7rem 0.85rem;
       font-size: 1rem;
-      background: var(--control-bg);
-      color: var(--ink);
+      font-family: inherit;
+      box-sizing: border-box;
+      background: #fff;
+      color: var(--text);
     }
 
-    input[type="checkbox"] {
-      width: auto;
-      padding: 0;
-      margin: 0;
-      border: none;
-      border-radius: 0;
-      background: transparent;
-      accent-color: #ef7f1a;
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    summary:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
     }
 
-    .iframe-wrap {
-      margin-top: 16px;
-      border-radius: 14px;
-      overflow: hidden;
-      border: 1px solid var(--line);
+    .hint {
+      margin-top: 0.55rem;
+      font-size: 0.84rem;
+      color: var(--muted);
     }
 
-    iframe {
-      display: block;
-      width: 100%;
-      min-height: 500px;
-      border: 0;
+    details {
+      margin-top: 0.75rem;
+      border-top: 1px dashed var(--border);
+      padding-top: 0.55rem;
+    }
+
+    summary {
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #30415f;
+      width: max-content;
+      border-radius: 6px;
+      padding: 0.15rem 0.3rem;
+    }
+
+    pre {
+      margin: 0.5rem 0 0;
+      padding: 0.75rem;
+      background: #0f1624;
+      color: #d8e3ff;
+      border-radius: 10px;
+      overflow: auto;
+      font-family: "IBM Plex Mono", "Cascadia Code", monospace;
+      font-size: 0.79rem;
+      line-height: 1.45;
+    }
+
+    .themes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .theme-chip {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem;
       background: #fff;
     }
 
-    .notice {
-      font-size: 0.9rem;
-      color: var(--sub);
-      margin-top: 10px;
+    .theme-chip strong {
+      display: block;
+      margin-bottom: 0.35rem;
     }
 
-    .pill {
-      display: inline-block;
-      font-size: 0.8rem;
-      font-weight: 700;
-      letter-spacing: 0.3px;
-      text-transform: uppercase;
-      color: #fff;
-      background: var(--brand-2);
-      border-radius: 999px;
-      padding: 4px 10px;
-      margin-bottom: 10px;
+    .theme-chip code {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.82rem;
+      color: #3f4d67;
     }
 
-    @media (max-width: 920px) {
-      .layout {
-        grid-template-columns: 1fr;
-      }
+    .theme-chip p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
 
-      .shell {
-        padding: 14px;
+    .foot {
+      margin-top: 0.95rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 700px) {
+      .wrap {
+        margin: 1rem auto;
       }
 
       .hero {
-        border-radius: 14px;
-      }
-
-      .card {
-        border-radius: 12px;
-      }
-
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      * {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
-      }
-
-      .skip-link {
-        transition: none;
+        padding: 1rem;
       }
     }
   </style>
-  <link rel="stylesheet" href="./dist/a11y_datetime.css?v=5.1.1" />
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Direkt zum Inhalt springen</a>
-  <main id="main-content" class="shell" tabindex="-1">
-    <section class="hero">
+  <main class="wrap" aria-label="a11y_datetime demo page">
+    <header class="hero">
       <h1>a11y_datetime</h1>
-      <p>
-        Accessible datetime picker fork based on flatpickr. This page contains a bilingual quick intro,
-        and a compact website-native live demo.
-      </p>
-      <div class="links">
-        <a href="https://github.com/FriendsOfREDAXO/a11y_datetime" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
-        <a href="https://friendsofredaxo.github.io" target="_blank" rel="noopener noreferrer">FriendsOfREDAXO</a>
-        <a href="https://friendsofredaxo.github.io/a11y_datetime/" target="_blank" rel="noopener noreferrer">Open Website</a>
+      <p class="meta">An accessibility-first fork based on flatpickr with keyboard-friendly navigation, reduced-motion support, and CSS-variable driven theming.</p>
+      <div class="badge-row" aria-label="feature highlights">
+        <span class="badge">Keyboard-first</span>
+        <span class="badge">Screen-reader friendly</span>
+        <span class="badge">Reduced motion aware</span>
+        <span class="badge">Themeable via CSS variables</span>
       </div>
+    </header>
+
+    <section class="panel" aria-labelledby="controls-heading">
+      <h2 id="controls-heading">Live Design Controls</h2>
+      <div class="controls">
+        <div>
+          <label for="theme">Color mode</label>
+          <select id="theme" aria-label="Theme mode">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+        <div>
+          <label for="accent">Accent palette</label>
+          <select id="accent" aria-label="Accent palette">
+            <option value="default">Default Blue</option>
+            <option value="sunset">Sunset Orange</option>
+            <option value="ocean">Ocean Cyan</option>
+            <option value="forest">Forest Green</option>
+            <option value="berry">Berry Pink</option>
+          </select>
+        </div>
+        <div>
+          <label for="motion">Motion</label>
+          <select id="motion" aria-label="Animation mode">
+            <option value="system">System</option>
+            <option value="reduce">Reduce</option>
+            <option value="normal">Normal</option>
+          </select>
+        </div>
+        <div>
+          <label for="background">Background atmosphere</label>
+          <select id="background" aria-label="Background atmosphere">
+            <option value="default">Daylight</option>
+            <option value="sand">Sand Studio</option>
+            <option value="night">Night Ops</option>
+          </select>
+        </div>
+        <div>
+          <label for="design">Design preset</label>
+          <select id="design" aria-label="Calendar design preset">
+            <option value="balanced">Balanced</option>
+            <option value="soft">Soft Editorial</option>
+            <option value="contrast">High Contrast</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint">Tip: These controls change CSS variables live so you can inspect what a11y_datetime looks like in different design systems.</p>
     </section>
 
-    <section class="layout">
-      <article class="card">
-        <span class="pill">Deutsch</span>
-        <div class="lang" lang="de">
-          <h2>Was ist a11y_datetime?</h2>
-          <p>
-            a11y_datetime ist ein zuganglichkeitsorientierter Fork von flatpickr.
-            Der Schwerpunkt liegt auf besserer Tastaturbedienung, klarerer ARIA-Semantik und modernem Theming.
-          </p>
-          <h3>Highlights</h3>
-          <ul>
-            <li>Bessere Screenreader-Unterstuetzung durch ARIA-Verbesserungen</li>
-            <li>Starkere Keyboard-Navigation im Kalender</li>
-            <li>Design ueber CSS Variablen flexibel anpassbar</li>
-            <li>Kompatibel zu flatpickr-typischen Integrationen</li>
-          </ul>
-        </div>
-
-        <span class="pill">English</span>
-        <div class="lang" lang="en">
-          <h2>What is a11y_datetime?</h2>
-          <p>
-            a11y_datetime is an accessibility-focused fork of flatpickr.
-            It improves keyboard behavior, ARIA semantics, and design customization through CSS variables.
-          </p>
-          <h3>Highlights</h3>
-          <ul>
-            <li>Improved screen reader experience with stronger ARIA wiring</li>
-            <li>More reliable keyboard navigation in date/time interactions</li>
-            <li>Flexible theming using CSS custom properties</li>
-            <li>Compatible with common flatpickr-style setups</li>
-          </ul>
-        </div>
-      </article>
-
-      <article class="card">
-        <h2>Quick Demo / Schnelle Demo</h2>
-        <div class="inline-demo">
-          <div>
-            <label for="demoDate">Date / Datum</label>
-            <input id="demoDate" type="text" placeholder="YYYY-MM-DD" />
-          </div>
-          <div>
-            <label for="demoDateTime">Date Time / Datum Zeit</label>
-            <input id="demoDateTime" type="text" placeholder="YYYY-MM-DD HH:mm" />
-          </div>
-        </div>
-        <p class="notice">
-          Tip: Use Tab, arrow keys, Enter, and Escape to test keyboard accessibility.
-        </p>
-      </article>
-    </section>
-
-    <section class="card" style="margin-top: 18px;">
-      <h2>Website Demo Playground</h2>
+    <section class="panel" aria-labelledby="examples-heading">
+      <h2 id="examples-heading">Interactive Examples + Code</h2>
       <div class="demo-grid">
-        <article class="demo-block">
+        <article class="card">
           <h3>Single Date + Time</h3>
-          <label for="demoSingleDateTime">Input</label>
-          <input id="demoSingleDateTime" type="text" placeholder="YYYY-MM-DD HH:mm" />
-          <p class="mobile-note">Custom picker is active to keep keyboard behavior consistent across devices.</p>
+          <p class="desc">Default booking style picker with time selection and clear title label.</p>
+          <label for="demo-single">Pick one date and time</label>
+          <input id="demo-single" placeholder="Select date and time" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="single picker code"><code>pick("#demo-single", {
+  enableTime: true,
+  dateFormat: "Y-m-d H:i",
+  calendarTitle: "Select a date",
+  announceChanges: true
+});</code></pre>
+          </details>
         </article>
 
-        <article class="demo-block">
+        <article class="card">
+          <h3>Date Range</h3>
+          <p class="desc">Check-in / check-out flow with keyboard-friendly month and day traversal.</p>
+          <label for="demo-range">Start and end date</label>
+          <input id="demo-range" placeholder="Select date range" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="range picker code"><code>pick("#demo-range", {
+  mode: "range",
+  dateFormat: "Y-m-d",
+  calendarTitle: "Select a date range",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Multiple Dates</h3>
+          <p class="desc">Useful for blackout dates, campaign days, or flexible attendance planning.</p>
+          <label for="demo-multiple">Pick several days</label>
+          <input id="demo-multiple" placeholder="Select multiple dates" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="multiple picker code"><code>pick("#demo-multiple", {
+  mode: "multiple",
+  dateFormat: "Y-m-d",
+  conjunction: ", ",
+  calendarTitle: "Select dates",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
           <h3>Time Only</h3>
-          <label for="demoTimeOnly">Input</label>
-          <input id="demoTimeOnly" type="text" placeholder="HH:mm" />
-          <p class="mobile-note">Custom picker is active so hour and minute fields remain keyboard-accessible.</p>
+          <p class="desc">Compact time chooser for appointments, calls, and shift start windows.</p>
+          <label for="demo-time">Only time</label>
+          <input id="demo-time" placeholder="Select time" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="time picker code"><code>pick("#demo-time", {
+  enableTime: true,
+  noCalendar: true,
+  dateFormat: "H:i",
+  calendarTitle: "Select a time",
+  announceChanges: true
+});</code></pre>
+          </details>
         </article>
 
-        <article class="demo-block">
-          <h3>Optional Playground</h3>
-          <label for="demoPlayground">Demo Input</label>
-          <input id="demoPlayground" type="text" placeholder="Change mode below" />
-
-          <div class="control-grid">
-            <div>
-              <label for="playgroundMode" style="display:block; margin-bottom:4px;">Mode</label>
-              <select id="playgroundMode">
-                <option value="single">single</option>
-                <option value="range">range</option>
-                <option value="multiple">multiple</option>
-                <option value="time">time-only</option>
-              </select>
-            </div>
-            <div>
-              <label for="playgroundMobileFallback" style="display:block; margin-bottom:4px;">Mobile</label>
-              <select id="playgroundMobileFallback">
-                <option value="native">native fallback</option>
-                <option value="custom">force custom picker</option>
-              </select>
-            </div>
+        <article class="card">
+          <h3>Optional Feature Playground</h3>
+          <p class="desc">Toggle optional UI behavior for titlebar, close button, and initial keyboard day focus.</p>
+          <label for="demo-optional">Preview input</label>
+          <input id="demo-optional" placeholder="Try optional settings" />
+          <div style="margin-top: 0.7rem;">
+            <label for="opt-titlebar">showTitleBar</label>
+            <select id="opt-titlebar" aria-label="Optional title bar toggle">
+              <option value="true" selected>true</option>
+              <option value="false">false</option>
+            </select>
           </div>
-
-          <div class="control-grid" style="margin-top:10px;">
-            <label><input id="playgroundTitleBar" type="checkbox" checked /> showTitleBar</label>
-            <label><input id="playgroundCloseButton" type="checkbox" checked /> showCloseButton</label>
-            <label><input id="playgroundAnnounce" type="checkbox" checked /> announceChanges</label>
+          <div style="margin-top: 0.45rem;">
+            <label for="opt-close">showCloseButton</label>
+            <select id="opt-close" aria-label="Optional close button toggle">
+              <option value="true" selected>true</option>
+              <option value="false">false</option>
+            </select>
           </div>
-
-          <div style="margin-top:10px;">
-            <button id="playgroundApply" type="button">Apply playground config</button>
+          <div style="margin-top: 0.45rem;">
+            <label for="opt-focus">initialDayFocus</label>
+            <select id="opt-focus" aria-label="Initial day focus option">
+              <option value="today" selected>today</option>
+              <option value="selected">selected</option>
+              <option value="firstAvailable">firstAvailable</option>
+            </select>
           </div>
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="optional feature code"><code>pick("#demo-optional", {
+  dateFormat: "Y-m-d",
+  calendarTitle: "Optional feature demo",
+  showTitleBar: true,
+  showCloseButton: true,
+  initialDayFocus: "today",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Min/Max + Disabled Weekends</h3>
+          <p class="desc">Constrain date range and disable non-business days for scheduling workflows.</p>
+          <label for="demo-limits">Business date picker</label>
+          <input id="demo-limits" placeholder="Select weekday in allowed range" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="min max disabled code"><code>pick("#demo-limits", {
+  minDate: "today",
+  maxDate: new Date().fp_incr(30),
+  disable: [
+    function (date) {
+      return date.getDay() === 0 || date.getDay() === 6;
+    }
+  ],
+  calendarTitle: "Business day booking"
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Alt Input (Human Readable)</h3>
+          <p class="desc">Store machine format while showing a user-friendly date string in the UI.</p>
+          <label for="demo-alt">Friendly date display</label>
+          <input id="demo-alt" placeholder="Select date" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="alt input code"><code>pick("#demo-alt", {
+  altInput: true,
+  altFormat: "l, d F Y",
+  dateFormat: "Y-m-d",
+  defaultDate: "today",
+  calendarTitle: "Human friendly date"
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Week Numbers + Precision Time</h3>
+          <p class="desc">Advanced picker with week numbers, 24h clock, and second-level precision.</p>
+          <label for="demo-precision">Precise timestamp</label>
+          <input id="demo-precision" placeholder="Select date and exact time" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="precision code"><code>pick("#demo-precision", {
+  enableTime: true,
+  enableSeconds: true,
+  time_24hr: true,
+  weekNumbers: true,
+  dateFormat: "Y-m-d H:i:S",
+  calendarTitle: "Precise date and time"
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Inline Calendar</h3>
+          <p class="desc">Always-visible calendar for dashboards, kiosks, or booking sidebars.</p>
+          <label for="demo-inline">Inline mode input</label>
+          <input id="demo-inline" placeholder="Inline calendar" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="inline code"><code>pick("#demo-inline", {
+  inline: true,
+  dateFormat: "Y-m-d",
+  defaultDate: "today",
+  calendarTitle: "Inline planning"
+});</code></pre>
+          </details>
         </article>
       </div>
-
-      <div class="demo-grid" style="margin-top:12px;">
-        <article class="demo-block">
-          <h3>DE: Mobile Fallback</h3>
-          <p class="mobile-note" style="margin-top:0;">
-            Bei vielen mobilen Browsern nutzt der Picker automatisch native Eingabefelder.
-            Das ist Absicht: bessere Bedienung, vertraute UI und weniger Fehler auf Touch-Geraeten.
-            Im Playground kannst du mit "force custom picker" auf die komplette Kalender-UI wechseln.
-          </p>
-        </article>
-        <article class="demo-block">
-          <h3>EN: Mobile fallback</h3>
-          <p class="mobile-note" style="margin-top:0;">
-            On many mobile browsers, the picker intentionally falls back to native controls.
-            This improves usability and reliability for touch input.
-            In the playground, switch to "force custom picker" to always use the full calendar UI.
-          </p>
-        </article>
-      </div>
+      <p class="hint">Keyboard: focus input, press Enter to open, Tab through controls, Arrow keys move days/months, Enter/Space selects, Esc closes.</p>
     </section>
 
-    <section class="card" style="margin-top: 18px;">
-      <h2>Ausgabevarianten (Deutsch)</h2>
-      <p class="notice" style="margin-top:0;">
-        Waehle die Schreibweise und sieh sie direkt im Input-Feld (wie im Playground).
-      </p>
-
-      <div class="demo-grid">
-        <article class="demo-block">
-          <h3>DE Master Picker</h3>
-          <label for="demoDeMaster">Datum + Uhrzeit</label>
-          <input id="demoDeMaster" type="text" placeholder="TT.MM.JJJJ HH:mm" />
-          <div class="control-grid" style="margin-top:10px;">
-            <div>
-              <label for="deFormatVariant" style="display:block; margin-bottom:4px;">Schreibweise</label>
-              <select id="deFormatVariant">
-                <option value="datetime_short">Datum + Uhrzeit (kurz) - 22.05.2026 17:23</option>
-                <option value="datetime_long">Datum + Uhrzeit (lang) - Freitag, 22. Mai 2026 17:23</option>
-                <option value="date_short">Datum (kurz) - 22.05.2026</option>
-                <option value="date_long">Datum (lang) - Freitag, 22. Mai 2026</option>
-                <option value="time_24">Uhrzeit - 17:23</option>
-                <option value="calendar_month">Kalenderansicht (Monat/Jahr) - Mai 2026</option>
-              </select>
-            </div>
-            <div>
-              <label for="deMobileFallback" style="display:block; margin-bottom:4px;">Mobile</label>
-              <select id="deMobileFallback">
-                <option value="native">native fallback</option>
-                <option value="custom">force custom picker</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="margin-top:10px;">
-            <button id="deApplyVariant" type="button">Schreibweise anwenden</button>
-          </div>
-          <p class="mobile-note">Locale: de, 24h-Uhrzeit; Format direkt im Input sichtbar.</p>
-        </article>
+    <section class="panel" aria-labelledby="design-notes-heading">
+      <h2 id="design-notes-heading">Design Notes</h2>
+      <div class="themes">
+        <div class="theme-chip">
+          <strong>Balanced</strong>
+          <p>General-purpose UI with neutral surfaces and medium contrast.</p>
+          <code>--a11y-dt-day-bg / --a11y-dt-month-bg</code>
+        </div>
+        <div class="theme-chip">
+          <strong>Soft Editorial</strong>
+          <p>Airy typography and lower visual noise for content-heavy products.</p>
+          <code>--a11y-dt-font-size / --a11y-dt-radius</code>
+        </div>
+        <div class="theme-chip">
+          <strong>High Contrast</strong>
+          <p>Stronger borders and day contrast for demanding accessibility baselines.</p>
+          <code>--a11y-dt-day-fg / --a11y-dt-calendar-border</code>
+        </div>
       </div>
-    </section>
-
-    <section class="card" style="margin-top: 18px;">
-      <h2>Theme Varianten & Akzentfarben</h2>
-      <p class="notice" style="margin-top:0;">
-        Hier kannst du fertige Themes und individuelle Farben live auf alle Demo-Picker anwenden.
-      </p>
-
-      <div class="demo-grid">
-        <article class="demo-block">
-          <h3>Presets</h3>
-          <div class="theme-controls" style="margin-top:0; margin-bottom:8px;">
-            <div>
-              <label for="themeMode" style="display:block; margin-bottom:4px;">Theme mode</label>
-              <select id="themeMode">
-                <option value="system">system</option>
-                <option value="light">light</option>
-                <option value="dark">dark</option>
-              </select>
-            </div>
-          </div>
-          <div class="theme-presets" role="group" aria-label="Theme presets">
-            <button type="button" class="theme-chip-btn" data-theme-preset="balanced">Balanced</button>
-            <button type="button" class="theme-chip-btn" data-theme-preset="ocean">Ocean</button>
-            <button type="button" class="theme-chip-btn" data-theme-preset="sunset">Sunset</button>
-            <button type="button" class="theme-chip-btn" data-theme-preset="mono">Mono</button>
-          </div>
-        </article>
-
-        <article class="demo-block">
-          <h3>Custom Theme</h3>
-          <div class="theme-controls">
-            <div>
-              <label for="themeAccent">Akzentfarbe</label>
-              <input id="themeAccent" type="color" value="#0b5fd3" />
-            </div>
-            <div>
-              <label for="themeCalendarBg">Kalender-Hintergrund</label>
-              <input id="themeCalendarBg" type="color" value="#ffffff" />
-            </div>
-            <div>
-              <label for="themeDayText">Tages-Textfarbe</label>
-              <input id="themeDayText" type="color" value="#1c2230" />
-            </div>
-          </div>
-
-          <div class="theme-presets" style="margin-top:12px;">
-            <button id="applyCustomTheme" type="button" class="theme-chip-btn">Custom anwenden</button>
-            <button id="resetTheme" type="button" class="theme-chip-btn">Reset</button>
-          </div>
-        </article>
-      </div>
-
-      <div id="themeCode" class="theme-code" role="status" aria-live="polite">Noch kein Theme aktiv.</div>
+      <p class="foot">All variations are done without changing picker internals, only through configuration and CSS variables.</p>
     </section>
   </main>
 
-  <script src="./dist/a11y_datetime.js?v=5.1.1"></script>
-  <script src="./dist/l10n/de.js?v=5.1.1"></script>
+  <!-- classList polyfill for IE9 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
+  <script src="./dist/a11y_datetime.js"></script>
+
   <script>
-    (function () {
-      var pick = window.a11y_datetime || window.flatpickr;
-      if (typeof pick !== "function") return;
+    var pick = (window.a11y_datetime || window.flatpickr);
 
-      pick("#demoDate", {
+    pick("#demo-single", {
+      enableTime: true,
+      dateFormat: "Y-m-d H:i",
+      calendarTitle: "Select a date",
+      announceChanges: true
+    });
+
+    pick("#demo-range", {
+      mode: "range",
+      dateFormat: "Y-m-d",
+      calendarTitle: "Select a date range",
+      announceChanges: true
+    });
+
+    pick("#demo-multiple", {
+      mode: "multiple",
+      dateFormat: "Y-m-d",
+      conjunction: ", ",
+      calendarTitle: "Select dates",
+      announceChanges: true
+    });
+
+    pick("#demo-time", {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      calendarTitle: "Select a time",
+      announceChanges: true
+    });
+
+    pick("#demo-limits", {
+      minDate: "today",
+      maxDate: new Date().fp_incr(30),
+      disable: [
+        function (date) {
+          return date.getDay() === 0 || date.getDay() === 6;
+        }
+      ],
+      calendarTitle: "Business day booking",
+      announceChanges: true
+    });
+
+    pick("#demo-alt", {
+      altInput: true,
+      altFormat: "l, d F Y",
+      dateFormat: "Y-m-d",
+      defaultDate: "today",
+      calendarTitle: "Human friendly date",
+      announceChanges: true
+    });
+
+    pick("#demo-precision", {
+      enableTime: true,
+      enableSeconds: true,
+      time_24hr: true,
+      weekNumbers: true,
+      dateFormat: "Y-m-d H:i:S",
+      calendarTitle: "Precise date and time",
+      announceChanges: true
+    });
+
+    pick("#demo-inline", {
+      inline: true,
+      dateFormat: "Y-m-d",
+      defaultDate: "today",
+      calendarTitle: "Inline planning",
+      announceChanges: true
+    });
+
+    var optTitlebar = document.getElementById("opt-titlebar");
+    var optClose = document.getElementById("opt-close");
+    var optFocus = document.getElementById("opt-focus");
+    var optionalPicker;
+
+    function initOptionalPicker() {
+      if (optionalPicker) {
+        optionalPicker.destroy();
+      }
+
+      optionalPicker = pick("#demo-optional", {
         dateFormat: "Y-m-d",
-        calendarTitle: "Select date",
+        calendarTitle: "Optional feature demo",
+        showTitleBar: optTitlebar.value === "true",
+        showCloseButton: optClose.value === "true",
+        initialDayFocus: optFocus.value,
         announceChanges: true
       });
+    }
 
-      pick("#demoDateTime", {
-        enableTime: true,
-        disableMobile: true,
-        dateFormat: "Y-m-d H:i",
-        calendarTitle: "Select date and time",
-        announceChanges: true
-      });
+    optTitlebar.addEventListener("change", initOptionalPicker);
+    optClose.addEventListener("change", initOptionalPicker);
+    optFocus.addEventListener("change", initOptionalPicker);
+    initOptionalPicker();
 
-      pick("#demoSingleDateTime", {
-        enableTime: true,
-        disableMobile: true,
-        dateFormat: "Y-m-d H:i",
-        calendarTitle: "Single date and time",
-        announceChanges: true
-      });
+    var themeSelect = document.getElementById("theme");
+    var accentSelect = document.getElementById("accent");
+    var motionSelect = document.getElementById("motion");
+    var backgroundSelect = document.getElementById("background");
+    var designSelect = document.getElementById("design");
+    var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
 
-      pick("#demoTimeOnly", {
-        enableTime: true,
-        noCalendar: true,
-        disableMobile: true,
-        dateFormat: "H:i",
-        calendarTitle: "Time only",
-        announceChanges: true
-      });
+    function getResolvedThemeMode() {
+      if (themeSelect.value === "dark") return "dark";
+      if (themeSelect.value === "light") return "light";
+      return systemThemeQuery.matches ? "dark" : "light";
+    }
 
-      function destroyIfExists(selector) {
-        var el = document.querySelector(selector);
-        if (!el || !el._flatpickr) return;
-        el._flatpickr.destroy();
-      }
-
-      function getPlaygroundConfig() {
-        var mode = document.getElementById("playgroundMode").value;
-        var fallback = document.getElementById("playgroundMobileFallback").value;
-        var showTitleBar = document.getElementById("playgroundTitleBar").checked;
-        var showCloseButton = document.getElementById("playgroundCloseButton").checked;
-        var announceChanges = document.getElementById("playgroundAnnounce").checked;
-
-        var config = {
-          mode: mode,
-          showTitleBar: showTitleBar,
-          showCloseButton: showCloseButton,
-          announceChanges: announceChanges,
-          disableMobile: fallback === "custom"
-        };
-
-        if (mode === "multiple") {
-          config.dateFormat = "Y-m-d";
-          config.conjunction = ", ";
-        } else if (mode === "range") {
-          config.dateFormat = "Y-m-d";
-        } else if (mode === "time") {
-          config.mode = "single";
-          config.enableTime = true;
-          config.noCalendar = true;
-          config.dateFormat = "H:i";
-        } else {
-          config.enableTime = true;
-          config.dateFormat = "Y-m-d H:i";
-        }
-
-        return config;
-      }
-
-      function initPlayground() {
-        destroyIfExists("#demoPlayground");
-        pick("#demoPlayground", getPlaygroundConfig());
-      }
-
-      document.getElementById("playgroundApply").addEventListener("click", initPlayground);
-      initPlayground();
-
-      function getGermanVariantConfig() {
-        var variant = document.getElementById("deFormatVariant").value;
-        var fallback = document.getElementById("deMobileFallback").value;
-
-        var cfg = {
-          locale: "de",
-          time_24hr: true,
-          disableMobile: fallback === "custom",
-          defaultDate: new Date(),
-          calendarTitle: "Deutsche Ausgabevarianten",
-          announceChanges: true
-        };
-
-        if (variant === "datetime_long") {
-          cfg.enableTime = true;
-          cfg.dateFormat = "l, d. F Y H:i";
-        } else if (variant === "date_short") {
-          cfg.dateFormat = "d.m.Y";
-        } else if (variant === "date_long") {
-          cfg.dateFormat = "l, d. F Y";
-        } else if (variant === "time_24") {
-          cfg.enableTime = true;
-          cfg.noCalendar = true;
-          cfg.dateFormat = "H:i";
-        } else if (variant === "calendar_month") {
-          cfg.dateFormat = "F Y";
-        } else {
-          cfg.enableTime = true;
-          cfg.dateFormat = "d.m.Y H:i";
-        }
-
-        return cfg;
-      }
-
-      function initGermanVariantPicker() {
-        destroyIfExists("#demoDeMaster");
-        pick("#demoDeMaster", getGermanVariantConfig());
-      }
-
-      document.getElementById("deApplyVariant").addEventListener("click", initGermanVariantPicker);
-      initGermanVariantPicker();
-
-      var themeCode = document.getElementById("themeCode");
-      var rootStyle = document.documentElement.style;
-      var rootEl = document.documentElement;
-      var themeModeSelect = document.getElementById("themeMode");
-      var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      var activeThemeName = "balanced";
-      var activeThemeCore = null;
-      var themePresetButtons = Array.prototype.slice.call(
-        document.querySelectorAll("[data-theme-preset]")
-      );
-      var themeVars = {
+    function applyDesignPreset(preset) {
+      var presets = {
         balanced: {
           light: {
-            calendarBg: "#ffffff",
-            calendarBorder: "#d7dce6",
-            dayFg: "#1c2230",
-            accent: "#0b5fd3"
+            radius: "0.55rem",
+            dayBg: "#f8fbff",
+            monthBg: "#eaf1fb",
+            dayFg: "#222a3a",
+            border: "#cfd8ea",
+            monthFg: "#1f2f4f",
+            weekdaysFg: "#4c5f80",
+            calendarBg: "#ffffff"
           },
           dark: {
-            calendarBg: "#141b27",
-            calendarBorder: "#3f4e67",
+            radius: "0.55rem",
+            dayBg: "#222a35",
+            monthBg: "#1a2433",
             dayFg: "#e4ecfa",
-            accent: "#66a6ff"
+            border: "#3f4e67",
+            monthFg: "#e7eeff",
+            weekdaysFg: "#b4c2dd",
+            calendarBg: "#141b27"
           }
         },
-        ocean: {
+        soft: {
           light: {
-            calendarBg: "#ecf7fb",
-            calendarBorder: "#9dd2e4",
-            dayFg: "#114059",
-            accent: "#0f7ea8"
+            radius: "0.9rem",
+            dayBg: "#fffdf9",
+            monthBg: "#f9f3e8",
+            dayFg: "#2b2f3a",
+            border: "#d9d0be",
+            monthFg: "#3f3228",
+            weekdaysFg: "#715d4f",
+            calendarBg: "#fffefb"
           },
           dark: {
-            calendarBg: "#10202a",
-            calendarBorder: "#2b5a70",
-            dayFg: "#d5ebf5",
-            accent: "#1ca7d8"
+            radius: "0.9rem",
+            dayBg: "#2a2622",
+            monthBg: "#312b25",
+            dayFg: "#f3eadf",
+            border: "#5f5448",
+            monthFg: "#f4e8da",
+            weekdaysFg: "#d2beaa",
+            calendarBg: "#201c18"
           }
         },
-        sunset: {
+        contrast: {
           light: {
-            calendarBg: "#fff6ec",
-            calendarBorder: "#f2c9a6",
-            dayFg: "#5a2a0d",
-            accent: "#d8691f"
+            radius: "0.35rem",
+            dayBg: "#ffffff",
+            monthBg: "#e9eef7",
+            dayFg: "#111827",
+            border: "#7d8ca7",
+            monthFg: "#0f172a",
+            weekdaysFg: "#22314c",
+            calendarBg: "#ffffff"
           },
           dark: {
-            calendarBg: "#2a1f18",
-            calendarBorder: "#7a4f31",
-            dayFg: "#f6deca",
-            accent: "#eb8f4f"
-          }
-        },
-        mono: {
-          light: {
-            calendarBg: "#ffffff",
-            calendarBorder: "#b7b7b7",
-            dayFg: "#121212",
-            accent: "#2d2d2d"
-          },
-          dark: {
-            calendarBg: "#161616",
-            calendarBorder: "#505050",
-            dayFg: "#f2f2f2",
-            accent: "#c7c7c7"
+            radius: "0.35rem",
+            dayBg: "#0e1420",
+            monthBg: "#121b2b",
+            dayFg: "#f4f7ff",
+            border: "#8da3cc",
+            monthFg: "#f4f7ff",
+            weekdaysFg: "#d6e2ff",
+            calendarBg: "#0b111b"
           }
         }
       };
 
-      function hexToRgb(hex) {
-        var value = (hex || "").replace("#", "");
-        if (value.length === 3) {
-          value = value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
+      var mode = getResolvedThemeMode();
+      var tokenSet = presets[preset] || presets.balanced;
+      var token = tokenSet[mode] || tokenSet.light;
+      document.documentElement.style.setProperty("--a11y-dt-radius", token.radius);
+      document.documentElement.style.setProperty("--a11y-dt-day-bg", token.dayBg);
+      document.documentElement.style.setProperty("--a11y-dt-month-bg", token.monthBg);
+      document.documentElement.style.setProperty("--a11y-dt-day-fg", token.dayFg);
+      document.documentElement.style.setProperty("--a11y-dt-calendar-border", token.border);
+      document.documentElement.style.setProperty("--a11y-dt-month-fg", token.monthFg);
+      document.documentElement.style.setProperty("--a11y-dt-weekdays-fg", token.weekdaysFg);
+      document.documentElement.style.setProperty("--a11y-dt-calendar-bg", token.calendarBg);
+    }
+
+    themeSelect.addEventListener("change", function () {
+      var selected = themeSelect.value;
+      if (selected === "system") {
+        document.documentElement.removeAttribute("data-a11y-datetime-theme");
+      } else {
+        document.documentElement.setAttribute("data-a11y-datetime-theme", selected);
+      }
+
+      applyDesignPreset(designSelect.value);
+    });
+
+    if (systemThemeQuery && systemThemeQuery.addEventListener) {
+      systemThemeQuery.addEventListener("change", function () {
+        if (themeSelect.value === "system") {
+          applyDesignPreset(designSelect.value);
         }
-        var int = parseInt(value, 16);
-        return {
-          r: (int >> 16) & 255,
-          g: (int >> 8) & 255,
-          b: int & 255
-        };
-      }
+      });
+    }
 
-      function luminance(hex) {
-        var rgb = hexToRgb(hex);
-        var channels = [rgb.r, rgb.g, rgb.b].map(function(v) {
-          var c = v / 255;
-          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-        });
-        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+    motionSelect.addEventListener("change", function () {
+      var selected = motionSelect.value;
+      if (selected === "reduce") {
+        document.documentElement.style.setProperty("--a11y-dt-transition-fast", "0ms");
+      } else if (selected === "normal") {
+        document.documentElement.style.setProperty("--a11y-dt-transition-fast", "0.1s");
+      } else {
+        document.documentElement.style.removeProperty("--a11y-dt-transition-fast");
       }
+    });
 
-      function toRgba(hex, alpha) {
-        var rgb = hexToRgb(hex);
-        return "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + "," + alpha + ")";
+    accentSelect.addEventListener("change", function () {
+      var accentTokens = {
+        sunset: { selectedBg: "#e67817", todayColor: "#cc5e00" },
+        ocean: { selectedBg: "#0d8bd8", todayColor: "#0667a3" },
+        forest: { selectedBg: "#2f8f3e", todayColor: "#1f6a2c" },
+        berry: { selectedBg: "#c03a8a", todayColor: "#8f1f64" }
+      };
+
+      var selectedAccent = accentTokens[accentSelect.value];
+
+      if (selectedAccent) {
+        document.documentElement.style.setProperty("--a11y-dt-selected-bg", selectedAccent.selectedBg);
+        document.documentElement.style.setProperty("--a11y-dt-today-color", selectedAccent.todayColor);
+      } else {
+        document.documentElement.style.removeProperty("--a11y-dt-selected-bg");
+        document.documentElement.style.removeProperty("--a11y-dt-today-color");
       }
+    });
 
-      function contrastColor(hex) {
-        return luminance(hex) > 0.45 ? "#0f1725" : "#ffffff";
-      }
-
-      function resolveThemeMode() {
-        if (themeModeSelect.value === "dark") return "dark";
-        if (themeModeSelect.value === "light") return "light";
-        return systemThemeQuery.matches ? "dark" : "light";
-      }
-
-      function applyThemeModeAttribute() {
-        if (themeModeSelect.value === "system") {
-          rootEl.removeAttribute("data-a11y-datetime-theme");
-        } else {
-          rootEl.setAttribute("data-a11y-datetime-theme", themeModeSelect.value);
+    backgroundSelect.addEventListener("change", function () {
+      var backgrounds = {
+        sand: {
+          start: "#ffecc7",
+          mid: "#f7f4ee",
+          end: "#e9f0ff"
+        },
+        night: {
+          start: "#1c2333",
+          mid: "#151a26",
+          end: "#0f1420"
         }
+      };
+
+      var selectedBackground = backgrounds[backgroundSelect.value];
+
+      if (selectedBackground) {
+        document.documentElement.style.setProperty("--demo-bg-start", selectedBackground.start);
+        document.documentElement.style.setProperty("--demo-bg-mid", selectedBackground.mid);
+        document.documentElement.style.setProperty("--demo-bg-end", selectedBackground.end);
+      } else {
+        document.documentElement.style.removeProperty("--demo-bg-start");
+        document.documentElement.style.removeProperty("--demo-bg-mid");
+        document.documentElement.style.removeProperty("--demo-bg-end");
       }
+    });
 
-      function buildThemePalette(core) {
-        var mode = resolveThemeMode();
-        var isDark = mode === "dark";
-        var calendarBg = core.calendarBg;
-        var calendarBorder = core.calendarBorder;
-        var dayFg = core.dayFg;
-        var accent = core.accent;
-        var selectedFg = contrastColor(accent);
+    designSelect.addEventListener("change", function () {
+      applyDesignPreset(designSelect.value);
+    });
 
-        return {
-          "--a11y-dt-calendar-bg": calendarBg,
-          "--a11y-dt-calendar-border": calendarBorder,
-          "--a11y-dt-month-bg": calendarBg,
-          "--a11y-dt-month-fg": dayFg,
-          "--a11y-dt-weekdays-bg": calendarBg,
-          "--a11y-dt-weekdays-fg": isDark ? "#cfd5df" : "#4c566d",
-          "--a11y-dt-day-fg": dayFg,
-          "--a11y-dt-day-disabled-fg": toRgba(dayFg, isDark ? 0.45 : 0.42),
-          "--a11y-dt-day-not-allowed-fg": toRgba(dayFg, isDark ? 0.62 : 0.58),
-          "--a11y-dt-day-hover-bg": isDark ? "#2e3643" : "#e6eefb",
-          "--a11y-dt-selected-bg": accent,
-          "--a11y-dt-selected-fg": selectedFg,
-          "--a11y-dt-today-color": accent,
-          "--a11y-dt-focus-ring": "2px solid " + accent
-        };
-      }
-
-      function renderThemeCode(name, vars) {
-        if (!themeCode) return;
-        var lines = [
-          "/* active theme: " + name + " */",
-          "/* mode: " + resolveThemeMode() + " */",
-          ":root {"
-        ];
-        Object.keys(vars).forEach(function(key) {
-          lines.push("  " + key + ": " + vars[key] + ";");
-        });
-        lines.push("}");
-        themeCode.textContent = lines.join("\n");
-      }
-
-      function resolveCoreByMode(coreOrModes) {
-        var mode = resolveThemeMode();
-        if (coreOrModes && coreOrModes.light && coreOrModes.dark) {
-          return coreOrModes[mode] || coreOrModes.light;
-        }
-        return coreOrModes;
-      }
-
-      function applyThemeVars(name, coreOrModes) {
-        var core = resolveCoreByMode(coreOrModes);
-        var vars = buildThemePalette(core);
-        applyThemeModeAttribute();
-
-        Object.keys(vars).forEach(function(key) {
-          rootStyle.setProperty(key, vars[key]);
-        });
-        activeThemeName = name;
-        activeThemeCore = coreOrModes;
-        themePresetButtons.forEach(function(btn) {
-          var isActive = btn.getAttribute("data-theme-preset") === name;
-          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-        });
-        renderThemeCode(name, vars);
-      }
-
-      themePresetButtons.forEach(function(btn) {
-        btn.setAttribute("aria-pressed", "false");
-        btn.addEventListener("click", function() {
-          var preset = btn.getAttribute("data-theme-preset");
-          if (!preset || !themeVars[preset]) return;
-          applyThemeVars(preset, themeVars[preset]);
-        });
-      });
-
-      document.getElementById("applyCustomTheme").addEventListener("click", function() {
-        var accent = document.getElementById("themeAccent").value;
-        var bg = document.getElementById("themeCalendarBg").value;
-        var day = document.getElementById("themeDayText").value;
-        var darkBg = luminance(bg) > 0.4 ? "#1a2331" : bg;
-        var darkDay = luminance(day) < 0.45 ? "#e8edf7" : day;
-        var custom = {
-          light: {
-            calendarBg: bg,
-            calendarBorder: accent,
-            dayFg: day,
-            accent: accent
-          },
-          dark: {
-            calendarBg: darkBg,
-            calendarBorder: accent,
-            dayFg: darkDay,
-            accent: accent
-          }
-        };
-        applyThemeVars("custom", custom);
-      });
-
-      document.getElementById("resetTheme").addEventListener("click", function() {
-        applyThemeVars("balanced", themeVars.balanced);
-      });
-
-      themeModeSelect.addEventListener("change", function() {
-        applyThemeVars(activeThemeName || "balanced", activeThemeCore || themeVars.balanced);
-      });
-
-      if (systemThemeQuery && systemThemeQuery.addEventListener) {
-        systemThemeQuery.addEventListener("change", function() {
-          if (themeModeSelect.value === "system") {
-            applyThemeVars(activeThemeName || "balanced", activeThemeCore || themeVars.balanced);
-          }
-        });
-      }
-
-      applyThemeVars("balanced", themeVars.balanced);
-    })();
+    applyDesignPreset("balanced");
   </script>
 </body>
 </html>
