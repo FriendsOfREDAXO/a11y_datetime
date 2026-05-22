@@ -125,6 +125,63 @@
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
 
+    .demo-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
+    .demo-block {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: #fbfcff;
+    }
+
+    .demo-block h3 {
+      margin: 0 0 10px;
+    }
+
+    .control-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      margin-top: 8px;
+    }
+
+    .control-grid label {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--sub);
+    }
+
+    select,
+    button {
+      border: 1px solid #bfc8d8;
+      border-radius: 10px;
+      padding: 9px 10px;
+      font-size: 0.95rem;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    button {
+      background: #0b5fd3;
+      border-color: #0b5fd3;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mobile-note {
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: var(--sub);
+    }
+
     label {
       font-size: 0.92rem;
       color: var(--sub);
@@ -201,7 +258,7 @@
       <h1>a11y_datetime</h1>
       <p>
         Accessible datetime picker fork based on flatpickr. This page contains a bilingual quick intro,
-        a compact live demo, and a full demo embed.
+        and a compact website-native live demo.
       </p>
       <div class="links">
         <a href="https://github.com/FriendsOfREDAXO/a11y_datetime" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
@@ -264,9 +321,75 @@
     </section>
 
     <section class="card" style="margin-top: 18px;">
-      <h2>Embedded Full Demo</h2>
-      <div class="iframe-wrap">
-        <iframe src="./dist/demo/index.html" title="a11y_datetime full demo"></iframe>
+      <h2>Website Demo Playground</h2>
+      <div class="demo-grid">
+        <article class="demo-block">
+          <h3>Single Date + Time</h3>
+          <label for="demoSingleDateTime">Input</label>
+          <input id="demoSingleDateTime" type="text" placeholder="YYYY-MM-DD HH:mm" />
+          <p class="mobile-note">Mobile fallback active by default (native date/time picker on many devices).</p>
+        </article>
+
+        <article class="demo-block">
+          <h3>Time Only</h3>
+          <label for="demoTimeOnly">Input</label>
+          <input id="demoTimeOnly" type="text" placeholder="HH:mm" />
+          <p class="mobile-note">Also uses mobile fallback by default when device/browser supports native controls.</p>
+        </article>
+
+        <article class="demo-block">
+          <h3>Optional Playground</h3>
+          <label for="demoPlayground">Demo Input</label>
+          <input id="demoPlayground" type="text" placeholder="Change mode below" />
+
+          <div class="control-grid">
+            <div>
+              <label for="playgroundMode" style="display:block; margin-bottom:4px;">Mode</label>
+              <select id="playgroundMode">
+                <option value="single">single</option>
+                <option value="range">range</option>
+                <option value="multiple">multiple</option>
+                <option value="time">time-only</option>
+              </select>
+            </div>
+            <div>
+              <label for="playgroundMobileFallback" style="display:block; margin-bottom:4px;">Mobile</label>
+              <select id="playgroundMobileFallback">
+                <option value="native">native fallback</option>
+                <option value="custom">force custom picker</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="control-grid" style="margin-top:10px;">
+            <label><input id="playgroundTitleBar" type="checkbox" checked /> showTitleBar</label>
+            <label><input id="playgroundCloseButton" type="checkbox" checked /> showCloseButton</label>
+            <label><input id="playgroundAnnounce" type="checkbox" checked /> announceChanges</label>
+          </div>
+
+          <div style="margin-top:10px;">
+            <button id="playgroundApply" type="button">Apply playground config</button>
+          </div>
+        </article>
+      </div>
+
+      <div class="demo-grid" style="margin-top:12px;">
+        <article class="demo-block">
+          <h3>DE: Mobile Fallback</h3>
+          <p class="mobile-note" style="margin-top:0;">
+            Bei vielen mobilen Browsern nutzt der Picker automatisch native Eingabefelder.
+            Das ist Absicht: bessere Bedienung, vertraute UI und weniger Fehler auf Touch-Geraeten.
+            Im Playground kannst du mit "force custom picker" auf die komplette Kalender-UI wechseln.
+          </p>
+        </article>
+        <article class="demo-block">
+          <h3>EN: Mobile fallback</h3>
+          <p class="mobile-note" style="margin-top:0;">
+            On many mobile browsers, the picker intentionally falls back to native controls.
+            This improves usability and reliability for touch input.
+            In the playground, switch to "force custom picker" to always use the full calendar UI.
+          </p>
+        </article>
       </div>
     </section>
   </main>
@@ -289,6 +412,68 @@
         calendarTitle: "Select date and time",
         announceChanges: true
       });
+
+      pick("#demoSingleDateTime", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        calendarTitle: "Single date and time",
+        announceChanges: true
+      });
+
+      pick("#demoTimeOnly", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+        calendarTitle: "Time only",
+        announceChanges: true
+      });
+
+      function destroyIfExists(selector) {
+        var el = document.querySelector(selector);
+        if (!el || !el._flatpickr) return;
+        el._flatpickr.destroy();
+      }
+
+      function getPlaygroundConfig() {
+        var mode = document.getElementById("playgroundMode").value;
+        var fallback = document.getElementById("playgroundMobileFallback").value;
+        var showTitleBar = document.getElementById("playgroundTitleBar").checked;
+        var showCloseButton = document.getElementById("playgroundCloseButton").checked;
+        var announceChanges = document.getElementById("playgroundAnnounce").checked;
+
+        var config = {
+          mode: mode,
+          showTitleBar: showTitleBar,
+          showCloseButton: showCloseButton,
+          announceChanges: announceChanges,
+          disableMobile: fallback === "custom"
+        };
+
+        if (mode === "multiple") {
+          config.dateFormat = "Y-m-d";
+          config.conjunction = ", ";
+        } else if (mode === "range") {
+          config.dateFormat = "Y-m-d";
+        } else if (mode === "time") {
+          config.mode = "single";
+          config.enableTime = true;
+          config.noCalendar = true;
+          config.dateFormat = "H:i";
+        } else {
+          config.enableTime = true;
+          config.dateFormat = "Y-m-d H:i";
+        }
+
+        return config;
+      }
+
+      function initPlayground() {
+        destroyIfExists("#demoPlayground");
+        pick("#demoPlayground", getPlaygroundConfig());
+      }
+
+      document.getElementById("playgroundApply").addEventListener("click", initPlayground);
+      initPlayground();
     })();
   </script>
 </body>
