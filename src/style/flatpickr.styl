@@ -482,13 +482,19 @@
   font-weight 300
   color inherit
   position absolute
-  width 75%
+  width 82%
   left 12.5%
   padding (0.22*$monthNavHeight) 0 0 0
   line-height 1
   height $monthNavHeight
-  display inline-block
+  display grid
+  grid-auto-flow column
+  grid-auto-columns max-content
+  align-items center
+  justify-content center
+  column-gap 0.35rem
   text-align center
+  white-space nowrap
   transform translate3d(0px, 0px, 0px)
   z-index 6
 
@@ -507,7 +513,8 @@
   .numInputWrapper
     width 6ch
     width unquote("7ch\0")
-    display inline-block
+    display inline-flex
+    flex 0 0 auto
 
     span.arrowUp:after
       border-bottom-color $monthForeground
@@ -523,6 +530,7 @@
     padding 0 0 0 0.5ch
     margin 0
     display inline-block
+    min-width 4.5ch
     font-size inherit
     font-family inherit
     font-weight 300
@@ -557,14 +565,18 @@
     line-height: inherit
     margin: -1px 0 0 0
     outline: none
-    padding: 0 0 0 0.5ch
+    padding: 0 0.25rem 0 0.5ch
     position: relative
     vertical-align: initial
     box-sizing: border-box
+    display inline-flex
+    align-items center
     -webkit-appearance: none
     -moz-appearance: none
     appearance: none
-    width: auto
+    width: fit-content
+    max-width: calc(100% - 4.75ch)
+    flex: 0 1 auto
 
     &:focus:not(:focus-visible), &:active:not(:focus-visible)
       outline: none
