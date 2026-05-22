@@ -1943,6 +1943,12 @@ function FlatpickrInstance(
             break;
           }
 
+          if (eventTarget === self.closeButton) {
+            e.preventDefault();
+            focusAndClose();
+            break;
+          }
+
           if (
             eventTarget === self.prevMonthNav ||
             eventTarget === self.nextMonthNav

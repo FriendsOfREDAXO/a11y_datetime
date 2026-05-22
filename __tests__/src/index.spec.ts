@@ -1060,6 +1060,17 @@ describe("flatpickr", () => {
       expect(fp.isOpen).toBe(false);
     });
 
+    it("closes calendar when Enter is pressed on close button", () => {
+      createInstance();
+      fp.open();
+
+      expect(fp.closeButton).toBeDefined();
+      (fp.closeButton as HTMLButtonElement).focus();
+
+      simulate("keydown", fp.closeButton as HTMLElement, { keyCode: 13 });
+      expect(fp.isOpen).toBe(false);
+    });
+
     it("can hide close button via showCloseButton option", () => {
       createInstance({ showCloseButton: false });
       fp.open();
