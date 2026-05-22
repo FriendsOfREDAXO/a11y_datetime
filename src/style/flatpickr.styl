@@ -575,8 +575,8 @@
     -moz-appearance: none
     appearance: none
     width: auto
-    min-width: 10ch
-    max-width: calc(100% - 4.75ch)
+    min-width 12ch
+    max-width calc(100% - 4.25ch)
     flex: 0 0 auto
 
     &:focus:not(:focus-visible), &:active:not(:focus-visible)
@@ -584,6 +584,19 @@
 
     &:hover
       background var(--a11y-dt-day-hover-bg)
+
+@media (max-width: 480px)
+  .flatpickr-current-month
+    width 88%
+    column-gap 0.25rem
+    font-size 120%
+
+  .flatpickr-current-month .flatpickr-monthDropdown-months
+    min-width 9.5ch
+    max-width calc(100% - 3.75ch)
+
+  .flatpickr-current-month input.cur-year
+    min-width 3.5ch
 
   .flatpickr-monthDropdown
     position relative
