@@ -718,30 +718,64 @@
       var rootEl = document.documentElement;
       var themeModeSelect = document.getElementById("themeMode");
       var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      var activeThemeName = "balanced";
+      var activeThemeCore = null;
       var themeVars = {
         balanced: {
-          calendarBg: "#ffffff",
-          calendarBorder: "#d7dce6",
-          dayFg: "#1c2230",
-          accent: "#0b5fd3"
+          light: {
+            calendarBg: "#ffffff",
+            calendarBorder: "#d7dce6",
+            dayFg: "#1c2230",
+            accent: "#0b5fd3"
+          },
+          dark: {
+            calendarBg: "#141b27",
+            calendarBorder: "#3f4e67",
+            dayFg: "#e4ecfa",
+            accent: "#66a6ff"
+          }
         },
         ocean: {
-          calendarBg: "#ecf7fb",
-          calendarBorder: "#9dd2e4",
-          dayFg: "#114059",
-          accent: "#0f7ea8"
+          light: {
+            calendarBg: "#ecf7fb",
+            calendarBorder: "#9dd2e4",
+            dayFg: "#114059",
+            accent: "#0f7ea8"
+          },
+          dark: {
+            calendarBg: "#10202a",
+            calendarBorder: "#2b5a70",
+            dayFg: "#d5ebf5",
+            accent: "#1ca7d8"
+          }
         },
         sunset: {
-          calendarBg: "#fff6ec",
-          calendarBorder: "#f2c9a6",
-          dayFg: "#5a2a0d",
-          accent: "#d8691f"
+          light: {
+            calendarBg: "#fff6ec",
+            calendarBorder: "#f2c9a6",
+            dayFg: "#5a2a0d",
+            accent: "#d8691f"
+          },
+          dark: {
+            calendarBg: "#2a1f18",
+            calendarBorder: "#7a4f31",
+            dayFg: "#f6deca",
+            accent: "#eb8f4f"
+          }
         },
         mono: {
-          calendarBg: "#ffffff",
-          calendarBorder: "#b7b7b7",
-          dayFg: "#121212",
-          accent: "#2d2d2d"
+          light: {
+            calendarBg: "#ffffff",
+            calendarBorder: "#b7b7b7",
+            dayFg: "#121212",
+            accent: "#2d2d2d"
+          },
+          dark: {
+            calendarBg: "#161616",
+            calendarBorder: "#505050",
+            dayFg: "#f2f2f2",
+            accent: "#c7c7c7"
+          }
         }
       };
 
@@ -819,7 +853,11 @@
 
       function renderThemeCode(name, vars) {
         if (!themeCode) return;
-        var lines = ["/* active theme: " + name + " */", ":root {"];
+        var lines = [
+          "/* active theme: " + name + " */",
+          "/* mode: " + resolveThemeMode() + " */",
+          ":root {"
+        ];
         Object.keys(vars).forEach(function(key) {
           lines.push("  " + key + ": " + vars[key] + ";");
         });
@@ -827,13 +865,24 @@
         themeCode.textContent = lines.join("\n");
       }
 
-      function applyThemeVars(name, coreVars) {
-        var vars = buildThemePalette(coreVars);
+      function resolveCoreByMode(coreOrModes) {
+        var mode = resolveThemeMode();
+        if (coreOrModes && coreOrModes.light && coreOrModes.dark) {
+          return coreOrModes[mode] || coreOrModes.light;
+        }
+        return coreOrModes;
+      }
+
+      function applyThemeVars(name, coreOrModes) {
+        var core = resolveCoreByMode(coreOrModes);
+        var vars = buildThemePalette(core);
         applyThemeModeAttribute();
 
         Object.keys(vars).forEach(function(key) {
           rootStyle.setProperty(key, vars[key]);
         });
+        activeThemeName = name;
+        activeThemeCore = coreOrModes;
         renderThemeCode(name, vars);
       }
 
@@ -849,11 +898,21 @@
         var accent = document.getElementById("themeAccent").value;
         var bg = document.getElementById("themeCalendarBg").value;
         var day = document.getElementById("themeDayText").value;
+        var darkBg = luminance(bg) > 0.4 ? "#1a2331" : bg;
+        var darkDay = luminance(day) < 0.45 ? "#e8edf7" : day;
         var custom = {
-          calendarBg: bg,
-          calendarBorder: accent,
-          dayFg: day,
-          accent: accent
+          light: {
+            calendarBg: bg,
+            calendarBorder: accent,
+            dayFg: day,
+            accent: accent
+          },
+          dark: {
+            calendarBg: darkBg,
+            calendarBorder: accent,
+            dayFg: darkDay,
+            accent: accent
+          }
         };
         applyThemeVars("custom", custom);
       });
@@ -863,13 +922,13 @@
       });
 
       themeModeSelect.addEventListener("change", function() {
-        applyThemeVars("balanced", themeVars.balanced);
+        applyThemeVars(activeThemeName || "balanced", activeThemeCore || themeVars.balanced);
       });
 
       if (systemThemeQuery && systemThemeQuery.addEventListener) {
         systemThemeQuery.addEventListener("change", function() {
           if (themeModeSelect.value === "system") {
-            applyThemeVars("balanced", themeVars.balanced);
+            applyThemeVars(activeThemeName || "balanced", activeThemeCore || themeVars.balanced);
           }
         });
       }
