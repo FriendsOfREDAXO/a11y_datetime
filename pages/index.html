@@ -535,6 +535,13 @@
         </article>
 
         <article class="demo-block">
+          <h3>Week Select</h3>
+          <label for="demoWeekSelect">Input</label>
+          <input id="demoWeekSelect" type="text" placeholder="Week #23, 2026" />
+          <p class="mobile-note">Selects a full week and highlights all days in that week.</p>
+        </article>
+
+        <article class="demo-block">
           <h3>Optional Playground</h3>
           <label for="demoPlayground">Demo Input</label>
           <input id="demoPlayground" type="text" placeholder="Change mode below" />
@@ -686,6 +693,7 @@
   </main>
 
   <script src="./dist/a11y_datetime.js?v=5.1.1"></script>
+  <script src="./dist/plugins/weekSelect/weekSelect.js?v=5.1.1"></script>
   <script src="./dist/l10n/de.js?v=5.1.1"></script>
   <script>
     (function () {
@@ -722,6 +730,16 @@
         calendarTitle: "Time only",
         announceChanges: true
       });
+
+      if (typeof plugins_weekSelect !== "undefined" && typeof plugins_weekSelect.default === "function") {
+        pick("#demoWeekSelect", {
+          weekNumbers: true,
+          disableMobile: true,
+          plugins: [plugins_weekSelect.default()],
+          calendarTitle: "Select week",
+          announceChanges: true
+        });
+      }
 
       function destroyIfExists(selector) {
         var el = document.querySelector(selector);

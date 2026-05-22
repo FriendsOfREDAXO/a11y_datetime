@@ -496,6 +496,22 @@
         </article>
 
         <article class="card">
+          <h3>Week Select</h3>
+          <p class="desc">Pick an entire calendar week with hover preview and week number output.</p>
+          <label for="demo-weekselect">Week picker</label>
+          <input id="demo-weekselect" placeholder="Select a week" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="week select code"><code>pick("#demo-weekselect", {
+  weekNumbers: true,
+  plugins: [plugins_weekSelect.default()],
+  calendarTitle: "Select a week",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
           <h3>Inline Calendar</h3>
           <p class="desc">Always-visible calendar for dashboards, kiosks, or booking sidebars.</p>
           <label for="demo-inline">Inline mode input</label>
@@ -540,6 +556,7 @@
   <!-- classList polyfill for IE9 -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
   <script src="./dist/a11y_datetime.js"></script>
+  <script src="./dist/plugins/weekSelect/weekSelect.js"></script>
 
   <script>
     var pick = (window.a11y_datetime || window.flatpickr);
@@ -604,6 +621,15 @@
       calendarTitle: "Precise date and time",
       announceChanges: true
     });
+
+    if (typeof plugins_weekSelect !== "undefined" && typeof plugins_weekSelect.default === "function") {
+      pick("#demo-weekselect", {
+        weekNumbers: true,
+        plugins: [plugins_weekSelect.default()],
+        calendarTitle: "Select a week",
+        announceChanges: true
+      });
+    }
 
     pick("#demo-inline", {
       inline: true,
