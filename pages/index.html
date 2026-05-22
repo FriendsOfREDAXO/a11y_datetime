@@ -8,12 +8,35 @@
     :root {
       --bg: #f7f8fb;
       --panel: #ffffff;
+      --panel-soft: #fbfcff;
       --ink: #1c2230;
       --sub: #4c566d;
       --line: #d7dce6;
       --brand: #005fcc;
       --brand-2: #0f8b5f;
+      --control-bg: #ffffff;
+      --control-border: #bfc8d8;
+      --theme-code-bg: #f5f8ff;
+      --theme-code-fg: #24345c;
       --shadow: 0 12px 40px rgba(24, 32, 53, 0.12);
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f141d;
+        --panel: #151c28;
+        --panel-soft: #1a2331;
+        --ink: #e8edf7;
+        --sub: #b7c2d8;
+        --line: #2d3a50;
+        --brand: #66a6ff;
+        --brand-2: #39b37d;
+        --control-bg: #111823;
+        --control-border: #3a4a66;
+        --theme-code-bg: #101a29;
+        --theme-code-fg: #cfe0ff;
+        --shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
+      }
     }
 
     * {
@@ -24,6 +47,7 @@
       margin: 0;
       font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
       color: var(--ink);
+      color-scheme: light dark;
       background:
         radial-gradient(circle at 15% -10%, #cddfff 0%, transparent 35%),
         radial-gradient(circle at 100% 0%, #d8ffef 0%, transparent 30%),
@@ -135,7 +159,7 @@
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 12px;
-      background: #fbfcff;
+      background: var(--panel-soft);
     }
 
     .demo-block h3 {
@@ -161,17 +185,17 @@
 
     select,
     button {
-      border: 1px solid #bfc8d8;
+      border: 1px solid var(--control-border);
       border-radius: 10px;
       padding: 9px 10px;
       font-size: 0.95rem;
-      background: #fff;
+      background: var(--control-bg);
       color: var(--ink);
     }
 
     button {
-      background: #0b5fd3;
-      border-color: #0b5fd3;
+      background: var(--brand);
+      border-color: var(--brand);
       color: #fff;
       font-weight: 600;
       cursor: pointer;
@@ -194,7 +218,7 @@
       border: 1px solid var(--line);
       border-radius: 10px;
       padding: 10px;
-      background: #ffffff;
+      background: var(--panel);
     }
 
     .variant-item strong {
@@ -219,9 +243,9 @@
     }
 
     .theme-chip-btn {
-      border: 1px solid #bfc8d8;
-      background: #fff;
-      color: #1f2c45;
+      border: 1px solid var(--control-border);
+      background: var(--control-bg);
+      color: var(--ink);
       border-radius: 999px;
       padding: 7px 12px;
       cursor: pointer;
@@ -240,11 +264,11 @@
       margin-top: 12px;
       border: 1px solid var(--line);
       border-radius: 10px;
-      background: #f5f8ff;
+      background: var(--theme-code-bg);
       padding: 10px;
       font-family: "SFMono-Regular", Menlo, Consolas, monospace;
       font-size: 0.84rem;
-      color: #24345c;
+      color: var(--theme-code-fg);
       white-space: pre-wrap;
     }
 
@@ -257,11 +281,12 @@
 
     input[type="text"] {
       width: 100%;
-      border: 1px solid #bfc8d8;
+      border: 1px solid var(--control-border);
       border-radius: 10px;
       padding: 10px 12px;
       font-size: 1rem;
-      background: #fff;
+      background: var(--control-bg);
+      color: var(--ink);
     }
 
     input[type="checkbox"] {
