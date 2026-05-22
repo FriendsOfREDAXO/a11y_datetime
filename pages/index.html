@@ -680,40 +680,90 @@
 
       var themeCode = document.getElementById("themeCode");
       var rootStyle = document.documentElement.style;
+      var rootEl = document.documentElement;
       var themeVars = {
         balanced: {
-          "--a11y-dt-calendar-bg": "#ffffff",
-          "--a11y-dt-calendar-border": "#d7dce6",
-          "--a11y-dt-day-fg": "#1c2230",
-          "--a11y-dt-selected-bg": "#0b5fd3",
-          "--a11y-dt-selected-fg": "#ffffff",
-          "--a11y-dt-today-color": "#0b5fd3"
+          calendarBg: "#ffffff",
+          calendarBorder: "#d7dce6",
+          dayFg: "#1c2230",
+          accent: "#0b5fd3"
         },
         ocean: {
-          "--a11y-dt-calendar-bg": "#ecf7fb",
-          "--a11y-dt-calendar-border": "#9dd2e4",
-          "--a11y-dt-day-fg": "#114059",
-          "--a11y-dt-selected-bg": "#0f7ea8",
-          "--a11y-dt-selected-fg": "#ffffff",
-          "--a11y-dt-today-color": "#075f84"
+          calendarBg: "#ecf7fb",
+          calendarBorder: "#9dd2e4",
+          dayFg: "#114059",
+          accent: "#0f7ea8"
         },
         sunset: {
-          "--a11y-dt-calendar-bg": "#fff6ec",
-          "--a11y-dt-calendar-border": "#f2c9a6",
-          "--a11y-dt-day-fg": "#5a2a0d",
-          "--a11y-dt-selected-bg": "#d8691f",
-          "--a11y-dt-selected-fg": "#ffffff",
-          "--a11y-dt-today-color": "#b54f0f"
+          calendarBg: "#fff6ec",
+          calendarBorder: "#f2c9a6",
+          dayFg: "#5a2a0d",
+          accent: "#d8691f"
         },
         mono: {
-          "--a11y-dt-calendar-bg": "#ffffff",
-          "--a11y-dt-calendar-border": "#b7b7b7",
-          "--a11y-dt-day-fg": "#121212",
-          "--a11y-dt-selected-bg": "#2d2d2d",
-          "--a11y-dt-selected-fg": "#ffffff",
-          "--a11y-dt-today-color": "#2d2d2d"
+          calendarBg: "#ffffff",
+          calendarBorder: "#b7b7b7",
+          dayFg: "#121212",
+          accent: "#2d2d2d"
         }
       };
+
+      function hexToRgb(hex) {
+        var value = (hex || "").replace("#", "");
+        if (value.length === 3) {
+          value = value[0] + value[0] + value[1] + value[1] + value[2] + value[2];
+        }
+        var int = parseInt(value, 16);
+        return {
+          r: (int >> 16) & 255,
+          g: (int >> 8) & 255,
+          b: int & 255
+        };
+      }
+
+      function luminance(hex) {
+        var rgb = hexToRgb(hex);
+        var channels = [rgb.r, rgb.g, rgb.b].map(function(v) {
+          var c = v / 255;
+          return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+        });
+        return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+      }
+
+      function toRgba(hex, alpha) {
+        var rgb = hexToRgb(hex);
+        return "rgba(" + rgb.r + "," + rgb.g + "," + rgb.b + "," + alpha + ")";
+      }
+
+      function contrastColor(hex) {
+        return luminance(hex) > 0.45 ? "#0f1725" : "#ffffff";
+      }
+
+      function buildThemePalette(core) {
+        var isDark = luminance(core.calendarBg) < 0.32;
+        var calendarBg = core.calendarBg;
+        var calendarBorder = core.calendarBorder;
+        var dayFg = core.dayFg;
+        var accent = core.accent;
+        var selectedFg = contrastColor(accent);
+
+        return {
+          "--a11y-dt-calendar-bg": calendarBg,
+          "--a11y-dt-calendar-border": calendarBorder,
+          "--a11y-dt-month-bg": calendarBg,
+          "--a11y-dt-month-fg": dayFg,
+          "--a11y-dt-weekdays-bg": calendarBg,
+          "--a11y-dt-weekdays-fg": isDark ? "#cfd5df" : "#4c566d",
+          "--a11y-dt-day-fg": dayFg,
+          "--a11y-dt-day-disabled-fg": toRgba(dayFg, isDark ? 0.45 : 0.42),
+          "--a11y-dt-day-not-allowed-fg": toRgba(dayFg, isDark ? 0.62 : 0.58),
+          "--a11y-dt-day-hover-bg": isDark ? "#2e3643" : "#e6eefb",
+          "--a11y-dt-selected-bg": accent,
+          "--a11y-dt-selected-fg": selectedFg,
+          "--a11y-dt-today-color": accent,
+          "--a11y-dt-focus-ring": "2px solid " + accent
+        };
+      }
 
       function renderThemeCode(name, vars) {
         if (!themeCode) return;
@@ -725,7 +775,11 @@
         themeCode.textContent = lines.join("\n");
       }
 
-      function applyThemeVars(name, vars) {
+      function applyThemeVars(name, coreVars) {
+        var vars = buildThemePalette(coreVars);
+        var mode = luminance(coreVars.calendarBg) < 0.32 ? "dark" : "light";
+        rootEl.setAttribute("data-a11y-datetime-theme", mode);
+
         Object.keys(vars).forEach(function(key) {
           rootStyle.setProperty(key, vars[key]);
         });
@@ -745,12 +799,10 @@
         var bg = document.getElementById("themeCalendarBg").value;
         var day = document.getElementById("themeDayText").value;
         var custom = {
-          "--a11y-dt-calendar-bg": bg,
-          "--a11y-dt-calendar-border": accent,
-          "--a11y-dt-day-fg": day,
-          "--a11y-dt-selected-bg": accent,
-          "--a11y-dt-selected-fg": "#ffffff",
-          "--a11y-dt-today-color": accent
+          calendarBg: bg,
+          calendarBorder: accent,
+          dayFg: day,
+          accent: accent
         };
         applyThemeVars("custom", custom);
       });
