@@ -6,6 +6,11 @@ All notable changes to this project will be documented in this file.
 
 - No changes yet.
 
+## [5.1.1] - 2026-05-22
+
+### Fixed
+- Keyboard navigation: forward Tab from the day grid now moves focus to time controls (hour/minute/second or AM/PM) and no longer loops back to month navigation.
+
 ## [5.1.0] - 2026-05-22
 
 ### Added
