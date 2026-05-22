@@ -146,6 +146,7 @@ async function buildDemoPage() {
   const template = await readText("./index.template.html");
   const distDemoHtml = template
     .replace(/href="dist\//g, 'href="../')
+    .replace(/href="\.\/dist\//g, 'href="../')
     .replace(/src="\.\/dist\//g, 'src="../')
     .replace(/src="dist\//g, 'src="../');
 
