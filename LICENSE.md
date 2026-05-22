@@ -1,6 +1,13 @@
 The MIT License (MIT)
 
+Original project "flatpickr":
 Copyright (c) 2017 Gregory Petrosyan
+
+Fork and ongoing accessibility-focused adaptations "a11y_datetime":
+Copyright (c) 2026 Friends of REDAXO
+
+This project is based on the original work by Gregory Petrosyan.
+We gratefully acknowledge and value the original author's contribution.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
