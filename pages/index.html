@@ -351,7 +351,7 @@
       }
     }
   </style>
-  <link rel="stylesheet" href="./dist/a11y_datetime.css" />
+  <link rel="stylesheet" href="./dist/a11y_datetime.css?v=5.1.1" />
 </head>
 <body>
   <main class="shell">
@@ -589,8 +589,8 @@
     </section>
   </main>
 
-  <script src="./dist/a11y_datetime.js"></script>
-  <script src="./dist/l10n/de.js"></script>
+  <script src="./dist/a11y_datetime.js?v=5.1.1"></script>
+  <script src="./dist/l10n/de.js?v=5.1.1"></script>
   <script>
     (function () {
       var pick = window.a11y_datetime || window.flatpickr;
@@ -604,6 +604,7 @@
 
       pick("#demoDateTime", {
         enableTime: true,
+        disableMobile: true,
         dateFormat: "Y-m-d H:i",
         calendarTitle: "Select date and time",
         announceChanges: true
@@ -611,6 +612,7 @@
 
       pick("#demoSingleDateTime", {
         enableTime: true,
+        disableMobile: true,
         dateFormat: "Y-m-d H:i",
         calendarTitle: "Single date and time",
         announceChanges: true
@@ -619,6 +621,7 @@
       pick("#demoTimeOnly", {
         enableTime: true,
         noCalendar: true,
+        disableMobile: true,
         dateFormat: "H:i",
         calendarTitle: "Time only",
         announceChanges: true
