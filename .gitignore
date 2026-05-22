@@ -1,6 +1,7 @@
 *.log
 node_modules
 index.html
+!pages/index.html
 coverage
 dist
 *.tsbuildinfo
