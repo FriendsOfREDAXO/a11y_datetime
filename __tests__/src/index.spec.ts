@@ -1035,17 +1035,19 @@ describe("flatpickr", () => {
       expect(document.activeElement).toBe(fp.monthsDropdownContainer);
     });
 
-    it("month control changes month with arrow keys", () => {
+    it("month control changes month via native select change", () => {
       createInstance({
         monthSelectorType: "dropdown",
         defaultDate: new Date(2019, 1, 1),
       });
       fp.open();
 
-      simulate("keydown", fp.monthsDropdownContainer, { keyCode: 40 });
+      fp.monthsDropdownContainer.value = "2";
+      simulate("change", fp.monthsDropdownContainer);
       expect(fp.currentMonth).toBe(2);
 
-      simulate("keydown", fp.monthsDropdownContainer, { keyCode: 37 });
+      fp.monthsDropdownContainer.value = "1";
+      simulate("change", fp.monthsDropdownContainer);
       expect(fp.currentMonth).toBe(1);
     });
 
@@ -1110,37 +1112,15 @@ describe("flatpickr", () => {
       );
     });
 
-    it("wires month toggle to listbox ARIA and syncs expanded/hidden", () => {
+    it("renders month control as native select with available options", () => {
       createInstance();
       fp.open();
 
-      expect(fp.monthsDropdownContainer.getAttribute("aria-controls")).toBe(
-        fp.monthPickerContainer && fp.monthPickerContainer.id
+      expect(fp.monthsDropdownContainer.tagName).toBe("SELECT");
+      expect(fp.monthsDropdownContainer.options.length).toBeGreaterThan(0);
+      expect(fp.monthsDropdownContainer.value).toBe(
+        fp.currentMonth.toString()
       );
-      expect(fp.monthPickerContainer && fp.monthPickerContainer.getAttribute("role")).toBe(
-        "listbox"
-      );
-      expect(
-        fp.monthPickerContainer && fp.monthPickerContainer.getAttribute("aria-hidden")
-      ).toBe("true");
-
-      simulate("click", fp.monthsDropdownContainer, { which: 1 }, MouseEvent);
-
-      expect(fp.monthsDropdownContainer.getAttribute("aria-expanded")).toBe(
-        "true"
-      );
-      expect(
-        fp.monthPickerContainer && fp.monthPickerContainer.getAttribute("aria-hidden")
-      ).toBe("false");
-
-      simulate("keydown", fp.monthsDropdownContainer, { keyCode: 27 });
-
-      expect(fp.monthsDropdownContainer.getAttribute("aria-expanded")).toBe(
-        "false"
-      );
-      expect(
-        fp.monthPickerContainer && fp.monthPickerContainer.getAttribute("aria-hidden")
-      ).toBe("true");
     });
 
     it("initialDayFocus selected prioritizes selected day", () => {
@@ -2025,23 +2005,20 @@ describe("flatpickr", () => {
 
       const monthControl = fp.calendarContainer.querySelector(
         ".flatpickr-monthDropdown-months"
-      ) as HTMLButtonElement;
+      ) as HTMLSelectElement;
 
       expect(monthControl).toBeTruthy();
       if (!monthControl) return;
 
-      simulate("keydown", monthControl, { keyCode: 37 });
-      simulate("keydown", monthControl, { keyCode: 37 });
+      monthControl.value = "4";
+      simulate("change", monthControl);
+
+      monthControl.value = "3";
+      simulate("change", monthControl);
 
       expect(fp.currentMonth).toEqual(4);
-      expect(monthControl.textContent).toEqual("May");
-
-      clickOn(monthControl);
-      const options = fp.calendarContainer.querySelectorAll(
-        ".flatpickr-monthPicker-option"
-      );
-      expect(options.length).toEqual(8);
-      expect(options[0].textContent).toEqual("May");
+      expect(monthControl.options.length).toEqual(8);
+      expect(monthControl.options[0].textContent).toEqual("May");
     });
 
     it("month control respects maxDate when navigating forwards", () => {
@@ -2052,44 +2029,36 @@ describe("flatpickr", () => {
 
       const monthControl = fp.calendarContainer.querySelector(
         ".flatpickr-monthDropdown-months"
-      ) as HTMLButtonElement;
+      ) as HTMLSelectElement;
 
       expect(monthControl).toBeTruthy();
       if (!monthControl) return;
 
-      for (let i = 0; i < 5; i++) {
-        simulate("keydown", monthControl, { keyCode: 39 });
-      }
+      monthControl.value = "8";
+      simulate("change", monthControl);
+
+      monthControl.value = "9";
+      simulate("change", monthControl);
 
       expect(fp.currentMonth).toEqual(8);
-      expect(monthControl.textContent).toEqual("September");
-
-      clickOn(monthControl);
-      const options = fp.calendarContainer.querySelectorAll(
-        ".flatpickr-monthPicker-option"
-      );
-      expect(options.length).toEqual(9);
-      expect(options[options.length - 1].textContent).toEqual("September");
+      expect(monthControl.options.length).toEqual(9);
+      expect(monthControl.options[monthControl.options.length - 1].textContent).toEqual("September");
     });
 
-    it("month control should open list and change month on option click", () => {
+    it("month control should change month on select change", () => {
       const fp = createInstance({
         defaultDate: new Date(2019, 1, 1),
       }) as Instance;
 
       const monthControl = fp.calendarContainer.querySelector(
         ".flatpickr-monthDropdown-months"
-      ) as HTMLButtonElement;
+      ) as HTMLSelectElement;
 
-      clickOn(monthControl);
-
-      const options = fp.calendarContainer.querySelectorAll(
-        ".flatpickr-monthPicker-option"
-      ) as NodeListOf<HTMLButtonElement>;
-      clickOn(options[3]);
+      monthControl.value = "3";
+      simulate("change", monthControl);
 
       expect(fp.currentMonth).toEqual(3);
-      expect(monthControl.textContent).toEqual("April");
+      expect(monthControl.value).toEqual("3");
     });
   });
 

@@ -1082,37 +1082,21 @@ function FlatpickrInstance(
     if (self.currentMonth < minMonth) self.currentMonth = minMonth;
     if (self.currentMonth > maxMonth) self.currentMonth = maxMonth;
 
-    self.monthsDropdownContainer.tabIndex = 0;
-    self.monthsDropdownContainer.setAttribute("aria-haspopup", "listbox");
-    self.monthsDropdownContainer.setAttribute(
-      "aria-expanded",
-      self.monthPickerContainer?.classList.contains("open") ? "true" : "false"
-    );
-    self.monthsDropdownContainer.textContent = monthToStr(
-      self.currentMonth,
-      self.config.shorthandCurrentMonth,
-      self.l10n
-    );
+    clearNode(self.monthsDropdownContainer);
 
-    if (self.monthPickerContainer) {
-      clearNode(self.monthPickerContainer);
+    for (let i = minMonth; i <= maxMonth; i++) {
+      const option = createElement<HTMLOptionElement>(
+        "option",
+        "flatpickr-monthDropdown-month",
+        monthToStr(i, self.config.shorthandCurrentMonth, self.l10n)
+      );
 
-      for (let i = minMonth; i <= maxMonth; i++) {
-        const option = createElement<HTMLButtonElement>(
-          "button",
-          "flatpickr-monthPicker-option",
-          monthToStr(i, self.config.shorthandCurrentMonth, self.l10n)
-        );
-
-        option.type = "button";
-        option.setAttribute("role", "option");
-        option.setAttribute("data-month", i.toString());
-        option.setAttribute("aria-selected", i === self.currentMonth ? "true" : "false");
-        if (i === self.currentMonth) option.classList.add("is-selected");
-
-        self.monthPickerContainer.appendChild(option);
-      }
+      option.value = i.toString();
+      option.selected = i === self.currentMonth;
+      self.monthsDropdownContainer.appendChild(option);
     }
+
+    self.monthsDropdownContainer.value = self.currentMonth.toString();
   }
 
   function buildMonth() {
@@ -1132,11 +1116,10 @@ function FlatpickrInstance(
         "flatpickr-monthDropdown"
       );
 
-      self.monthsDropdownContainer = createElement<HTMLButtonElement>(
-        "button",
+      self.monthsDropdownContainer = createElement<HTMLSelectElement>(
+        "select",
         "flatpickr-monthDropdown-months"
       );
-      self.monthsDropdownContainer.type = "button";
       self.monthsDropdownContainer.id = `${calendarInstanceId}-month-toggle`;
 
       self.monthsDropdownContainer.setAttribute(
@@ -1144,96 +1127,16 @@ function FlatpickrInstance(
         self.l10n.monthAriaLabel
       );
 
-      self.monthPickerContainer = createElement<HTMLDivElement>(
-        "div",
-        "flatpickr-monthPicker"
-      );
-      self.monthPickerContainer.id = `${calendarInstanceId}-month-picker`;
-      self.monthPickerContainer.setAttribute("role", "listbox");
-      self.monthPickerContainer.setAttribute("aria-hidden", "true");
-      self.monthPickerContainer.setAttribute(
-        "aria-labelledby",
-        self.monthsDropdownContainer.id
-      );
-      self.monthsDropdownContainer.setAttribute(
-        "aria-controls",
-        self.monthPickerContainer.id
-      );
-
-      const closeMonthPicker = () => {
-        if (!self.monthPickerContainer) return;
-        self.monthPickerContainer.classList.remove("open");
-        self.monthPickerContainer.setAttribute("aria-hidden", "true");
-        self.monthsDropdownContainer.setAttribute("aria-expanded", "false");
-      };
-
-      const openMonthPicker = () => {
-        if (!self.monthPickerContainer) return;
-        self.monthPickerContainer.classList.add("open");
-        self.monthPickerContainer.setAttribute("aria-hidden", "false");
-        self.monthsDropdownContainer.setAttribute("aria-expanded", "true");
-      };
-
-      bind(self.monthsDropdownContainer, "click", (e: MouseEvent) => {
-        e.preventDefault();
-        if (self.monthPickerContainer?.classList.contains("open")) {
-          closeMonthPicker();
-        } else {
-          openMonthPicker();
-        }
-      });
-
-      bind(self.monthPickerContainer, "click", (e: MouseEvent) => {
-        const target = getEventTarget(e) as HTMLElement;
-        const option = findParent(target, (node) =>
-          node.classList.contains("flatpickr-monthPicker-option")
-        ) as HTMLButtonElement | undefined;
-
-        if (!option) return;
-
-        const selectedMonth = parseInt(option.getAttribute("data-month") || "", 10);
-        if (isNaN(selectedMonth)) return;
-
-        self.changeMonth(selectedMonth, false);
-        closeMonthPicker();
-        self.monthsDropdownContainer.focus();
-      });
-
-      bind(self.monthPickerContainer, "keydown", (e: KeyboardEvent) => {
-        const option = getEventTarget(e) as HTMLButtonElement;
-        if (!option.classList.contains("flatpickr-monthPicker-option")) return;
-
-        const options = Array.prototype.slice.call(
-          self.monthPickerContainer?.querySelectorAll(
-            ".flatpickr-monthPicker-option"
-          ) || []
-        ) as HTMLButtonElement[];
-        const index = options.indexOf(option);
-
-        if (e.keyCode === 27) {
-          e.preventDefault();
-          closeMonthPicker();
-          self.monthsDropdownContainer.focus();
-          return;
-        }
-
-        if (e.keyCode === 38 || e.keyCode === 40) {
-          e.preventDefault();
-          const next = options[index + (e.keyCode === 40 ? 1 : -1)];
-          (next || option).focus();
-          return;
-        }
-
-        if (e.keyCode === 13 || e.keyCode === 32) {
-          e.preventDefault();
-          option.click();
+      bind(self.monthsDropdownContainer, "change", () => {
+        const selectedMonth = parseInt(self.monthsDropdownContainer.value, 10);
+        if (!isNaN(selectedMonth)) {
+          self.changeMonth(selectedMonth, false);
         }
       });
 
       buildMonthSwitch();
 
       monthDropdown.appendChild(self.monthsDropdownContainer);
-      monthDropdown.appendChild(self.monthPickerContainer);
       monthElement = monthDropdown;
     }
 
@@ -1920,29 +1823,15 @@ function FlatpickrInstance(
       const isMonthDropdown =
         eventTarget === self.monthsDropdownContainer;
 
+      if (
+        isMonthDropdown &&
+        [13, 32, 37, 38, 39, 40].indexOf(e.keyCode) !== -1
+      ) {
+        return;
+      }
+
       switch (e.keyCode) {
         case 13:
-          if (isMonthDropdown) {
-            e.preventDefault();
-            if (self.monthPickerContainer?.classList.contains("open")) {
-              self.monthPickerContainer.classList.remove("open");
-              self.monthPickerContainer.setAttribute("aria-hidden", "true");
-              self.monthsDropdownContainer.setAttribute("aria-expanded", "false");
-            } else {
-              self.monthPickerContainer?.classList.add("open");
-              self.monthPickerContainer?.setAttribute("aria-hidden", "false");
-              self.monthsDropdownContainer.setAttribute("aria-expanded", "true");
-              const selected = self.monthPickerContainer?.querySelector(
-                ".flatpickr-monthPicker-option.is-selected"
-              ) as HTMLButtonElement | null;
-              (selected ||
-                (self.monthPickerContainer?.querySelector(
-                  ".flatpickr-monthPicker-option"
-                ) as HTMLButtonElement | null))?.focus();
-            }
-            break;
-          }
-
           if (eventTarget === self.closeButton) {
             e.preventDefault();
             focusAndClose();
@@ -1967,12 +1856,6 @@ function FlatpickrInstance(
           break;
 
         case 32:
-          if (isMonthDropdown) {
-            e.preventDefault();
-            self.monthsDropdownContainer.click();
-            break;
-          }
-
           if (
             eventTarget === self.prevMonthNav ||
             eventTarget === self.nextMonthNav
@@ -1986,15 +1869,6 @@ function FlatpickrInstance(
           break;
 
         case 27: // escape
-          if (self.monthPickerContainer?.classList.contains("open")) {
-            e.preventDefault();
-            self.monthPickerContainer.classList.remove("open");
-            self.monthPickerContainer.setAttribute("aria-hidden", "true");
-            self.monthsDropdownContainer.setAttribute("aria-expanded", "false");
-            self.monthsDropdownContainer.focus();
-            break;
-          }
-
           e.preventDefault();
           focusAndClose();
           break;
@@ -2009,12 +1883,6 @@ function FlatpickrInstance(
 
         case 37:
         case 39:
-          if (isMonthDropdown) {
-            e.preventDefault();
-            changeMonth(e.keyCode === 39 ? 1 : -1);
-            break;
-          }
-
           if (!isTimeObj && !isInput) {
             e.preventDefault();
 
@@ -2039,12 +1907,6 @@ function FlatpickrInstance(
 
         case 38:
         case 40:
-          if (isMonthDropdown) {
-            e.preventDefault();
-            changeMonth(e.keyCode === 40 ? 1 : -1);
-            break;
-          }
-
           e.preventDefault();
           const delta = e.keyCode === 40 ? 1 : -1;
           if (
@@ -2700,12 +2562,6 @@ function FlatpickrInstance(
     e.preventDefault();
     e.stopPropagation();
 
-    if (self.monthPickerContainer?.classList.contains("open")) {
-      self.monthPickerContainer.classList.remove("open");
-      self.monthPickerContainer.setAttribute("aria-hidden", "true");
-      self.monthsDropdownContainer.setAttribute("aria-expanded", "false");
-    }
-
     const isSelectable = (day: Element) =>
       day.classList &&
       day.classList.contains("flatpickr-day") &&
@@ -3185,28 +3041,7 @@ function FlatpickrInstance(
             self.l10n
           ) + " ";
       } else {
-        self.monthsDropdownContainer.textContent = monthToStr(
-          d.getMonth(),
-          self.config.shorthandCurrentMonth,
-          self.l10n
-        );
-
-        if (self.monthPickerContainer) {
-          const options = self.monthPickerContainer.querySelectorAll(
-            ".flatpickr-monthPicker-option"
-          );
-
-          options.forEach((option) => {
-            const month = parseInt(
-              option.getAttribute("data-month") || "",
-              10
-            );
-            const isSelected = !isNaN(month) && month === d.getMonth();
-
-            option.classList.toggle("is-selected", isSelected);
-            option.setAttribute("aria-selected", isSelected ? "true" : "false");
-          });
-        }
+        self.monthsDropdownContainer.value = d.getMonth().toString();
       }
 
       yearElement.value = d.getFullYear().toString();
@@ -3275,16 +3110,6 @@ function FlatpickrInstance(
 
   function onMonthNavClick(e: MouseEvent) {
     const eventTarget = getEventTarget(e);
-
-    if (
-      self.monthPickerContainer?.classList.contains("open") &&
-      !self.monthsDropdownContainer.contains(eventTarget as Node) &&
-      !self.monthPickerContainer.contains(eventTarget as Node)
-    ) {
-      self.monthPickerContainer.classList.remove("open");
-      self.monthPickerContainer.setAttribute("aria-hidden", "true");
-      self.monthsDropdownContainer.setAttribute("aria-expanded", "false");
-    }
 
     const isPrevMonth = self.prevMonthNav.contains(eventTarget as Node);
     const isNextMonth = self.nextMonthNav.contains(eventTarget as Node);

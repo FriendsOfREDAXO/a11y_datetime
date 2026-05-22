@@ -28,7 +28,7 @@ export interface Elements {
   // month nav
   monthNav: HTMLDivElement;
 
-  monthsDropdownContainer: HTMLButtonElement;
+  monthsDropdownContainer: HTMLSelectElement;
   monthPickerContainer?: HTMLDivElement;
 
   yearElements: HTMLInputElement[];
