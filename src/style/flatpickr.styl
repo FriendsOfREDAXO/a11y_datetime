@@ -352,7 +352,8 @@
     text-align center
     position relative
     user-select none
-    overflow hidden
+    // Keep month dropdowns from being clipped when opened.
+    overflow visible
     flex 1
 
   .flatpickr-prev-month, .flatpickr-next-month
