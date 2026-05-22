@@ -42,7 +42,8 @@ async function bundleMain({ minify = false, sourcemap = false } = {}) {
     outfile: minify ? "./dist/a11y_datetime.min.js" : "./dist/a11y_datetime.js",
     bundle: true,
     format: "iife",
-    globalName: "a11y_datetime",
+    // Keep wrapper global internal so window.a11y_datetime set by source code is not overwritten.
+    globalName: "__a11y_datetime_bundle",
     target: ["es2018"],
     platform: "browser",
     minify,
