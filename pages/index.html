@@ -183,6 +183,34 @@
       color: var(--sub);
     }
 
+    .variant-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      margin-top: 10px;
+    }
+
+    .variant-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #ffffff;
+    }
+
+    .variant-item strong {
+      display: block;
+      font-size: 0.86rem;
+      color: #3e4b65;
+      margin-bottom: 6px;
+    }
+
+    .variant-value {
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+      color: #102447;
+      word-break: break-word;
+    }
+
     label {
       font-size: 0.92rem;
       color: var(--sub);
@@ -403,9 +431,49 @@
         </article>
       </div>
     </section>
+
+    <section class="card" style="margin-top: 18px;">
+      <h2>Ausgabevarianten (Deutsch)</h2>
+      <p class="notice" style="margin-top:0;">
+        Waehle unten ein Datum mit Uhrzeit. Die Ausgabe wird parallel in mehreren deutschen Schreibweisen angezeigt.
+      </p>
+
+      <div class="demo-grid">
+        <article class="demo-block">
+          <h3>DE Master Picker</h3>
+          <label for="demoDeMaster">Datum + Uhrzeit</label>
+          <input id="demoDeMaster" type="text" placeholder="TT.MM.JJJJ HH:mm" />
+          <p class="mobile-note">Locale: de, 24h-Uhrzeit, mit nativer Mobile-Fallback-Logik.</p>
+        </article>
+      </div>
+
+      <div class="variant-grid">
+        <div class="variant-item">
+          <strong>Kalenderansicht (Monat/Jahr)</strong>
+          <div id="outCalendarView" class="variant-value">-</div>
+        </div>
+        <div class="variant-item">
+          <strong>Datum kurz</strong>
+          <div id="outDateShort" class="variant-value">-</div>
+        </div>
+        <div class="variant-item">
+          <strong>Datum lang</strong>
+          <div id="outDateLong" class="variant-value">-</div>
+        </div>
+        <div class="variant-item">
+          <strong>Uhrzeit</strong>
+          <div id="outTimeOnly" class="variant-value">-</div>
+        </div>
+        <div class="variant-item">
+          <strong>Datum + Uhrzeit</strong>
+          <div id="outDateTime" class="variant-value">-</div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="./dist/a11y_datetime.js"></script>
+  <script src="./dist/l10n/de.js"></script>
   <script>
     (function () {
       var pick = window.a11y_datetime || window.flatpickr;
@@ -485,6 +553,35 @@
 
       document.getElementById("playgroundApply").addEventListener("click", initPlayground);
       initPlayground();
+
+      function setText(id, value) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        el.textContent = value;
+      }
+
+      function updateGermanOutputs(selectedDates, _dateStr, instance) {
+        var date = selectedDates && selectedDates.length ? selectedDates[0] : new Date();
+        setText("outCalendarView", instance.formatDate(date, "F Y"));
+        setText("outDateShort", instance.formatDate(date, "d.m.Y"));
+        setText("outDateLong", instance.formatDate(date, "l, d. F Y"));
+        setText("outTimeOnly", instance.formatDate(date, "H:i") + " Uhr");
+        setText("outDateTime", instance.formatDate(date, "d.m.Y H:i"));
+      }
+
+      pick("#demoDeMaster", {
+        locale: "de",
+        enableTime: true,
+        time_24hr: true,
+        dateFormat: "d.m.Y H:i",
+        defaultDate: new Date(),
+        calendarTitle: "Deutsche Ausgabevarianten",
+        announceChanges: true,
+        onReady: updateGermanOutputs,
+        onChange: updateGermanOutputs,
+        onMonthChange: updateGermanOutputs,
+        onYearChange: updateGermanOutputs
+      });
     })();
   </script>
 </body>
