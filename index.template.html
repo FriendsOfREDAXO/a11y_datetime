@@ -87,27 +87,6 @@
       box-shadow: var(--shadow);
     }
 
-    .hero-top {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-
-    .hero-logo {
-      width: 86px;
-      height: 86px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      object-fit: cover;
-      background: #233453;
-      box-shadow: 0 8px 18px rgba(13, 34, 72, 0.35);
-    }
-
-    .hero-copy {
-      flex: 1 1 280px;
-    }
-
     .hero h1 {
       margin: 0 0 10px;
       font-size: clamp(1.7rem, 3vw, 2.4rem);
@@ -417,10 +396,6 @@
         border-radius: 12px;
       }
 
-      .hero-logo {
-        width: 74px;
-        height: 74px;
-      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -442,21 +417,11 @@
   <a class="skip-link" href="#main-content">Direkt zum Inhalt springen</a>
   <main id="main-content" class="shell" tabindex="-1">
     <section class="hero">
-      <div class="hero-top">
-        <img
-          class="hero-logo"
-          src="https://raw.githubusercontent.com/FriendsOfREDAXO/friendsofredaxo.github.io/assets/v2/FOR-badge-dark-rgb.png"
-          alt="Friends of REDAXO Logo"
-          loading="lazy"
-        />
-        <div class="hero-copy">
-          <h1>a11y_datetime</h1>
-          <p>
-            Accessible datetime picker fork based on flatpickr. This page contains a bilingual quick intro,
-            and a compact website-native live demo.
-          </p>
-        </div>
-      </div>
+      <h1>a11y_datetime</h1>
+      <p>
+        Accessible datetime picker fork based on flatpickr. This page contains a bilingual quick intro,
+        and a compact website-native live demo.
+      </p>
       <div class="links">
         <a href="https://github.com/FriendsOfREDAXO/a11y_datetime" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
         <a href="https://friendsofredaxo.github.io" target="_blank" rel="noopener noreferrer">FriendsOfREDAXO</a>
