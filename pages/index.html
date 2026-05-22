@@ -153,6 +153,7 @@
       margin: 0;
       display: flex;
       align-items: center;
+      justify-content: flex-start;
       gap: 8px;
       font-size: 0.88rem;
       color: var(--sub);
@@ -189,13 +190,23 @@
       margin-bottom: 6px;
     }
 
-    input {
+    input[type="text"] {
       width: 100%;
       border: 1px solid #bfc8d8;
       border-radius: 10px;
       padding: 10px 12px;
       font-size: 1rem;
       background: #fff;
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+      padding: 0;
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      accent-color: #ef7f1a;
     }
 
     .iframe-wrap {
