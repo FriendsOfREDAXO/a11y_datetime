@@ -3190,6 +3190,23 @@ function FlatpickrInstance(
           self.config.shorthandCurrentMonth,
           self.l10n
         );
+
+        if (self.monthPickerContainer) {
+          const options = self.monthPickerContainer.querySelectorAll(
+            ".flatpickr-monthPicker-option"
+          );
+
+          options.forEach((option) => {
+            const month = parseInt(
+              option.getAttribute("data-month") || "",
+              10
+            );
+            const isSelected = !isNaN(month) && month === d.getMonth();
+
+            option.classList.toggle("is-selected", isSelected);
+            option.setAttribute("aria-selected", isSelected ? "true" : "false");
+          });
+        }
       }
 
       yearElement.value = d.getFullYear().toString();
@@ -3261,7 +3278,7 @@ function FlatpickrInstance(
 
     if (
       self.monthPickerContainer?.classList.contains("open") &&
-      eventTarget !== self.monthsDropdownContainer &&
+      !self.monthsDropdownContainer.contains(eventTarget as Node) &&
       !self.monthPickerContainer.contains(eventTarget as Node)
     ) {
       self.monthPickerContainer.classList.remove("open");

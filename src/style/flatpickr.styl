@@ -335,6 +335,8 @@
   background var(--a11y-dt-month-bg)
   border-top 1px solid var(--a11y-dt-calendar-border)
   border-bottom 0
+  position relative
+  z-index 5
 
 .flatpickr-titlebar + .flatpickr-months
   border-top 0
@@ -488,6 +490,7 @@
   display inline-block
   text-align center
   transform translate3d(0px, 0px, 0px)
+  z-index 6
 
   span.cur-month
     font-family inherit
@@ -618,6 +621,8 @@
   background var(--a11y-dt-month-bg)
   text-align center
   overflow hidden
+  position relative
+  z-index 1
   width 100%
   display flex
   align-items center
