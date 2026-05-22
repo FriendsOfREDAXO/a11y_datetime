@@ -10,13 +10,25 @@ All notable changes to this project will be documented in this file.
   - `showCloseButton` (default `true`)
   - `initialDayFocus` with values `today`, `selected`, `firstAvailable` (default `today`)
 - Demo now includes an optional-feature playground to toggle these options live.
+- Additional demo scenarios: min/max + disabled weekends, alt input format, week numbers with precise time, and inline mode.
+- New manual GitHub release workflow: `.github/workflows/release-manual.yml` (workflow_dispatch) that builds and publishes `dist.zip` as a release asset.
 
 ### Changed
 - Demo redesign expanded with richer, accessibility-oriented sections, live design controls, and setup-code snippets.
+- Design presets are now mode-aware (light/dark/system) and re-apply on theme changes.
+- README rewritten and standardized in English, including fork transparency, API compatibility, extras usage, style system details, and repository link.
 
 ### Fixed
 - Keyboard flow improved: Tab from focused input can move focus into calendar day grid.
 - Focus visibility improved with stronger `:focus-visible` styles for day cells and month/year/time controls.
+- Focus ring behavior now remains reliable after mouse interactions via keyboard-navigation state handling.
+- Month navigation styling edge case fixed when `showTitleBar=false` and `showCloseButton=false`.
+- Disabled/not-allowed day contrast improved in dark mode and presets.
+- Week-number header/column alignment fixed for week-number calendars.
+- ARIA wiring improvements:
+  - dialog now always has an accessible name (`aria-label`)
+  - month toggle and month listbox are linked via `aria-controls` / `aria-labelledby`
+  - month listbox `aria-hidden` now stays synchronized with open/close state
 
 ## [5.0.0] - 2026-05-22
 
