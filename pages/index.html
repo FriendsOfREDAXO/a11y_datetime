@@ -6,36 +6,36 @@
   <title>a11y_datetime - Demo and Docs</title>
   <style>
     :root {
-      --bg: #f7f8fb;
+      --bg: #edf2f8;
       --panel: #ffffff;
-      --panel-soft: #fbfcff;
-      --ink: #1c2230;
-      --sub: #4c566d;
-      --line: #d7dce6;
-      --brand: #005fcc;
-      --brand-2: #0f8b5f;
+      --panel-soft: #f6f9fd;
+      --ink: #1d2f49;
+      --sub: #4d617e;
+      --line: #ced9e8;
+      --brand: #2f78c4;
+      --brand-2: #3ea0db;
       --control-bg: #ffffff;
-      --control-border: #bfc8d8;
-      --theme-code-bg: #f5f8ff;
-      --theme-code-fg: #24345c;
-      --shadow: 0 12px 40px rgba(24, 32, 53, 0.12);
+      --control-border: #b6c7de;
+      --theme-code-bg: #eef4fd;
+      --theme-code-fg: #1f416a;
+      --shadow: 0 14px 36px rgba(28, 46, 79, 0.14);
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0f141d;
-        --panel: #151c28;
-        --panel-soft: #1a2331;
-        --ink: #e8edf7;
-        --sub: #b7c2d8;
-        --line: #2d3a50;
-        --brand: #66a6ff;
-        --brand-2: #39b37d;
-        --control-bg: #111823;
-        --control-border: #3a4a66;
-        --theme-code-bg: #101a29;
-        --theme-code-fg: #cfe0ff;
-        --shadow: 0 12px 40px rgba(0, 0, 0, 0.42);
+        --bg: #0c1224;
+        --panel: #121d35;
+        --panel-soft: #182742;
+        --ink: #e9f1ff;
+        --sub: #b4c4df;
+        --line: #2b3f63;
+        --brand: #58a9ff;
+        --brand-2: #22c2e6;
+        --control-bg: #0f1a31;
+        --control-border: #36527c;
+        --theme-code-bg: #0d1a34;
+        --theme-code-fg: #d0e4ff;
+        --shadow: 0 16px 44px rgba(1, 6, 18, 0.56);
       }
     }
 
@@ -49,8 +49,8 @@
       color: var(--ink);
       color-scheme: light dark;
       background:
-        radial-gradient(circle at 15% -10%, #cddfff 0%, transparent 35%),
-        radial-gradient(circle at 100% 0%, #d8ffef 0%, transparent 30%),
+        radial-gradient(circle at 8% -15%, #c9ddf7 0%, transparent 40%),
+        radial-gradient(circle at 100% 0%, #d7ebff 0%, transparent 36%),
         var(--bg);
       line-height: 1.5;
     }
@@ -62,11 +62,32 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, #0d2248 0%, #123a63 60%, #0d5f57 100%);
+      background: linear-gradient(135deg, #2a69ad 0%, #2f78c4 55%, #3ea0db 100%);
       color: #eef4ff;
       border-radius: 20px;
       padding: 28px;
       box-shadow: var(--shadow);
+    }
+
+    .hero-top {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-logo {
+      width: 86px;
+      height: 86px;
+      border-radius: 50%;
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      object-fit: cover;
+      background: #233453;
+      box-shadow: 0 8px 18px rgba(13, 34, 72, 0.35);
+    }
+
+    .hero-copy {
+      flex: 1 1 280px;
     }
 
     .hero h1 {
@@ -91,12 +112,31 @@
     .links a {
       display: inline-block;
       text-decoration: none;
-      color: #fff;
-      background: rgba(255, 255, 255, 0.16);
-      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #0f3d70;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid rgba(255, 255, 255, 0.92);
       border-radius: 999px;
       padding: 9px 14px;
       font-weight: 600;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        background:
+          radial-gradient(circle at 12% -18%, #213464 0%, transparent 38%),
+          radial-gradient(circle at 96% -8%, #0f6e8b 0%, transparent 35%),
+          var(--bg);
+      }
+
+      .hero {
+        background: linear-gradient(145deg, #0f2c59 0%, #114b7b 45%, #0a6b72 100%);
+      }
+
+      .links a {
+        color: #d7e8ff;
+        background: rgba(10, 20, 40, 0.55);
+        border-color: rgba(134, 178, 241, 0.45);
+      }
     }
 
     .layout {
@@ -349,6 +389,11 @@
       .card {
         border-radius: 12px;
       }
+
+      .hero-logo {
+        width: 74px;
+        height: 74px;
+      }
     }
   </style>
   <link rel="stylesheet" href="./dist/a11y_datetime.css?v=5.1.1" />
@@ -356,11 +401,21 @@
 <body>
   <main class="shell">
     <section class="hero">
-      <h1>a11y_datetime</h1>
-      <p>
-        Accessible datetime picker fork based on flatpickr. This page contains a bilingual quick intro,
-        and a compact website-native live demo.
-      </p>
+      <div class="hero-top">
+        <img
+          class="hero-logo"
+          src="https://raw.githubusercontent.com/FriendsOfREDAXO/friendsofredaxo.github.io/assets/v2/FOR-badge-dark-rgb.png"
+          alt="Friends of REDAXO Logo"
+          loading="lazy"
+        />
+        <div class="hero-copy">
+          <h1>a11y_datetime</h1>
+          <p>
+            Accessible datetime picker fork based on flatpickr. This page contains a bilingual quick intro,
+            and a compact website-native live demo.
+          </p>
+        </div>
+      </div>
       <div class="links">
         <a href="https://github.com/FriendsOfREDAXO/a11y_datetime" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
         <a href="https://friendsofredaxo.github.io" target="_blank" rel="noopener noreferrer">FriendsOfREDAXO</a>
