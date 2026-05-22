@@ -6,6 +6,19 @@ All notable changes to this project will be documented in this file.
 
 - No changes yet.
 
+## [5.1.2] - 2026-05-22
+
+### Changed
+- Month picker now uses a native month `<select>` for a familiar, standard interaction model with keyboard, mouse, and browser type-ahead behavior.
+
+### Fixed
+- Month dropdown reliability improved: no clipping/stacking overlap in the calendar header area.
+- Month control behavior stabilized: month selection no longer closes unexpectedly on toggle interaction.
+- Month selection state now stays synchronized with the displayed month when navigating.
+- Demo dark-mode contrast improved for cards, inputs, summary labels, and code/theme chips.
+- Full demo background controls aligned with website approach by removing the custom "background atmosphere" selector.
+- Added and validated week-select examples in both full demo and website demo.
+
 ## [5.1.1] - 2026-05-22
 
 ### Fixed
