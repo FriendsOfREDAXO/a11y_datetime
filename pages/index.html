@@ -472,7 +472,7 @@
     <section class="card" style="margin-top: 18px;">
       <h2>Ausgabevarianten (Deutsch)</h2>
       <p class="notice" style="margin-top:0;">
-        Waehle unten ein Datum mit Uhrzeit. Die Ausgabe wird parallel in mehreren deutschen Schreibweisen angezeigt.
+        Waehle die Schreibweise und sieh sie direkt im Input-Feld (wie im Playground).
       </p>
 
       <div class="demo-grid">
@@ -480,31 +480,32 @@
           <h3>DE Master Picker</h3>
           <label for="demoDeMaster">Datum + Uhrzeit</label>
           <input id="demoDeMaster" type="text" placeholder="TT.MM.JJJJ HH:mm" />
-          <p class="mobile-note">Locale: de, 24h-Uhrzeit, mit nativer Mobile-Fallback-Logik.</p>
-        </article>
-      </div>
+          <div class="control-grid" style="margin-top:10px;">
+            <div>
+              <label for="deFormatVariant" style="display:block; margin-bottom:4px;">Schreibweise</label>
+              <select id="deFormatVariant">
+                <option value="datetime_short">Datum + Uhrzeit (kurz) - 22.05.2026 17:23</option>
+                <option value="datetime_long">Datum + Uhrzeit (lang) - Freitag, 22. Mai 2026 17:23</option>
+                <option value="date_short">Datum (kurz) - 22.05.2026</option>
+                <option value="date_long">Datum (lang) - Freitag, 22. Mai 2026</option>
+                <option value="time_24">Uhrzeit - 17:23</option>
+                <option value="calendar_month">Kalenderansicht (Monat/Jahr) - Mai 2026</option>
+              </select>
+            </div>
+            <div>
+              <label for="deMobileFallback" style="display:block; margin-bottom:4px;">Mobile</label>
+              <select id="deMobileFallback">
+                <option value="native">native fallback</option>
+                <option value="custom">force custom picker</option>
+              </select>
+            </div>
+          </div>
 
-      <div class="variant-grid">
-        <div class="variant-item">
-          <strong>Kalenderansicht (Monat/Jahr)</strong>
-          <div id="outCalendarView" class="variant-value">-</div>
-        </div>
-        <div class="variant-item">
-          <strong>Datum kurz</strong>
-          <div id="outDateShort" class="variant-value">-</div>
-        </div>
-        <div class="variant-item">
-          <strong>Datum lang</strong>
-          <div id="outDateLong" class="variant-value">-</div>
-        </div>
-        <div class="variant-item">
-          <strong>Uhrzeit</strong>
-          <div id="outTimeOnly" class="variant-value">-</div>
-        </div>
-        <div class="variant-item">
-          <strong>Datum + Uhrzeit</strong>
-          <div id="outDateTime" class="variant-value">-</div>
-        </div>
+          <div style="margin-top:10px;">
+            <button id="deApplyVariant" type="button">Schreibweise anwenden</button>
+          </div>
+          <p class="mobile-note">Locale: de, 24h-Uhrzeit; Format direkt im Input sichtbar.</p>
+        </article>
       </div>
     </section>
 
@@ -635,34 +636,47 @@
       document.getElementById("playgroundApply").addEventListener("click", initPlayground);
       initPlayground();
 
-      function setText(id, value) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.textContent = value;
+      function getGermanVariantConfig() {
+        var variant = document.getElementById("deFormatVariant").value;
+        var fallback = document.getElementById("deMobileFallback").value;
+
+        var cfg = {
+          locale: "de",
+          time_24hr: true,
+          disableMobile: fallback === "custom",
+          defaultDate: new Date(),
+          calendarTitle: "Deutsche Ausgabevarianten",
+          announceChanges: true
+        };
+
+        if (variant === "datetime_long") {
+          cfg.enableTime = true;
+          cfg.dateFormat = "l, d. F Y H:i";
+        } else if (variant === "date_short") {
+          cfg.dateFormat = "d.m.Y";
+        } else if (variant === "date_long") {
+          cfg.dateFormat = "l, d. F Y";
+        } else if (variant === "time_24") {
+          cfg.enableTime = true;
+          cfg.noCalendar = true;
+          cfg.dateFormat = "H:i";
+        } else if (variant === "calendar_month") {
+          cfg.dateFormat = "F Y";
+        } else {
+          cfg.enableTime = true;
+          cfg.dateFormat = "d.m.Y H:i";
+        }
+
+        return cfg;
       }
 
-      function updateGermanOutputs(selectedDates, _dateStr, instance) {
-        var date = selectedDates && selectedDates.length ? selectedDates[0] : new Date();
-        setText("outCalendarView", instance.formatDate(date, "F Y"));
-        setText("outDateShort", instance.formatDate(date, "d.m.Y"));
-        setText("outDateLong", instance.formatDate(date, "l, d. F Y"));
-        setText("outTimeOnly", instance.formatDate(date, "H:i") + " Uhr");
-        setText("outDateTime", instance.formatDate(date, "d.m.Y H:i"));
+      function initGermanVariantPicker() {
+        destroyIfExists("#demoDeMaster");
+        pick("#demoDeMaster", getGermanVariantConfig());
       }
 
-      pick("#demoDeMaster", {
-        locale: "de",
-        enableTime: true,
-        time_24hr: true,
-        dateFormat: "d.m.Y H:i",
-        defaultDate: new Date(),
-        calendarTitle: "Deutsche Ausgabevarianten",
-        announceChanges: true,
-        onReady: updateGermanOutputs,
-        onChange: updateGermanOutputs,
-        onMonthChange: updateGermanOutputs,
-        onYearChange: updateGermanOutputs
-      });
+      document.getElementById("deApplyVariant").addEventListener("click", initGermanVariantPicker);
+      initGermanVariantPicker();
 
       var themeCode = document.getElementById("themeCode");
       var rootStyle = document.documentElement.style;
