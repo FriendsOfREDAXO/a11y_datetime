@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>a11y_datetime demo</title>
+
+  <link rel="stylesheet" href="dist/a11y_datetime.css" />
+  <link rel="stylesheet" href="dist/ie.css" />
+
+  <style>
+    :root {
+      --surface: #f2f4f8;
+      --card: #ffffff;
+      --text: #161922;
+      --muted: #53607a;
+      --border: #d7dceb;
+      --ring: #0f6cff;
+      --demo-bg-start: #f8efcf;
+      --demo-bg-mid: #f2f4f8;
+      --demo-bg-end: #e9effa;
+      --section-gap: 1.25rem;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 8%, var(--demo-bg-start) 0, rgba(255, 255, 255, 0) 40%),
+        radial-gradient(circle at 90% 20%, #dce9ff 0, rgba(220, 233, 255, 0) 35%),
+        linear-gradient(135deg, var(--demo-bg-mid), var(--demo-bg-end));
+      min-height: 100vh;
+    }
+
+    .wrap {
+      max-width: 1080px;
+      margin: 2.25rem auto;
+      padding: 0 1rem 2rem;
+    }
+
+    .hero {
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 1.25rem 1.25rem 1rem;
+      background: linear-gradient(120deg, #ffffff, #f7f9ff);
+      box-shadow: 0 18px 42px rgba(16, 30, 58, 0.12);
+      margin-bottom: var(--section-gap);
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      line-height: 1.15;
+    }
+
+    .meta {
+      color: var(--muted);
+      margin: 0.5rem 0 0;
+      max-width: 70ch;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 0.9rem;
+    }
+
+    .badge {
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-size: 0.8rem;
+      letter-spacing: 0.02em;
+      padding: 0.25rem 0.65rem;
+      color: #243045;
+      background: #ffffff;
+    }
+
+    .panel {
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: var(--card);
+      padding: 1rem;
+      margin-bottom: var(--section-gap);
+    }
+
+    .panel h2 {
+      margin: 0 0 0.75rem;
+      font-size: 1.05rem;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.8rem;
+    }
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #ffffff;
+      padding: 0.9rem;
+      box-shadow: 0 8px 26px rgba(18, 31, 55, 0.06);
+    }
+
+    .card h3 {
+      margin: 0;
+      font-size: 1.02rem;
+    }
+
+    .card .desc {
+      margin: 0.3rem 0 0.75rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.7rem 0.85rem;
+      font-size: 1rem;
+      font-family: inherit;
+      box-sizing: border-box;
+      background: #fff;
+      color: var(--text);
+    }
+
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    summary:focus-visible {
+      outline: 2px solid var(--ring);
+      outline-offset: 2px;
+    }
+
+    .hint {
+      margin-top: 0.55rem;
+      font-size: 0.84rem;
+      color: var(--muted);
+    }
+
+    details {
+      margin-top: 0.75rem;
+      border-top: 1px dashed var(--border);
+      padding-top: 0.55rem;
+    }
+
+    summary {
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #30415f;
+      width: max-content;
+      border-radius: 6px;
+      padding: 0.15rem 0.3rem;
+    }
+
+    pre {
+      margin: 0.5rem 0 0;
+      padding: 0.75rem;
+      background: #0f1624;
+      color: #d8e3ff;
+      border-radius: 10px;
+      overflow: auto;
+      font-family: "IBM Plex Mono", "Cascadia Code", monospace;
+      font-size: 0.79rem;
+      line-height: 1.45;
+    }
+
+    .themes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .theme-chip {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.75rem;
+      background: #fff;
+    }
+
+    .theme-chip strong {
+      display: block;
+      margin-bottom: 0.35rem;
+    }
+
+    .theme-chip code {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 0.82rem;
+      color: #3f4d67;
+    }
+
+    .theme-chip p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    .foot {
+      margin-top: 0.95rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 700px) {
+      .wrap {
+        margin: 1rem auto;
+      }
+
+      .hero {
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap" aria-label="a11y_datetime demo page">
+    <header class="hero">
+      <h1>a11y_datetime</h1>
+      <p class="meta">An accessibility-first fork based on flatpickr with keyboard-friendly navigation, reduced-motion support, and CSS-variable driven theming.</p>
+      <div class="badge-row" aria-label="feature highlights">
+        <span class="badge">Keyboard-first</span>
+        <span class="badge">Screen-reader friendly</span>
+        <span class="badge">Reduced motion aware</span>
+        <span class="badge">Themeable via CSS variables</span>
+      </div>
+    </header>
+
+    <section class="panel" aria-labelledby="controls-heading">
+      <h2 id="controls-heading">Live Design Controls</h2>
+      <div class="controls">
+        <div>
+          <label for="theme">Color mode</label>
+          <select id="theme" aria-label="Theme mode">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
+        <div>
+          <label for="accent">Accent palette</label>
+          <select id="accent" aria-label="Accent palette">
+            <option value="default">Default Blue</option>
+            <option value="sunset">Sunset Orange</option>
+            <option value="ocean">Ocean Cyan</option>
+            <option value="forest">Forest Green</option>
+            <option value="berry">Berry Pink</option>
+          </select>
+        </div>
+        <div>
+          <label for="motion">Motion</label>
+          <select id="motion" aria-label="Animation mode">
+            <option value="system">System</option>
+            <option value="reduce">Reduce</option>
+            <option value="normal">Normal</option>
+          </select>
+        </div>
+        <div>
+          <label for="background">Background atmosphere</label>
+          <select id="background" aria-label="Background atmosphere">
+            <option value="default">Daylight</option>
+            <option value="sand">Sand Studio</option>
+            <option value="night">Night Ops</option>
+          </select>
+        </div>
+        <div>
+          <label for="design">Design preset</label>
+          <select id="design" aria-label="Calendar design preset">
+            <option value="balanced">Balanced</option>
+            <option value="soft">Soft Editorial</option>
+            <option value="contrast">High Contrast</option>
+          </select>
+        </div>
+      </div>
+      <p class="hint">Tip: These controls change CSS variables live so you can inspect what a11y_datetime looks like in different design systems.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="examples-heading">
+      <h2 id="examples-heading">Interactive Examples + Code</h2>
+      <div class="demo-grid">
+        <article class="card">
+          <h3>Single Date + Time</h3>
+          <p class="desc">Default booking style picker with time selection and clear title label.</p>
+          <label for="demo-single">Pick one date and time</label>
+          <input id="demo-single" placeholder="Select date and time" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="single picker code"><code>pick("#demo-single", {
+  enableTime: true,
+  dateFormat: "Y-m-d H:i",
+  calendarTitle: "Select a date",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Date Range</h3>
+          <p class="desc">Check-in / check-out flow with keyboard-friendly month and day traversal.</p>
+          <label for="demo-range">Start and end date</label>
+          <input id="demo-range" placeholder="Select date range" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="range picker code"><code>pick("#demo-range", {
+  mode: "range",
+  dateFormat: "Y-m-d",
+  calendarTitle: "Select a date range",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Multiple Dates</h3>
+          <p class="desc">Useful for blackout dates, campaign days, or flexible attendance planning.</p>
+          <label for="demo-multiple">Pick several days</label>
+          <input id="demo-multiple" placeholder="Select multiple dates" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="multiple picker code"><code>pick("#demo-multiple", {
+  mode: "multiple",
+  dateFormat: "Y-m-d",
+  conjunction: ", ",
+  calendarTitle: "Select dates",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Time Only</h3>
+          <p class="desc">Compact time chooser for appointments, calls, and shift start windows.</p>
+          <label for="demo-time">Only time</label>
+          <input id="demo-time" placeholder="Select time" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="time picker code"><code>pick("#demo-time", {
+  enableTime: true,
+  noCalendar: true,
+  dateFormat: "H:i",
+  calendarTitle: "Select a time",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Optional Feature Playground</h3>
+          <p class="desc">Toggle optional UI behavior for titlebar, close button, and initial keyboard day focus.</p>
+          <label for="demo-optional">Preview input</label>
+          <input id="demo-optional" placeholder="Try optional settings" />
+          <div style="margin-top: 0.7rem;">
+            <label for="opt-titlebar">showTitleBar</label>
+            <select id="opt-titlebar" aria-label="Optional title bar toggle">
+              <option value="true" selected>true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+          <div style="margin-top: 0.45rem;">
+            <label for="opt-close">showCloseButton</label>
+            <select id="opt-close" aria-label="Optional close button toggle">
+              <option value="true" selected>true</option>
+              <option value="false">false</option>
+            </select>
+          </div>
+          <div style="margin-top: 0.45rem;">
+            <label for="opt-focus">initialDayFocus</label>
+            <select id="opt-focus" aria-label="Initial day focus option">
+              <option value="today" selected>today</option>
+              <option value="selected">selected</option>
+              <option value="firstAvailable">firstAvailable</option>
+            </select>
+          </div>
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="optional feature code"><code>pick("#demo-optional", {
+  dateFormat: "Y-m-d",
+  calendarTitle: "Optional feature demo",
+  showTitleBar: true,
+  showCloseButton: true,
+  initialDayFocus: "today",
+  announceChanges: true
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Min/Max + Disabled Weekends</h3>
+          <p class="desc">Constrain date range and disable non-business days for scheduling workflows.</p>
+          <label for="demo-limits">Business date picker</label>
+          <input id="demo-limits" placeholder="Select weekday in allowed range" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="min max disabled code"><code>pick("#demo-limits", {
+  minDate: "today",
+  maxDate: new Date().fp_incr(30),
+  disable: [
+    function (date) {
+      return date.getDay() === 0 || date.getDay() === 6;
+    }
+  ],
+  calendarTitle: "Business day booking"
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Alt Input (Human Readable)</h3>
+          <p class="desc">Store machine format while showing a user-friendly date string in the UI.</p>
+          <label for="demo-alt">Friendly date display</label>
+          <input id="demo-alt" placeholder="Select date" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="alt input code"><code>pick("#demo-alt", {
+  altInput: true,
+  altFormat: "l, d F Y",
+  dateFormat: "Y-m-d",
+  defaultDate: "today",
+  calendarTitle: "Human friendly date"
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Week Numbers + Precision Time</h3>
+          <p class="desc">Advanced picker with week numbers, 24h clock, and second-level precision.</p>
+          <label for="demo-precision">Precise timestamp</label>
+          <input id="demo-precision" placeholder="Select date and exact time" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="precision code"><code>pick("#demo-precision", {
+  enableTime: true,
+  enableSeconds: true,
+  time_24hr: true,
+  weekNumbers: true,
+  dateFormat: "Y-m-d H:i:S",
+  calendarTitle: "Precise date and time"
+});</code></pre>
+          </details>
+        </article>
+
+        <article class="card">
+          <h3>Inline Calendar</h3>
+          <p class="desc">Always-visible calendar for dashboards, kiosks, or booking sidebars.</p>
+          <label for="demo-inline">Inline mode input</label>
+          <input id="demo-inline" placeholder="Inline calendar" />
+          <details>
+            <summary>Show setup code</summary>
+            <pre aria-label="inline code"><code>pick("#demo-inline", {
+  inline: true,
+  dateFormat: "Y-m-d",
+  defaultDate: "today",
+  calendarTitle: "Inline planning"
+});</code></pre>
+          </details>
+        </article>
+      </div>
+      <p class="hint">Keyboard: focus input, press Enter to open, Tab through controls, Arrow keys move days/months, Enter/Space selects, Esc closes.</p>
+    </section>
+
+    <section class="panel" aria-labelledby="design-notes-heading">
+      <h2 id="design-notes-heading">Design Notes</h2>
+      <div class="themes">
+        <div class="theme-chip">
+          <strong>Balanced</strong>
+          <p>General-purpose UI with neutral surfaces and medium contrast.</p>
+          <code>--a11y-dt-day-bg / --a11y-dt-month-bg</code>
+        </div>
+        <div class="theme-chip">
+          <strong>Soft Editorial</strong>
+          <p>Airy typography and lower visual noise for content-heavy products.</p>
+          <code>--a11y-dt-font-size / --a11y-dt-radius</code>
+        </div>
+        <div class="theme-chip">
+          <strong>High Contrast</strong>
+          <p>Stronger borders and day contrast for demanding accessibility baselines.</p>
+          <code>--a11y-dt-day-fg / --a11y-dt-calendar-border</code>
+        </div>
+      </div>
+      <p class="foot">All variations are done without changing picker internals, only through configuration and CSS variables.</p>
+    </section>
+  </main>
+
+  <!-- classList polyfill for IE9 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.2.20171210/classList.min.js"></script>
+  <script src="./dist/a11y_datetime.js"></script>
+
+  <script>
+    var pick = (window.a11y_datetime || window.flatpickr);
+
+    pick("#demo-single", {
+      enableTime: true,
+      dateFormat: "Y-m-d H:i",
+      calendarTitle: "Select a date",
+      announceChanges: true
+    });
+
+    pick("#demo-range", {
+      mode: "range",
+      dateFormat: "Y-m-d",
+      calendarTitle: "Select a date range",
+      announceChanges: true
+    });
+
+    pick("#demo-multiple", {
+      mode: "multiple",
+      dateFormat: "Y-m-d",
+      conjunction: ", ",
+      calendarTitle: "Select dates",
+      announceChanges: true
+    });
+
+    pick("#demo-time", {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      calendarTitle: "Select a time",
+      announceChanges: true
+    });
+
+    pick("#demo-limits", {
+      minDate: "today",
+      maxDate: new Date().fp_incr(30),
+      disable: [
+        function (date) {
+          return date.getDay() === 0 || date.getDay() === 6;
+        }
+      ],
+      calendarTitle: "Business day booking",
+      announceChanges: true
+    });
+
+    pick("#demo-alt", {
+      altInput: true,
+      altFormat: "l, d F Y",
+      dateFormat: "Y-m-d",
+      defaultDate: "today",
+      calendarTitle: "Human friendly date",
+      announceChanges: true
+    });
+
+    pick("#demo-precision", {
+      enableTime: true,
+      enableSeconds: true,
+      time_24hr: true,
+      weekNumbers: true,
+      dateFormat: "Y-m-d H:i:S",
+      calendarTitle: "Precise date and time",
+      announceChanges: true
+    });
+
+    pick("#demo-inline", {
+      inline: true,
+      dateFormat: "Y-m-d",
+      defaultDate: "today",
+      calendarTitle: "Inline planning",
+      announceChanges: true
+    });
+
+    var optTitlebar = document.getElementById("opt-titlebar");
+    var optClose = document.getElementById("opt-close");
+    var optFocus = document.getElementById("opt-focus");
+    var optionalPicker;
+
+    function initOptionalPicker() {
+      if (optionalPicker) {
+        optionalPicker.destroy();
+      }
+
+      optionalPicker = pick("#demo-optional", {
+        dateFormat: "Y-m-d",
+        calendarTitle: "Optional feature demo",
+        showTitleBar: optTitlebar.value === "true",
+        showCloseButton: optClose.value === "true",
+        initialDayFocus: optFocus.value,
+        announceChanges: true
+      });
+    }
+
+    optTitlebar.addEventListener("change", initOptionalPicker);
+    optClose.addEventListener("change", initOptionalPicker);
+    optFocus.addEventListener("change", initOptionalPicker);
+    initOptionalPicker();
+
+    var themeSelect = document.getElementById("theme");
+    var accentSelect = document.getElementById("accent");
+    var motionSelect = document.getElementById("motion");
+    var backgroundSelect = document.getElementById("background");
+    var designSelect = document.getElementById("design");
+    var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
+
+    function getResolvedThemeMode() {
+      if (themeSelect.value === "dark") return "dark";
+      if (themeSelect.value === "light") return "light";
+      return systemThemeQuery.matches ? "dark" : "light";
+    }
+
+    function applyDesignPreset(preset) {
+      var presets = {
+        balanced: {
+          light: {
+            radius: "0.55rem",
+            dayBg: "#f8fbff",
+            monthBg: "#eaf1fb",
+            dayFg: "#222a3a",
+            border: "#cfd8ea",
+            monthFg: "#1f2f4f",
+            weekdaysFg: "#4c5f80",
+            calendarBg: "#ffffff"
+          },
+          dark: {
+            radius: "0.55rem",
+            dayBg: "#222a35",
+            monthBg: "#1a2433",
+            dayFg: "#e4ecfa",
+            border: "#3f4e67",
+            monthFg: "#e7eeff",
+            weekdaysFg: "#b4c2dd",
+            calendarBg: "#141b27"
+          }
+        },
+        soft: {
+          light: {
+            radius: "0.9rem",
+            dayBg: "#fffdf9",
+            monthBg: "#f9f3e8",
+            dayFg: "#2b2f3a",
+            border: "#d9d0be",
+            monthFg: "#3f3228",
+            weekdaysFg: "#715d4f",
+            calendarBg: "#fffefb"
+          },
+          dark: {
+            radius: "0.9rem",
+            dayBg: "#2a2622",
+            monthBg: "#312b25",
+            dayFg: "#f3eadf",
+            border: "#5f5448",
+            monthFg: "#f4e8da",
+            weekdaysFg: "#d2beaa",
+            calendarBg: "#201c18"
+          }
+        },
+        contrast: {
+          light: {
+            radius: "0.35rem",
+            dayBg: "#ffffff",
+            monthBg: "#e9eef7",
+            dayFg: "#111827",
+            border: "#7d8ca7",
+            monthFg: "#0f172a",
+            weekdaysFg: "#22314c",
+            calendarBg: "#ffffff"
+          },
+          dark: {
+            radius: "0.35rem",
+            dayBg: "#0e1420",
+            monthBg: "#121b2b",
+            dayFg: "#f4f7ff",
+            border: "#8da3cc",
+            monthFg: "#f4f7ff",
+            weekdaysFg: "#d6e2ff",
+            calendarBg: "#0b111b"
+          }
+        }
+      };
+
+      var mode = getResolvedThemeMode();
+      var tokenSet = presets[preset] || presets.balanced;
+      var token = tokenSet[mode] || tokenSet.light;
+      document.documentElement.style.setProperty("--a11y-dt-radius", token.radius);
+      document.documentElement.style.setProperty("--a11y-dt-day-bg", token.dayBg);
+      document.documentElement.style.setProperty("--a11y-dt-month-bg", token.monthBg);
+      document.documentElement.style.setProperty("--a11y-dt-day-fg", token.dayFg);
+      document.documentElement.style.setProperty("--a11y-dt-calendar-border", token.border);
+      document.documentElement.style.setProperty("--a11y-dt-month-fg", token.monthFg);
+      document.documentElement.style.setProperty("--a11y-dt-weekdays-fg", token.weekdaysFg);
+      document.documentElement.style.setProperty("--a11y-dt-calendar-bg", token.calendarBg);
+    }
+
+    themeSelect.addEventListener("change", function () {
+      var selected = themeSelect.value;
+      if (selected === "system") {
+        document.documentElement.removeAttribute("data-a11y-datetime-theme");
+      } else {
+        document.documentElement.setAttribute("data-a11y-datetime-theme", selected);
+      }
+
+      applyDesignPreset(designSelect.value);
+    });
+
+    if (systemThemeQuery && systemThemeQuery.addEventListener) {
+      systemThemeQuery.addEventListener("change", function () {
+        if (themeSelect.value === "system") {
+          applyDesignPreset(designSelect.value);
+        }
+      });
+    }
+
+    motionSelect.addEventListener("change", function () {
+      var selected = motionSelect.value;
+      if (selected === "reduce") {
+        document.documentElement.style.setProperty("--a11y-dt-transition-fast", "0ms");
+      } else if (selected === "normal") {
+        document.documentElement.style.setProperty("--a11y-dt-transition-fast", "0.1s");
+      } else {
+        document.documentElement.style.removeProperty("--a11y-dt-transition-fast");
+      }
+    });
+
+    accentSelect.addEventListener("change", function () {
+      var accentTokens = {
+        sunset: { selectedBg: "#e67817", todayColor: "#cc5e00" },
+        ocean: { selectedBg: "#0d8bd8", todayColor: "#0667a3" },
+        forest: { selectedBg: "#2f8f3e", todayColor: "#1f6a2c" },
+        berry: { selectedBg: "#c03a8a", todayColor: "#8f1f64" }
+      };
+
+      var selectedAccent = accentTokens[accentSelect.value];
+
+      if (selectedAccent) {
+        document.documentElement.style.setProperty("--a11y-dt-selected-bg", selectedAccent.selectedBg);
+        document.documentElement.style.setProperty("--a11y-dt-today-color", selectedAccent.todayColor);
+      } else {
+        document.documentElement.style.removeProperty("--a11y-dt-selected-bg");
+        document.documentElement.style.removeProperty("--a11y-dt-today-color");
+      }
+    });
+
+    backgroundSelect.addEventListener("change", function () {
+      var backgrounds = {
+        sand: {
+          start: "#ffecc7",
+          mid: "#f7f4ee",
+          end: "#e9f0ff"
+        },
+        night: {
+          start: "#1c2333",
+          mid: "#151a26",
+          end: "#0f1420"
+        }
+      };
+
+      var selectedBackground = backgrounds[backgroundSelect.value];
+
+      if (selectedBackground) {
+        document.documentElement.style.setProperty("--demo-bg-start", selectedBackground.start);
+        document.documentElement.style.setProperty("--demo-bg-mid", selectedBackground.mid);
+        document.documentElement.style.setProperty("--demo-bg-end", selectedBackground.end);
+      } else {
+        document.documentElement.style.removeProperty("--demo-bg-start");
+        document.documentElement.style.removeProperty("--demo-bg-mid");
+        document.documentElement.style.removeProperty("--demo-bg-end");
+      }
+    });
+
+    designSelect.addEventListener("change", function () {
+      applyDesignPreset(designSelect.value);
+    });
+
+    applyDesignPreset("balanced");
+  </script>
+</body>
+</html>
