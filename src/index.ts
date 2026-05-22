@@ -2098,27 +2098,26 @@ function FlatpickrInstance(
               tabOrder[0].focus();
             } else if (isDayInGrid) {
               e.preventDefault();
-              const dayGridTabTarget = e.shiftKey
-                ? self.nextMonthNav
-                : self.prevMonthNav;
-
-              if (
-                dayGridTabTarget &&
-                !dayGridTabTarget.classList.contains("flatpickr-disabled")
-              ) {
-                dayGridTabTarget.focus();
-              } else if (e.shiftKey) {
-                (
-                  self.nextMonthNav ||
-                  self.currentYearElement ||
-                  self.monthsDropdownContainer ||
-                  self.prevMonthNav ||
-                  self._input
-                ).focus();
+              if (e.shiftKey) {
+                if (
+                  self.nextMonthNav &&
+                  !self.nextMonthNav.classList.contains("flatpickr-disabled")
+                ) {
+                  self.nextMonthNav.focus();
+                } else {
+                  (
+                    self.currentYearElement ||
+                    self.monthsDropdownContainer ||
+                    self.prevMonthNav ||
+                    self._input
+                  ).focus();
+                }
               } else {
                 (
                   self.hourElement ||
                   self.minuteElement ||
+                  self.secondElement ||
+                  self.amPM ||
                   self.closeButton ||
                   self._input
                 ).focus();

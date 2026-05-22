@@ -1009,7 +1009,7 @@ describe("flatpickr", () => {
       expect(document.activeElement).toBe(fp.nextMonthNav);
     });
 
-    it("tab from day moves focus to previous-month arrow", () => {
+    it("tab from day moves focus forward to close button", () => {
       createInstance();
       fp.open();
 
@@ -1020,7 +1020,7 @@ describe("flatpickr", () => {
         keyCode: 9,
       });
 
-      expect(document.activeElement).toBe(fp.prevMonthNav);
+      expect(document.activeElement).toBe(fp.closeButton);
     });
 
     it("pressing M focuses month control as keyboard fallback", () => {
