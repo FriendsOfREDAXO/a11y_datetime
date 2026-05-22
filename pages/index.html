@@ -211,6 +211,43 @@
       word-break: break-word;
     }
 
+    .theme-presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .theme-chip-btn {
+      border: 1px solid #bfc8d8;
+      background: #fff;
+      color: #1f2c45;
+      border-radius: 999px;
+      padding: 7px 12px;
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 700;
+    }
+
+    .theme-controls {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin-top: 10px;
+    }
+
+    .theme-code {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f5f8ff;
+      padding: 10px;
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 0.84rem;
+      color: #24345c;
+      white-space: pre-wrap;
+    }
+
     label {
       font-size: 0.92rem;
       color: var(--sub);
@@ -470,6 +507,50 @@
         </div>
       </div>
     </section>
+
+    <section class="card" style="margin-top: 18px;">
+      <h2>Theme Varianten & Akzentfarben</h2>
+      <p class="notice" style="margin-top:0;">
+        Hier kannst du fertige Themes und individuelle Farben live auf alle Demo-Picker anwenden.
+      </p>
+
+      <div class="demo-grid">
+        <article class="demo-block">
+          <h3>Presets</h3>
+          <div class="theme-presets">
+            <button type="button" class="theme-chip-btn" data-theme-preset="balanced">Balanced</button>
+            <button type="button" class="theme-chip-btn" data-theme-preset="ocean">Ocean</button>
+            <button type="button" class="theme-chip-btn" data-theme-preset="sunset">Sunset</button>
+            <button type="button" class="theme-chip-btn" data-theme-preset="mono">Mono</button>
+          </div>
+        </article>
+
+        <article class="demo-block">
+          <h3>Custom Theme</h3>
+          <div class="theme-controls">
+            <div>
+              <label for="themeAccent">Akzentfarbe</label>
+              <input id="themeAccent" type="color" value="#0b5fd3" />
+            </div>
+            <div>
+              <label for="themeCalendarBg">Kalender-Hintergrund</label>
+              <input id="themeCalendarBg" type="color" value="#ffffff" />
+            </div>
+            <div>
+              <label for="themeDayText">Tages-Textfarbe</label>
+              <input id="themeDayText" type="color" value="#1c2230" />
+            </div>
+          </div>
+
+          <div class="theme-presets" style="margin-top:12px;">
+            <button id="applyCustomTheme" type="button" class="theme-chip-btn">Custom anwenden</button>
+            <button id="resetTheme" type="button" class="theme-chip-btn">Reset</button>
+          </div>
+        </article>
+      </div>
+
+      <div id="themeCode" class="theme-code">Noch kein Theme aktiv.</div>
+    </section>
   </main>
 
   <script src="./dist/a11y_datetime.js"></script>
@@ -582,6 +663,89 @@
         onMonthChange: updateGermanOutputs,
         onYearChange: updateGermanOutputs
       });
+
+      var themeCode = document.getElementById("themeCode");
+      var rootStyle = document.documentElement.style;
+      var themeVars = {
+        balanced: {
+          "--a11y-dt-calendar-bg": "#ffffff",
+          "--a11y-dt-calendar-border": "#d7dce6",
+          "--a11y-dt-day-fg": "#1c2230",
+          "--a11y-dt-selected-bg": "#0b5fd3",
+          "--a11y-dt-selected-fg": "#ffffff",
+          "--a11y-dt-today-color": "#0b5fd3"
+        },
+        ocean: {
+          "--a11y-dt-calendar-bg": "#ecf7fb",
+          "--a11y-dt-calendar-border": "#9dd2e4",
+          "--a11y-dt-day-fg": "#114059",
+          "--a11y-dt-selected-bg": "#0f7ea8",
+          "--a11y-dt-selected-fg": "#ffffff",
+          "--a11y-dt-today-color": "#075f84"
+        },
+        sunset: {
+          "--a11y-dt-calendar-bg": "#fff6ec",
+          "--a11y-dt-calendar-border": "#f2c9a6",
+          "--a11y-dt-day-fg": "#5a2a0d",
+          "--a11y-dt-selected-bg": "#d8691f",
+          "--a11y-dt-selected-fg": "#ffffff",
+          "--a11y-dt-today-color": "#b54f0f"
+        },
+        mono: {
+          "--a11y-dt-calendar-bg": "#ffffff",
+          "--a11y-dt-calendar-border": "#b7b7b7",
+          "--a11y-dt-day-fg": "#121212",
+          "--a11y-dt-selected-bg": "#2d2d2d",
+          "--a11y-dt-selected-fg": "#ffffff",
+          "--a11y-dt-today-color": "#2d2d2d"
+        }
+      };
+
+      function renderThemeCode(name, vars) {
+        if (!themeCode) return;
+        var lines = ["/* active theme: " + name + " */", ":root {"];
+        Object.keys(vars).forEach(function(key) {
+          lines.push("  " + key + ": " + vars[key] + ";");
+        });
+        lines.push("}");
+        themeCode.textContent = lines.join("\n");
+      }
+
+      function applyThemeVars(name, vars) {
+        Object.keys(vars).forEach(function(key) {
+          rootStyle.setProperty(key, vars[key]);
+        });
+        renderThemeCode(name, vars);
+      }
+
+      document.querySelectorAll("[data-theme-preset]").forEach(function(btn) {
+        btn.addEventListener("click", function() {
+          var preset = btn.getAttribute("data-theme-preset");
+          if (!preset || !themeVars[preset]) return;
+          applyThemeVars(preset, themeVars[preset]);
+        });
+      });
+
+      document.getElementById("applyCustomTheme").addEventListener("click", function() {
+        var accent = document.getElementById("themeAccent").value;
+        var bg = document.getElementById("themeCalendarBg").value;
+        var day = document.getElementById("themeDayText").value;
+        var custom = {
+          "--a11y-dt-calendar-bg": bg,
+          "--a11y-dt-calendar-border": accent,
+          "--a11y-dt-day-fg": day,
+          "--a11y-dt-selected-bg": accent,
+          "--a11y-dt-selected-fg": "#ffffff",
+          "--a11y-dt-today-color": accent
+        };
+        applyThemeVars("custom", custom);
+      });
+
+      document.getElementById("resetTheme").addEventListener("click", function() {
+        applyThemeVars("balanced", themeVars.balanced);
+      });
+
+      applyThemeVars("balanced", themeVars.balanced);
     })();
   </script>
 </body>
