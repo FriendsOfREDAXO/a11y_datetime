@@ -6,6 +6,15 @@ All notable changes to this project will be documented in this file.
 
 - No changes yet.
 
+## [5.1.3] - 2026-05-22
+
+### Fixed
+- Month header sizing on small screens improved so the month name stays visible and month/year remain aligned.
+- Native month select layout keeps the calendar header consistent on narrow viewports.
+
+### Changed
+- Continued refinement of the month control toward standard browser-like interaction and responsive behavior.
+
 ## [5.1.2] - 2026-05-22
 
 ### Changed
