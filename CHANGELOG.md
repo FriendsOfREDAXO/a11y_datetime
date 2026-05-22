@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+- No changes yet.
+
+## [5.1.0] - 2026-05-22
+
 ### Added
 - New optional UI options:
   - `showTitleBar` (default `true`)
@@ -17,6 +21,8 @@ All notable changes to this project will be documented in this file.
 - Demo redesign expanded with richer, accessibility-oriented sections, live design controls, and setup-code snippets.
 - Design presets are now mode-aware (light/dark/system) and re-apply on theme changes.
 - README rewritten and standardized in English, including fork transparency, API compatibility, extras usage, style system details, and repository link.
+- Build toolchain modernized from Rollup-based scripting to an esbuild-based pipeline for faster and more robust bundling.
+- New optional Vite-based local development server (`npm run dev`) for modern preview workflows.
 
 ### Fixed
 - Keyboard flow improved: Tab from focused input can move focus into calendar day grid.
@@ -29,6 +35,9 @@ All notable changes to this project will be documented in this file.
   - dialog now always has an accessible name (`aria-label`)
   - month toggle and month listbox are linked via `aria-controls` / `aria-labelledby`
   - month listbox `aria-hidden` now stays synchronized with open/close state
+- Release workflow compatibility improved for current GitHub Actions runtime changes (Node 24 JavaScript action runtime).
+- Build and typecheck compatibility fixed for newer TypeScript tooling (`unknown` catch typing, legacy navigator touch-point typing, and Babel type resolution issues).
+- Fixed global export collision in browser bundles so `window.a11y_datetime` and demo picker initialization remain callable functions.
 
 ## [5.0.0] - 2026-05-22
 
