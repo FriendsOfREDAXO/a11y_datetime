@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="de">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -53,6 +53,24 @@
         radial-gradient(circle at 100% 0%, #d7ebff 0%, transparent 36%),
         var(--bg);
       line-height: 1.5;
+    }
+
+    .skip-link {
+      position: absolute;
+      left: 12px;
+      top: -44px;
+      z-index: 1000;
+      padding: 8px 12px;
+      border-radius: 8px;
+      background: #0f3d70;
+      color: #ffffff;
+      text-decoration: none;
+      font-weight: 700;
+      transition: top 0.15s ease;
+    }
+
+    .skip-link:focus {
+      top: 12px;
     }
 
     .shell {
@@ -118,6 +136,15 @@
       border-radius: 999px;
       padding: 9px 14px;
       font-weight: 600;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    .theme-chip-btn:focus-visible {
+      outline: 3px solid #ffbf47;
+      outline-offset: 2px;
     }
 
     @media (prefers-color-scheme: dark) {
@@ -395,11 +422,25 @@
         height: 74px;
       }
     }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .skip-link {
+        transition: none;
+      }
+    }
   </style>
   <link rel="stylesheet" href="./dist/a11y_datetime.css?v=5.1.1" />
 </head>
 <body>
-  <main class="shell">
+  <a class="skip-link" href="#main-content">Direkt zum Inhalt springen</a>
+  <main id="main-content" class="shell" tabindex="-1">
     <section class="hero">
       <div class="hero-top">
         <img
@@ -426,7 +467,7 @@
     <section class="layout">
       <article class="card">
         <span class="pill">Deutsch</span>
-        <div class="lang">
+        <div class="lang" lang="de">
           <h2>Was ist a11y_datetime?</h2>
           <p>
             a11y_datetime ist ein zuganglichkeitsorientierter Fork von flatpickr.
@@ -442,7 +483,7 @@
         </div>
 
         <span class="pill">English</span>
-        <div class="lang">
+        <div class="lang" lang="en">
           <h2>What is a11y_datetime?</h2>
           <p>
             a11y_datetime is an accessibility-focused fork of flatpickr.
@@ -483,14 +524,14 @@
           <h3>Single Date + Time</h3>
           <label for="demoSingleDateTime">Input</label>
           <input id="demoSingleDateTime" type="text" placeholder="YYYY-MM-DD HH:mm" />
-          <p class="mobile-note">Mobile fallback active by default (native date/time picker on many devices).</p>
+          <p class="mobile-note">Custom picker is active to keep keyboard behavior consistent across devices.</p>
         </article>
 
         <article class="demo-block">
           <h3>Time Only</h3>
           <label for="demoTimeOnly">Input</label>
           <input id="demoTimeOnly" type="text" placeholder="HH:mm" />
-          <p class="mobile-note">Also uses mobile fallback by default when device/browser supports native controls.</p>
+          <p class="mobile-note">Custom picker is active so hour and minute fields remain keyboard-accessible.</p>
         </article>
 
         <article class="demo-block">
@@ -608,7 +649,7 @@
               </select>
             </div>
           </div>
-          <div class="theme-presets">
+          <div class="theme-presets" role="group" aria-label="Theme presets">
             <button type="button" class="theme-chip-btn" data-theme-preset="balanced">Balanced</button>
             <button type="button" class="theme-chip-btn" data-theme-preset="ocean">Ocean</button>
             <button type="button" class="theme-chip-btn" data-theme-preset="sunset">Sunset</button>
@@ -640,7 +681,7 @@
         </article>
       </div>
 
-      <div id="themeCode" class="theme-code">Noch kein Theme aktiv.</div>
+      <div id="themeCode" class="theme-code" role="status" aria-live="polite">Noch kein Theme aktiv.</div>
     </section>
   </main>
 
@@ -778,6 +819,9 @@
       var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
       var activeThemeName = "balanced";
       var activeThemeCore = null;
+      var themePresetButtons = Array.prototype.slice.call(
+        document.querySelectorAll("[data-theme-preset]")
+      );
       var themeVars = {
         balanced: {
           light: {
@@ -941,10 +985,15 @@
         });
         activeThemeName = name;
         activeThemeCore = coreOrModes;
+        themePresetButtons.forEach(function(btn) {
+          var isActive = btn.getAttribute("data-theme-preset") === name;
+          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+        });
         renderThemeCode(name, vars);
       }
 
-      document.querySelectorAll("[data-theme-preset]").forEach(function(btn) {
+      themePresetButtons.forEach(function(btn) {
+        btn.setAttribute("aria-pressed", "false");
         btn.addEventListener("click", function() {
           var preset = btn.getAttribute("data-theme-preset");
           if (!preset || !themeVars[preset]) return;
