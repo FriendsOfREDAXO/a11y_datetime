@@ -19,7 +19,7 @@
     "coveralls": "npm run test:unit -- --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
+    "@babel/core": "^7.29.6",
     "@babel/plugin-proposal-object-rest-spread": "^7.12.1",
     "@babel/plugin-proposal-optional-catch-binding": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
