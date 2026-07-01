@@ -2140,6 +2140,9 @@ function FlatpickrInstance(
     positionElement = self._positionElement
   ) {
     if (self.isMobile === true) {
+      const isTimeOnlyInput =
+        self.config.enableTime === true && self.config.noCalendar === true;
+
       if (e) {
         e.preventDefault();
         const eventTarget = getEventTarget(e);
@@ -2149,7 +2152,9 @@ function FlatpickrInstance(
       }
 
       if (self.mobileInput !== undefined) {
-        self.mobileInput.focus();
+        if (isTimeOnlyInput) {
+          self.mobileInput.focus();
+        }
         self.mobileInput.click();
       }
 

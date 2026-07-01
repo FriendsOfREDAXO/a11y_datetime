@@ -2,11 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
-## [5.1.4] - 2026-07-01 
+## [5.1.5] - 2026-07-01 
 
 ### Changed
 - Default interaction changed: focusing the input (for example via Tab) no longer opens the calendar automatically.
 - Added option `focusOpens` (default `false`) to opt in to the previous focus-to-open behavior when needed.
+
+### Fixed
+- Mobile date and datetime selection no longer forces input focus before opening the native picker, preventing the on-screen keyboard from appearing unnecessarily.
+- Time-only mobile inputs (`enableTime=true` and `noCalendar=true`) keep focus behavior so direct time entry still works.
 
 ## [5.1.3] - 2026-05-22
 

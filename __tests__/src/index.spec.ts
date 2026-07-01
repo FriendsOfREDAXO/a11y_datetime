@@ -1437,6 +1437,37 @@ describe("flatpickr", () => {
             plugins: [confirmDatePlugin({})],
           });
         });
+
+        it("open() does not focus mobile date input", () => {
+          mockAgent = "Android";
+          createInstance();
+
+          const mobileInput = fp.mobileInput as HTMLInputElement;
+          const focusSpy = jest.spyOn(mobileInput, "focus");
+          const clickSpy = jest.spyOn(mobileInput, "click");
+
+          fp.open();
+
+          expect(focusSpy).not.toHaveBeenCalled();
+          expect(clickSpy).toHaveBeenCalled();
+        });
+
+        it("open() keeps focus for mobile time-only input", () => {
+          mockAgent = "Android";
+          createInstance({
+            enableTime: true,
+            noCalendar: true,
+          });
+
+          const mobileInput = fp.mobileInput as HTMLInputElement;
+          const focusSpy = jest.spyOn(mobileInput, "focus");
+          const clickSpy = jest.spyOn(mobileInput, "click");
+
+          fp.open();
+
+          expect(focusSpy).toHaveBeenCalled();
+          expect(clickSpy).toHaveBeenCalled();
+        });
       });
     });
 
