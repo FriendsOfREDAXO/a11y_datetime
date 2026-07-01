@@ -1035,8 +1035,10 @@ describe("flatpickr", () => {
       expect(document.activeElement).toBe(fp.nextMonthNav);
     });
 
-    it("tab from day moves focus forward to close button", () => {
-      createInstance();
+    it("tab from day moves focus forward to time trigger", () => {
+      createInstance({
+        enableTime: true,
+      });
       fp.open();
 
       const firstDay = fp.days.childNodes[0] as HTMLElement;
@@ -1046,7 +1048,10 @@ describe("flatpickr", () => {
         keyCode: 9,
       });
 
-      expect(document.activeElement).toBe(fp.closeButton);
+      const trigger = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-trigger"
+      );
+      expect(document.activeElement).toBe(trigger);
     });
 
     it("pressing M focuses month control as keyboard fallback", () => {
@@ -1357,11 +1362,11 @@ describe("flatpickr", () => {
         it("with value", () => {
           mockAgent = "Android";
           createInstance({
-            enableTime: true,
+            defaultDate: "2016-10-20",
           });
 
           const mobileInput = fp.mobileInput as HTMLInputElement;
-          mobileInput.value = "2016-10-20T02:30";
+          mobileInput.value = "2016-10-20";
           simulate("change", mobileInput);
 
           expect(fp.selectedDates.length).toBe(1);
@@ -1371,8 +1376,18 @@ describe("flatpickr", () => {
           expect(fp.latestSelectedDateObj.getFullYear()).toBe(2016);
           expect(fp.latestSelectedDateObj.getMonth()).toBe(9);
           expect(fp.latestSelectedDateObj.getDate()).toBe(20);
-          expect(fp.latestSelectedDateObj.getHours()).toBe(2);
-          expect(fp.latestSelectedDateObj.getMinutes()).toBe(30);
+          expect(fp.latestSelectedDateObj.getHours()).toBe(0);
+          expect(fp.latestSelectedDateObj.getMinutes()).toBe(0);
+        });
+
+        it("enableTime uses custom picker on mobile", () => {
+          mockAgent = "Android";
+          createInstance({
+            enableTime: true,
+          });
+
+          expect(fp.isMobile).toBe(false);
+          expect(fp.mobileInput).toBeUndefined();
         });
 
         it("copy className and adds own", () => {
@@ -1452,21 +1467,15 @@ describe("flatpickr", () => {
           expect(clickSpy).toHaveBeenCalled();
         });
 
-        it("open() keeps focus for mobile time-only input", () => {
+        it("open() keeps custom picker for mobile time-only input", () => {
           mockAgent = "Android";
           createInstance({
             enableTime: true,
             noCalendar: true,
           });
 
-          const mobileInput = fp.mobileInput as HTMLInputElement;
-          const focusSpy = jest.spyOn(mobileInput, "focus");
-          const clickSpy = jest.spyOn(mobileInput, "click");
-
-          fp.open();
-
-          expect(focusSpy).toHaveBeenCalled();
-          expect(clickSpy).toHaveBeenCalled();
+          expect(fp.isMobile).toBe(false);
+          expect(fp.mobileInput).toBeUndefined();
         });
       });
     });
@@ -1545,6 +1554,219 @@ describe("flatpickr", () => {
       simulate("input", fp.hourElement);
       simulate("blur", fp.hourElement);
       expect(fp.hourElement.value).toEqual("09");
+    });
+
+    it("renders accessible time wheel popover", () => {
+      createInstance({
+        enableTime: true,
+      });
+
+      const trigger = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-trigger"
+      ) as HTMLElement | null;
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+
+      expect(trigger).toBeTruthy();
+      expect(popover).toBeTruthy();
+      expect(popover?.getAttribute("role")).toBe("dialog");
+      expect(popover?.hasAttribute("hidden")).toBe(true);
+
+      if (!trigger || !popover) return;
+
+      simulate("click", trigger, { which: 1 }, MouseEvent);
+      expect(popover.hasAttribute("hidden")).toBe(false);
+
+      const done = popover.querySelector(
+        ".flatpickr-time-wheel-done"
+      ) as HTMLElement | null;
+      expect(done).toBeTruthy();
+      if (!done) return;
+
+      simulate("click", done, { which: 1 }, MouseEvent);
+      expect(popover.hasAttribute("hidden")).toBe(true);
+    });
+
+    it("time wheel popover respects minuteIncrement", () => {
+      createInstance({
+        enableTime: true,
+        minuteIncrement: 15,
+      });
+
+      const minuteOptions = Array.from(
+        fp.timeContainer?.querySelectorAll(
+          ".flatpickr-time-wheel-minutes .flatpickr-time-wheel-option"
+        ) || []
+      ).map((el) => (el as HTMLElement).textContent?.trim());
+
+      expect(minuteOptions).toEqual(["00", "15", "30", "45"]);
+    });
+
+    it("time wheel popover updates minute value on click", () => {
+      createInstance({
+        enableTime: true,
+        defaultDate: "2017-1-1 10:00",
+      });
+
+      const targetOption = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-minutes .flatpickr-time-wheel-option[data-value='30']"
+      ) as HTMLElement | null;
+
+      expect(targetOption).toBeTruthy();
+      if (!targetOption || !fp.minuteElement) return;
+
+      simulate("click", targetOption, { which: 1 }, MouseEvent);
+      expect(fp.minuteElement.value).toBe("30");
+    });
+
+    it("time wheel popover supports arrow navigation and escape", () => {
+      createInstance({
+        enableTime: true,
+        defaultDate: "2017-1-1 10:00",
+      });
+
+      const trigger = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-trigger"
+      ) as HTMLElement | null;
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+
+      expect(trigger).toBeTruthy();
+      expect(popover).toBeTruthy();
+      if (!trigger || !popover || !fp.hourElement || !fp.minuteElement) return;
+
+      simulate("click", trigger, { which: 1 }, MouseEvent);
+
+      const selectedHour = popover.querySelector(
+        ".flatpickr-time-wheel-hours .flatpickr-time-wheel-option.is-selected"
+      ) as HTMLElement | null;
+      expect(selectedHour).toBeTruthy();
+      if (!selectedHour) return;
+
+      simulate("keydown", selectedHour, { key: "ArrowDown" }, KeyboardEvent);
+      expect(fp.hourElement.value).toBe("11");
+
+      simulate("keydown", selectedHour, { key: "Tab" }, KeyboardEvent);
+      const selectedMinute = popover.querySelector(
+        ".flatpickr-time-wheel-minutes .flatpickr-time-wheel-option.is-selected"
+      ) as HTMLElement | null;
+      expect(document.activeElement).toBe(selectedMinute);
+
+      if (!selectedMinute) return;
+      simulate("keydown", selectedMinute, { key: "Escape" }, KeyboardEvent);
+      expect(popover.hasAttribute("hidden")).toBe(true);
+      expect(document.activeElement).toBe(trigger);
+    });
+
+    it("enter on time trigger opens popover instead of closing calendar", () => {
+      createInstance({
+        enableTime: true,
+      });
+
+      fp.open();
+
+      const trigger = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-trigger"
+      ) as HTMLElement | null;
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+
+      expect(trigger).toBeTruthy();
+      expect(popover).toBeTruthy();
+      if (!trigger || !popover) return;
+
+      trigger.focus();
+      simulate("keydown", trigger, { keyCode: 13 }, KeyboardEvent);
+
+      expect(fp.isOpen).toBe(true);
+      expect(popover.hasAttribute("hidden")).toBe(false);
+    });
+
+    it("enter on done closes only the popover", () => {
+      createInstance({
+        enableTime: true,
+      });
+
+      fp.open();
+
+      const trigger = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-trigger"
+      ) as HTMLElement | null;
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+      const done = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-done"
+      ) as HTMLElement | null;
+
+      expect(trigger).toBeTruthy();
+      expect(popover).toBeTruthy();
+      expect(done).toBeTruthy();
+      if (!trigger || !popover || !done) return;
+
+      simulate("click", trigger, { which: 1 }, MouseEvent);
+      done.focus();
+      simulate("keydown", done, { keyCode: 13 }, KeyboardEvent);
+
+      expect(fp.isOpen).toBe(true);
+      expect(popover.hasAttribute("hidden")).toBe(true);
+      expect(document.activeElement).toBe(trigger);
+    });
+
+    it("time only renders the wheel popover directly", () => {
+      createInstance({
+        enableTime: true,
+        noCalendar: true,
+      });
+
+      const trigger = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-trigger"
+      ) as HTMLElement | null;
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+
+      expect(trigger).toBeNull();
+      expect(popover).toBeTruthy();
+      expect(popover?.hasAttribute("hidden")).toBe(false);
+    });
+
+    it("time only reopens the wheel popover after close", () => {
+      createInstance({
+        enableTime: true,
+        noCalendar: true,
+      });
+
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+      expect(popover).toBeTruthy();
+      if (!popover) return;
+
+      fp.close();
+      expect(popover.hasAttribute("hidden")).toBe(true);
+
+      fp.open();
+      expect(popover.hasAttribute("hidden")).toBe(false);
+    });
+
+    it("time only tabs from input into the wheel", () => {
+      createInstance({
+        enableTime: true,
+        noCalendar: true,
+      });
+
+      fp._input.focus();
+      simulate("keydown", fp._input, { keyCode: 9 }, KeyboardEvent);
+
+      const selectedHour = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-hours .flatpickr-time-wheel-option.is-selected"
+      ) as HTMLElement | null;
+
+      expect(document.activeElement).toBe(selectedHour);
     });
 
     it("time input respects minDate", () => {
@@ -2116,6 +2338,23 @@ describe("flatpickr", () => {
 
       expect(fp.currentMonth).toEqual(3);
       expect(monthControl.value).toEqual("3");
+    });
+
+    it("datetime mode does not auto-focus time input after mouse date click", () => {
+      const fp = createInstance({
+        enableTime: true,
+      }) as Instance;
+
+      fp.open();
+
+      const hourFocusSpy = jest.spyOn(
+        fp.hourElement as HTMLInputElement,
+        "focus"
+      );
+
+      simulate("click", fp.days.childNodes[15], { which: 1 }, MouseEvent);
+
+      expect(hourFocusSpy).not.toHaveBeenCalled();
     });
   });
 
