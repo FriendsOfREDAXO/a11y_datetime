@@ -45,7 +45,7 @@
     "ts-jest": "^27.1.3",
     "tslib": "^2.0.3",
     "typescript": "^4.9.5",
-    "vite": "^6.4.3"
+    "vite": "^8.1.2"
   },
   "main": "dist/a11y_datetime.js",
   "module": "dist/esm/index.js",
