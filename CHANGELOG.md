@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [5.1.4] - 2026-07-01 
 
 ### Changed
 - Default interaction changed: focusing the input (for example via Tab) no longer opens the calendar automatically.
