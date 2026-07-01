@@ -470,7 +470,9 @@ function FlatpickrInstance(
     bind(window.document, "focus", documentClick, { capture: true });
 
     if (self.config.clickOpens === true) {
-      bind(self._input, "focus", self.open);
+      if (self.config.focusOpens === true) {
+        bind(self._input, "focus", self.open);
+      }
       bind(self._input, "click", self.open);
     }
 

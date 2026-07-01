@@ -4,7 +4,9 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-- No changes yet.
+### Changed
+- Default interaction changed: focusing the input (for example via Tab) no longer opens the calendar automatically.
+- Added option `focusOpens` (default `false`) to opt in to the previous focus-to-open behavior when needed.
 
 ## [5.1.3] - 2026-05-22
 

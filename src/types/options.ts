@@ -81,6 +81,9 @@ export interface BaseOptions {
   /* Defaults to true */
   autoFillDefaultTime: boolean;
 
+  /* Whether focusing the input should open the picker. */
+  focusOpens: boolean;
+
   /*
     Whether clicking on the input should open the picker.
     Set it to false if you only want to open the calendar programmatically
@@ -302,6 +305,7 @@ export interface ParsedOptions {
   appendTo?: HTMLElement;
   ariaDateFormat: string;
   autoFillDefaultTime: boolean;
+  focusOpens: boolean;
   clickOpens: boolean;
   closeOnSelect: boolean;
   calendarTitle: string;
@@ -375,6 +379,7 @@ export const defaults: ParsedOptions = {
   announceChanges: true,
   ariaDateFormat: "F j, Y",
   autoFillDefaultTime: true,
+  focusOpens: false,
   clickOpens: true,
   closeOnSelect: true,
   calendarTitle: "Calendar",

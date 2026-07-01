@@ -682,6 +682,7 @@ describe("flatpickr", () => {
       it("should close popup", () => {
         createInstance({
           mode: "range",
+          focusOpens: true,
         });
 
         simulate("focus", fp._input, { which: 1, bubbles: true }, CustomEvent);
@@ -700,6 +701,7 @@ describe("flatpickr", () => {
       it("should set and clear the selectedDates", () => {
         createInstance({
           mode: "range",
+          focusOpens: true,
         });
 
         simulate("focus", fp._input);
@@ -726,6 +728,7 @@ describe("flatpickr", () => {
           allowInput: true,
           defaultDate: ["2020-01-22", "2020-01-28"],
           mode: "range",
+          focusOpens: true,
         });
 
         simulate("focus", fp._input);
@@ -742,6 +745,7 @@ describe("flatpickr", () => {
           altInput: true,
           altFormat: "j F Y",
           defaultDate: "2020-01-22",
+          focusOpens: true,
         });
 
         expect(fp.selectedDates[0]).toEqual(new Date("2020-01-22T00:00:00"));
@@ -759,6 +763,7 @@ describe("flatpickr", () => {
           altFormat: "j F Y H:i",
           defaultDate: "2020-01-22 03:04",
           enableTime: true,
+          focusOpens: true,
         });
 
         expect(fp.selectedDates[0]).toEqual(new Date("2020-01-22T03:04:00"));
@@ -777,6 +782,7 @@ describe("flatpickr", () => {
           altFormat: "j F Y H:i",
           enableTime: true,
           onChange: () => timesFired++,
+          focusOpens: true,
         });
 
         simulate("focus", fp._input);
@@ -937,6 +943,26 @@ describe("flatpickr", () => {
       expect(fp.isOpen).toEqual(false);
 
       fp.open();
+      expect(fp.isOpen).toEqual(true);
+    });
+
+    it("does not open on input focus by default", () => {
+      const fp = createInstance();
+
+      simulate("focus", fp._input);
+      fp._input.focus();
+
+      expect(fp.isOpen).toEqual(false);
+    });
+
+    it("opens on input focus when focusOpens is true", () => {
+      const fp = createInstance({
+        focusOpens: true,
+      });
+
+      simulate("focus", fp._input);
+      fp._input.focus();
+
       expect(fp.isOpen).toEqual(true);
     });
   });

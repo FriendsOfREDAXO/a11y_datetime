@@ -41,6 +41,7 @@ Notes:
 - Additional optional UI features:
   - `showTitleBar` (default `true`)
   - `showCloseButton` (default `true`)
+  - `focusOpens` (default `false`; set to `true` to open on input focus)
   - `initialDayFocus` (`"today" | "selected" | "firstAvailable"`, default `"today"`)
 
 ## Fork Extras and How to Use Them
@@ -55,6 +56,7 @@ Notes:
 - `calendarTitle`: sets a custom calendar title.
 - `showTitleBar`: shows or hides the title bar.
 - `showCloseButton`: shows or hides the close button.
+- `focusOpens`: controls whether focusing the input opens the calendar.
 - `initialDayFocus`: controls preferred first focus target in the day grid (`today`, `selected`, `firstAvailable`).
 
 Example:
@@ -65,6 +67,7 @@ Example:
   calendarTitle: "Select a date",
   showTitleBar: true,
   showCloseButton: true,
+  focusOpens: false,
   initialDayFocus: "today",
   announceChanges: true
 });
@@ -106,6 +109,7 @@ After build:
 	calendarTitle: "Optional feature demo",
 	showTitleBar: true,
 	showCloseButton: true,
+  focusOpens: false,
 	initialDayFocus: "today",
 	announceChanges: true
 });
@@ -115,6 +119,7 @@ Short meaning:
 
 - `showTitleBar`: shows or hides the calendar title bar.
 - `showCloseButton`: shows or hides the close button in the title bar.
+- `focusOpens`: when `true`, input focus opens the calendar.
 - `initialDayFocus`: defines which date is preferred when tabbing into the day grid.
 
 ## Core CSS Variables
