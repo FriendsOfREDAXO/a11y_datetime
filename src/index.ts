@@ -1187,6 +1187,28 @@ function FlatpickrInstance(
     self._input.setAttribute("aria-expanded", "false");
 
     if (!self.config.noCalendar) {
+      const keyboardHelpAriaLabel =
+        self.l10n.keyboardHelpAriaLabel || "Keyboard help";
+      const keyboardShortcutsTitle =
+        self.l10n.keyboardShortcutsTitle || "Keyboard shortcuts";
+      const keyboardShortcutFocus =
+        self.l10n.keyboardShortcutFocus || "Tab / Shift+Tab: Move focus";
+      const keyboardShortcutArrows =
+        self.l10n.keyboardShortcutArrows ||
+        "Arrow keys: Navigate days or wheel values";
+      const keyboardShortcutPage =
+        self.l10n.keyboardShortcutPage ||
+        "PageUp / PageDown: Month/Year step in wheel";
+      const keyboardShortcutHomeEnd =
+        self.l10n.keyboardShortcutHomeEnd ||
+        "Home / End: Jump to first/last month or year";
+      const keyboardShortcutSelect =
+        self.l10n.keyboardShortcutSelect ||
+        "Enter / Space: Select or confirm";
+      const keyboardShortcutEscape =
+        self.l10n.keyboardShortcutEscape ||
+        "Esc: Close popover/calendar";
+
       keyboardHelpButton = createElement<HTMLButtonElement>(
         "button",
         "flatpickr-keyboard-help-button",
@@ -1195,7 +1217,7 @@ function FlatpickrInstance(
       keyboardHelpButton.type = "button";
       keyboardHelpButton.setAttribute("aria-haspopup", "dialog");
       keyboardHelpButton.setAttribute("aria-expanded", "false");
-      keyboardHelpButton.setAttribute("aria-label", "Keyboard help");
+      keyboardHelpButton.setAttribute("aria-label", keyboardHelpAriaLabel);
       keyboardHelpButton.tabIndex = 0;
 
       keyboardHelpPanel = createElement<HTMLDivElement>(
@@ -1206,14 +1228,14 @@ function FlatpickrInstance(
       keyboardHelpPanel.setAttribute("role", "note");
       keyboardHelpPanel.setAttribute("hidden", "hidden");
       keyboardHelpPanel.innerHTML =
-        "<strong>Keyboard shortcuts</strong>" +
+        `<strong>${keyboardShortcutsTitle}</strong>` +
         "<ul>" +
-        "<li>Tab / Shift+Tab: Move focus</li>" +
-        "<li>Arrow keys: Navigate days or wheel values</li>" +
-        "<li>PageUp / PageDown: Month/Year step in wheel</li>" +
-        "<li>Home / End: Jump to first/last month or year</li>" +
-        "<li>Enter / Space: Select or confirm</li>" +
-        "<li>Esc: Close popover/calendar</li>" +
+        `<li>${keyboardShortcutFocus}</li>` +
+        `<li>${keyboardShortcutArrows}</li>` +
+        `<li>${keyboardShortcutPage}</li>` +
+        `<li>${keyboardShortcutHomeEnd}</li>` +
+        `<li>${keyboardShortcutSelect}</li>` +
+        `<li>${keyboardShortcutEscape}</li>` +
         "</ul>";
 
       keyboardHelpButton.setAttribute("aria-controls", keyboardHelpPanel.id);

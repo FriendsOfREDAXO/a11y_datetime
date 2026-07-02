@@ -63,6 +63,14 @@ export type Locale = {
   doneButtonLabel: string;
   closeTimePickerAriaLabel: string;
   selectedTimeAriaLabel: string;
+  keyboardHelpAriaLabel?: string;
+  keyboardShortcutsTitle?: string;
+  keyboardShortcutFocus?: string;
+  keyboardShortcutArrows?: string;
+  keyboardShortcutPage?: string;
+  keyboardShortcutHomeEnd?: string;
+  keyboardShortcutSelect?: string;
+  keyboardShortcutEscape?: string;
   time_24hr: boolean;
 };
 
@@ -83,6 +91,14 @@ export type CustomLocale = {
   doneButtonLabel?: string;
   closeTimePickerAriaLabel?: string;
   selectedTimeAriaLabel?: string;
+  keyboardHelpAriaLabel?: string;
+  keyboardShortcutsTitle?: string;
+  keyboardShortcutFocus?: string;
+  keyboardShortcutArrows?: string;
+  keyboardShortcutPage?: string;
+  keyboardShortcutHomeEnd?: string;
+  keyboardShortcutSelect?: string;
+  keyboardShortcutEscape?: string;
   amPM?: Locale["amPM"];
   time_24hr?: Locale["time_24hr"];
   weekdays: {
