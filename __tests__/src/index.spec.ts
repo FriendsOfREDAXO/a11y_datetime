@@ -2,6 +2,7 @@ import flatpickr from "index";
 import { French } from "l10n/fr";
 import { Irish } from "l10n/ga";
 import { Japanese } from "l10n/ja";
+import { German } from "l10n/de";
 import { Russian } from "l10n/ru";
 import { Instance, DayElement } from "types/instance";
 import { Options, DateRangeLimit } from "types/options";
@@ -1582,10 +1583,34 @@ describe("flatpickr", () => {
         ".flatpickr-time-wheel-done"
       ) as HTMLElement | null;
       expect(done).toBeTruthy();
+      expect(done?.textContent).toBe("Done");
+      expect(popover.getAttribute("aria-label")).toBe("Time picker popover");
       if (!done) return;
 
       simulate("click", done, { which: 1 }, MouseEvent);
       expect(popover.hasAttribute("hidden")).toBe(true);
+    });
+
+    it("localizes time wheel labels in German", () => {
+      createInstance({
+        enableTime: true,
+        locale: German,
+      });
+
+      const label = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-label"
+      ) as HTMLElement | null;
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+      const done = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-done"
+      ) as HTMLElement | null;
+
+      expect(label?.textContent).toBe("Zeit");
+      expect(done?.textContent).toBe("Fertig");
+      expect(popover?.getAttribute("aria-label")).toBe("Zeitauswahl");
+      expect(done?.getAttribute("aria-label")).toBe("Zeitauswahl schließen");
     });
 
     it("time wheel popover respects minuteIncrement", () => {
@@ -1648,13 +1673,20 @@ describe("flatpickr", () => {
       simulate("keydown", selectedHour, { key: "ArrowDown" }, KeyboardEvent);
       expect(fp.hourElement.value).toBe("11");
 
-      simulate("keydown", selectedHour, { key: "Tab" }, KeyboardEvent);
+      const doneButton = popover.querySelector(
+        ".flatpickr-time-wheel-done"
+      ) as HTMLElement | null;
       const selectedMinute = popover.querySelector(
         ".flatpickr-time-wheel-minutes .flatpickr-time-wheel-option.is-selected"
       ) as HTMLElement | null;
-      expect(document.activeElement).toBe(selectedMinute);
+
+      expect(doneButton).toBeTruthy();
+      if (doneButton) {
+        expect((doneButton as HTMLButtonElement).tabIndex).toBe(0);
+      }
 
       if (!selectedMinute) return;
+      selectedMinute.focus();
       simulate("keydown", selectedMinute, { key: "Escape" }, KeyboardEvent);
       expect(popover.hasAttribute("hidden")).toBe(true);
       expect(document.activeElement).toBe(trigger);
@@ -1716,6 +1748,68 @@ describe("flatpickr", () => {
       expect(document.activeElement).toBe(trigger);
     });
 
+    it("time wheel traps Tab inside popover until done", () => {
+      createInstance({
+        enableTime: true,
+      });
+
+      const trigger = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-trigger"
+      ) as HTMLElement | null;
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+      const done = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-done"
+      ) as HTMLElement | null;
+      const selectedHour = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-hours .flatpickr-time-wheel-option.is-selected"
+      ) as HTMLElement | null;
+
+      expect(trigger).toBeTruthy();
+      expect(popover).toBeTruthy();
+      expect(done).toBeTruthy();
+      expect(selectedHour).toBeTruthy();
+      if (!trigger || !popover || !done || !selectedHour) return;
+
+      simulate("click", trigger, { which: 1 }, MouseEvent);
+      done.focus();
+      simulate("keydown", done, { key: "Tab" }, KeyboardEvent);
+
+      expect(document.activeElement).toBe(selectedHour);
+    });
+
+    it("month/year wheel traps Tab inside popover until done", () => {
+      createInstance({
+        enableTime: true,
+      });
+
+      const trigger = fp.calendarContainer?.querySelector(
+        ".flatpickr-month-year-wheel-trigger"
+      ) as HTMLElement | null;
+      const popover = fp.calendarContainer?.querySelector(
+        ".flatpickr-month-year-wheel-popover"
+      ) as HTMLElement | null;
+      const done = fp.calendarContainer?.querySelector(
+        ".flatpickr-month-year-wheel-done"
+      ) as HTMLElement | null;
+      const selectedMonth = fp.calendarContainer?.querySelector(
+        ".flatpickr-month-wheel .flatpickr-month-year-wheel-option.is-selected"
+      ) as HTMLElement | null;
+
+      expect(trigger).toBeTruthy();
+      expect(popover).toBeTruthy();
+      expect(done).toBeTruthy();
+      expect(selectedMonth).toBeTruthy();
+      if (!trigger || !popover || !done || !selectedMonth) return;
+
+      simulate("click", trigger, { which: 1 }, MouseEvent);
+      done.focus();
+      simulate("keydown", done, { key: "Tab" }, KeyboardEvent);
+
+      expect(document.activeElement).toBe(selectedMonth);
+    });
+
     it("time only renders the wheel popover directly", () => {
       createInstance({
         enableTime: true,
@@ -1765,6 +1859,29 @@ describe("flatpickr", () => {
       const selectedHour = fp.timeContainer?.querySelector(
         ".flatpickr-time-wheel-hours .flatpickr-time-wheel-option.is-selected"
       ) as HTMLElement | null;
+
+      expect(document.activeElement).toBe(selectedHour);
+    });
+
+    it("time only keeps tab focus cycle after done button", () => {
+      createInstance({
+        enableTime: true,
+        noCalendar: true,
+      });
+
+      const selectedHour = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-hours .flatpickr-time-wheel-option.is-selected"
+      ) as HTMLElement | null;
+      const done = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-done"
+      ) as HTMLElement | null;
+
+      expect(selectedHour).toBeTruthy();
+      expect(done).toBeTruthy();
+      if (!selectedHour || !done) return;
+
+      done.focus();
+      simulate("keydown", done, { keyCode: 9 }, KeyboardEvent);
 
       expect(document.activeElement).toBe(selectedHour);
     });
@@ -1872,6 +1989,36 @@ describe("flatpickr", () => {
       );
 
       expect(minuteElem.value).toEqual("35"); // can't go higher than 35
+    });
+
+    it("applies weekday timeRules for matching weekdays", () => {
+      createInstance({
+        enableTime: true,
+        time_24hr: true,
+        dateFormat: "Y-m-d H:i",
+        defaultDate: "2026-07-06 18:45",
+        timeRules: [{ days: [1, 2, 3, 4, 5], from: "08:00", to: "17:00" }],
+      });
+
+      if (fp.hourElement) {
+        simulate("blur", fp.hourElement);
+      }
+
+      expect(fp.hourElement?.value).toBe("17");
+      expect(fp.minuteElement?.value).toBe("00");
+    });
+
+    it("disables excluded weekdays when timeRules are set", () => {
+      createInstance({
+        enableTime: true,
+        time_24hr: true,
+        dateFormat: "Y-m-d H:i",
+        defaultDate: "2026-07-05 07:30",
+        timeRules: [{ days: [1, 2, 3, 4, 5], from: "08:00", to: "17:00" }],
+      });
+
+      expect(fp.isEnabled("2026-07-05")).toBe(false);
+      expect(fp.selectedDates.length).toBe(0);
     });
 
     it("time picker: implicit selectedDate", () => {

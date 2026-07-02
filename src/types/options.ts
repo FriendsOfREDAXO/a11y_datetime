@@ -7,6 +7,16 @@ export type DateLimit<D = DateOption> =
   | D
   | DateRangeLimit<D>
   | ((date: Date) => boolean);
+export type TimeRule = {
+  days: number[];
+  from: DateOption;
+  to: DateOption;
+};
+
+export type YearRange = {
+  past: number;
+  future: number;
+};
 
 export type Hook = (
   dates: Date[],
@@ -179,6 +189,21 @@ By default, Flatpickr utilizes native datetime widgets unless certain options (e
   /* The minimum time that a user can start picking from (inclusive). */
   minTime: DateOption;
 
+  /* Optional weekday-based time windows, e.g. [{ days: [1,2,3,4,5], from: "08:00", to: "17:00" }] */
+  timeRules: TimeRule[];
+
+  /* Enables a wheel-style month/year chooser popover in the header. */
+  monthYearWheel: boolean;
+
+  /* Shows previous/next month arrow buttons in the header. Defaults to false. */
+  showMonthNavArrows: boolean;
+
+  /* Range around current year for the month/year wheel, e.g. { past: 10, future: 10 }. */
+  yearRange: YearRange;
+
+  /* Allows manual year input in month/year wheel popover. */
+  yearWheelManualInput: boolean;
+
   /* Adjusts the step for the minute input (incl. scrolling)
   Defaults to 5 */
   minuteIncrement: number;
@@ -333,6 +358,11 @@ export interface ParsedOptions {
   maxTime?: Date;
   minDate?: Date;
   minTime?: Date;
+  timeRules: TimeRule[];
+  monthYearWheel: boolean;
+  showMonthNavArrows: boolean;
+  yearRange: YearRange;
+  yearWheelManualInput: boolean;
   minuteIncrement: number;
   mode: BaseOptions["mode"];
   monthSelectorType: string;
@@ -421,6 +451,11 @@ export const defaults: ParsedOptions = {
   ignoredFocusElements: [],
   inline: false,
   locale: "default",
+  timeRules: [],
+  monthYearWheel: true,
+  showMonthNavArrows: false,
+  yearRange: { past: 10, future: 10 },
+  yearWheelManualInput: true,
   minuteIncrement: 5,
   mode: "single",
   monthSelectorType: "dropdown",

@@ -59,6 +59,11 @@ export const German: CustomLocale = {
   rangeSeparator: " bis ",
   scrollTitle: "Zum Ändern scrollen",
   toggleTitle: "Zum Umschalten klicken",
+  timeLabel: "Zeit",
+  timePickerAriaLabel: "Zeitauswahl",
+  doneButtonLabel: "Fertig",
+  closeTimePickerAriaLabel: "Zeitauswahl schließen",
+  selectedTimeAriaLabel: "Ausgewählte Zeit",
   time_24hr: true,
 };
 

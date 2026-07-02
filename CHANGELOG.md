@@ -2,7 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
-## [5.1.5] - 2026-07-01 
+## [Unreleased]
+
+## [5.2.0] - 2026-07-02
+
+### Added
+- New `timeRules` option for weekday-based time windows, e.g. Monday-Friday `08:00-17:00` with optional alternative windows per weekday.
+- New month/year wheel options: `monthYearWheel`, `yearRange`, and `yearWheelManualInput`.
+- New option `showMonthNavArrows` (default `false`) to keep month arrows hidden by default and allow explicit re-enable.
+- New keyboard help toggle in the calendar header with a compact shortcut overview.
+
+### Changed
+- Month/year wheel popover is now enabled by default to match the time-wheel interaction model.
+- Range demo now supports 3 visible months (`showMonths: 3`) for faster check-in/check-out selection.
+- In multi-month mode, month/year selection is anchored to the first visible month header; additional month headers are static.
+- Month/year wheel columns now use subtle, accent-colored hover/focus scrollbars instead of forced wheel/touch gesture hijacking.
+
+### Fixed
+- Time-only keyboard navigation no longer escapes the picker after the Done button; Tab and Shift+Tab now stay in a stable cycle.
+- Time and month/year popovers now keep keyboard focus inside the dialog while open (Tab/Shift+Tab cycle). Close with Done, Enter, or Escape.
+- Time wheel labels are now locale-driven instead of hardcoded, including German translations for "Zeit" and "Fertig" plus matching ARIA labels.
+- Time wheel now marks unavailable times as disabled and visibly non-selectable when limited by `minTime`/`maxTime`/`timeRules`.
+- Demo theme contrast improved for header month/year/navigation readability.
+- Month/year wheel keyboard control fixed: arrow navigation now works reliably for both month and year values (up/down), with left/right column switch preserved.
+- Popover key handling is now isolated from global day-grid navigation, preventing focus jumps from wheel columns back into the calendar grid.
+
+## [5.1.5] - 2026-07-01
 
 ### Changed
 - Default interaction changed: focusing the input (for example via Tab) no longer opens the calendar automatically.

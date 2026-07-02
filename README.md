@@ -28,6 +28,25 @@ Notes:
 - The focus is improved accessibility and modern theming.
 - Some UI details (for example header/month controls) were adjusted to improve usability.
 
+## Important Differences from Original flatpickr
+
+- This fork is not a visual 1:1 clone of original flatpickr anymore.
+- Accessibility behavior and defaults are intentionally different in several places.
+- New options extend behavior beyond original flatpickr.
+
+Key behavior differences:
+
+- `focusOpens` defaults to `false` (instead of opening on focus).
+- `announceChanges` defaults to `true` and adds screen reader live announcements.
+- `monthYearWheel` defaults to `true` and uses a wheel-style month/year popover.
+- Header arrows are now optional via `showMonthNavArrows` (default `false`).
+- `timeRules` can restrict allowed times by weekday.
+
+`timeRules` no-match behavior:
+
+- If `timeRules` are configured and a weekday has no matching rule, that day is treated as not selectable.
+- Example: rules for Monday-Saturday mean Sunday is disabled.
+
 ## What Is New Compared to flatpickr
 
 - Improved ARIA semantics for calendar dialog and date grid.
@@ -58,6 +77,26 @@ Notes:
 - `showCloseButton`: shows or hides the close button.
 - `focusOpens`: controls whether focusing the input opens the calendar.
 - `initialDayFocus`: controls preferred first focus target in the day grid (`today`, `selected`, `firstAvailable`).
+- `timeRules`: optional weekday-based time windows (for example Monday-Friday `08:00-17:00`).
+- `monthYearWheel`: wheel-style month/year chooser in the header (default `true`).
+- `showMonthNavArrows`: show previous/next month arrows in header (default `false`).
+- `yearRange`: year window for the month/year wheel, default `{ past: 10, future: 10 }`.
+- `yearWheelManualInput`: optional manual year input inside the month/year wheel.
+
+Quick reference for new/changed parameters:
+
+| Option | Type | Default | Purpose |
+|---|---|---|---|
+| `announceChanges` | `boolean` | `true` | Live region announcements for month/date changes |
+| `focusOpens` | `boolean` | `false` | Open picker on input focus |
+| `showTitleBar` | `boolean` | `true` | Render calendar title bar |
+| `showCloseButton` | `boolean` | `true` | Render close button in title bar |
+| `initialDayFocus` | `"today" \| "selected" \| "firstAvailable"` | `"today"` | Initial day-grid focus strategy |
+| `timeRules` | `TimeRule[]` | `[]` | Weekday-based time windows; non-matching weekdays are disabled |
+| `monthYearWheel` | `boolean` | `true` | Enable month/year wheel popover |
+| `showMonthNavArrows` | `boolean` | `false` | Show previous/next month arrow buttons in header |
+| `yearRange` | `{ past: number, future: number }` | `{ past: 10, future: 10 }` | Year range for wheel |
+| `yearWheelManualInput` | `boolean` | `false` | Allow direct year input in wheel |
 
 Example:
 
@@ -70,6 +109,37 @@ Example:
   focusOpens: false,
   initialDayFocus: "today",
   announceChanges: true
+});
+```
+
+### 3) Weekday Time Windows
+
+- `timeRules`: limit selectable times by weekday.
+
+Example:
+
+```js
+(window.a11y_datetime || window.flatpickr)("#date", {
+  enableTime: true,
+  dateFormat: "Y-m-d H:i",
+  timeRules: [
+    { days: [1, 2, 3, 4, 5], from: "08:00", to: "17:00" },
+    { days: [6], from: "10:00", to: "14:00" }
+  ]
+});
+```
+
+`days` uses JavaScript weekday indices (`0` = Sunday, `1` = Monday, ... `6` = Saturday).
+
+### 4) Month + Year Wheel
+
+```js
+(window.a11y_datetime || window.flatpickr)("#date", {
+  dateFormat: "Y-m-d",
+  monthYearWheel: true,
+  showMonthNavArrows: false,
+  yearRange: { past: 10, future: 10 },
+  yearWheelManualInput: true
 });
 ```
 
@@ -223,6 +293,7 @@ Theme override example:
 - `npm run start`: dev mode with watch/livereload
 - `npm run test`: type checks and unit tests
 - Demo includes single/range/multiple/time-only examples, plus additional accessibility and styling examples.
+- GitHub Pages website demo (`pages/index.html`) includes dedicated multilanguage locale examples for `de`, `fr`, and `ja`.
 
 ## Changelog
 

@@ -274,6 +274,16 @@
       color: var(--sub);
     }
 
+    .range-desktop-only {
+      display: block;
+    }
+
+    .range-mobile-only {
+      display: none;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
     .variant-grid {
       display: grid;
       gap: 10px;
@@ -387,6 +397,76 @@
       margin-top: 10px;
     }
 
+    .group-kicker {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #ffffff;
+      background: #0f4f92;
+      border-radius: 999px;
+      padding: 4px 10px;
+      margin-bottom: 8px;
+    }
+
+    .a11y-grid {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      margin-top: 8px;
+    }
+
+    .a11y-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 10px;
+      background: var(--panel-soft);
+    }
+
+    .a11y-item h3 {
+      margin: 0 0 6px;
+      font-size: 0.95rem;
+    }
+
+    .a11y-item p {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--sub);
+    }
+
+    .shortcut-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      margin-top: 10px;
+    }
+
+    .shortcut-item {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: var(--panel-soft);
+      font-size: 0.86rem;
+      color: var(--sub);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .shortcut-item kbd {
+      font-family: "SFMono-Regular", Menlo, Consolas, monospace;
+      border: 1px solid var(--control-border);
+      border-bottom-width: 2px;
+      border-radius: 6px;
+      padding: 2px 6px;
+      background: var(--control-bg);
+      color: var(--ink);
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
     .pill {
       display: inline-block;
       font-size: 0.8rem;
@@ -420,6 +500,15 @@
       .hero-logo {
         width: 74px;
         height: 74px;
+      }
+
+      .range-desktop-only {
+        display: none;
+      }
+
+      .range-mobile-only {
+        display: grid;
+        grid-template-columns: 1fr;
       }
     }
 
@@ -518,7 +607,8 @@
     </section>
 
     <section class="card" style="margin-top: 18px;">
-      <h2>Website Demo Playground</h2>
+      <span class="group-kicker">Typ A</span>
+      <h2>Basis & Interaktion</h2>
       <div class="demo-grid">
         <article class="demo-block">
           <h3>Single Date + Time</h3>
@@ -539,6 +629,23 @@
           <label for="demoWeekSelect">Input</label>
           <input id="demoWeekSelect" type="text" placeholder="Week #23, 2026" />
           <p class="mobile-note">Selects a full week and highlights all days in that week.</p>
+        </article>
+
+        <article class="demo-block">
+          <h3>Date Range (3 Months)</h3>
+          <label for="demoRange3Months">Input</label>
+          <input id="demoRange3Months" class="range-desktop-only" type="text" placeholder="YYYY-MM-DD to YYYY-MM-DD" />
+          <div class="range-mobile-only">
+            <div>
+              <label for="demoRangeFrom">Von / From</label>
+              <input id="demoRangeFrom" type="text" placeholder="YYYY-MM-DD" />
+            </div>
+            <div>
+              <label for="demoRangeTo">Bis / To</label>
+              <input id="demoRangeTo" type="text" placeholder="YYYY-MM-DD" />
+            </div>
+          </div>
+          <p class="mobile-note">Desktop: 3 months side-by-side. Mobile: From/To flow with one month view.</p>
         </article>
 
         <article class="demo-block">
@@ -598,7 +705,8 @@
     </section>
 
     <section class="card" style="margin-top: 18px;">
-      <h2>Ausgabevarianten (Deutsch)</h2>
+      <span class="group-kicker">Typ B</span>
+      <h2>Deutsch: Ausgabe & Oeffnungszeiten</h2>
       <p class="notice" style="margin-top:0;">
         Waehle die Schreibweise und sieh sie direkt im Input-Feld (wie im Playground).
       </p>
@@ -634,10 +742,51 @@
           </div>
           <p class="mobile-note">Locale: de, 24h-Uhrzeit; Format direkt im Input sichtbar.</p>
         </article>
+
+        <article class="demo-block">
+          <h3>DE Oeffnungszeiten (So deaktiviert)</h3>
+          <label for="demoDeBusinessHours">Termin (Mo-Sa)</label>
+          <input id="demoDeBusinessHours" type="text" placeholder="TT.MM.JJJJ HH:mm" />
+          <p class="mobile-note">
+            Zeitfenster: Mo-Fr 08:00-17:00, Sa 10:00-14:00. Sonntag hat keine Regel und ist deshalb nicht auswaehlbar.
+          </p>
+        </article>
       </div>
     </section>
 
     <section class="card" style="margin-top: 18px;">
+      <span class="group-kicker">Typ C</span>
+      <h2>Locale & Mehrsprachigkeit</h2>
+      <p class="notice" style="margin-top:0;">
+        Beispiele mit lokalisierten Monats- und Wochentagen sowie formatspezifischer Ausgabe fuer Deutsch, Franzoesisch und Japanisch.
+      </p>
+
+      <div class="demo-grid">
+        <article class="demo-block">
+          <h3>Deutsch (de)</h3>
+          <label for="demoLocaleDe">Termin</label>
+          <input id="demoLocaleDe" type="text" placeholder="TT.MM.JJJJ HH:mm" />
+          <p class="mobile-note">Locale: de, 24h, Format: d.m.Y H:i</p>
+        </article>
+
+        <article class="demo-block">
+          <h3>Français (fr)</h3>
+          <label for="demoLocaleFr">Rendez-vous</label>
+          <input id="demoLocaleFr" type="text" placeholder="JJ/MM/AAAA HH:mm" />
+          <p class="mobile-note">Locale: fr, 24h, Format: d/m/Y H:i</p>
+        </article>
+
+        <article class="demo-block">
+          <h3>日本語 (ja)</h3>
+          <label for="demoLocaleJa">日時</label>
+          <input id="demoLocaleJa" type="text" placeholder="YYYY/MM/DD HH:mm" />
+          <p class="mobile-note">Locale: ja, 24h, Format: Y/m/d H:i</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top: 18px;">
+      <span class="group-kicker">Typ D</span>
       <h2>Theme Varianten & Akzentfarben</h2>
       <p class="notice" style="margin-top:0;">
         Hier kannst du fertige Themes und individuelle Farben live auf alle Demo-Picker anwenden.
@@ -690,11 +839,53 @@
 
       <div id="themeCode" class="theme-code" role="status" aria-live="polite">Noch kein Theme aktiv.</div>
     </section>
+
+    <section class="card" style="margin-top: 18px;" id="demoA11yShortcuts">
+      <span class="group-kicker">Typ E</span>
+      <h2>A11y-Loesungen & Shortcuts</h2>
+      <p class="notice" style="margin-top:0;">
+        Die Demo zeigt zentrale Accessibility-Verbesserungen und bietet zusaetzliche Tastatur-Shortcuts fuer schnelle Tests.
+      </p>
+
+      <div class="a11y-grid" aria-label="A11y-Loesungen im Ueberblick">
+        <article class="a11y-item">
+          <h3>Screenreader-Ansagen</h3>
+          <p>Monats- und Datumswechsel werden ueber aria-live angesagt.</p>
+        </article>
+        <article class="a11y-item">
+          <h3>Fokus-Falle in Popovern</h3>
+          <p>Time- und Month/Year-Popover halten den Tab-Fokus stabil bis Done, Enter oder Escape.</p>
+        </article>
+        <article class="a11y-item">
+          <h3>Regelbasierte Verfuegbarkeit</h3>
+          <p>timeRules koennen Zeiten begrenzen und nicht konfigurierte Wochentage deaktivieren.</p>
+        </article>
+        <article class="a11y-item">
+          <h3>Themebarrierefreiheit</h3>
+          <p>Kontrast und Motion lassen sich per Presets und Variablen schnell pruefen.</p>
+        </article>
+      </div>
+
+      <div class="shortcut-grid" aria-label="Demo-Shortcuts">
+        <div class="shortcut-item"><span>Single Date + Time fokussieren</span><kbd>Alt+1</kbd></div>
+        <div class="shortcut-item"><span>Time Wheel Demo fokussieren</span><kbd>Alt+2</kbd></div>
+        <div class="shortcut-item"><span>Month/Year Wheel Demo fokussieren</span><kbd>Alt+3</kbd></div>
+        <div class="shortcut-item"><span>DE Oeffnungszeiten fokussieren</span><kbd>Alt+4</kbd></div>
+        <div class="shortcut-item"><span>Optional Playground fokussieren</span><kbd>Alt+0</kbd></div>
+        <div class="shortcut-item"><span>Zu diesem Abschnitt springen</span><kbd>Alt+K</kbd></div>
+      </div>
+
+      <p class="notice">Shortcuts sind ausserhalb von Eingabefeldern aktiv und werden zusaetzlich ueber ein verborgenes Live-Region-Element angesagt.</p>
+      <div id="demoShortcutsLive" class="flatpickr-visually-hidden" aria-live="polite" aria-atomic="true"></div>
+    </section>
   </main>
 
   <script src="./dist/a11y_datetime.js?v=5.1.3"></script>
+  <script src="./dist/plugins/rangePlugin.js?v=5.1.3"></script>
   <script src="./dist/plugins/weekSelect/weekSelect.js?v=5.1.3"></script>
   <script src="./dist/l10n/de.js?v=5.1.3"></script>
+  <script src="./dist/l10n/fr.js?v=5.1.3"></script>
+  <script src="./dist/l10n/ja.js?v=5.1.3"></script>
   <script>
     (function () {
       var pick = window.a11y_datetime || window.flatpickr;
@@ -731,6 +922,50 @@
         announceChanges: true
       });
 
+      pick("#demoLocaleDe", {
+        locale: "de",
+        enableTime: true,
+        time_24hr: true,
+        disableMobile: true,
+        dateFormat: "d.m.Y H:i",
+        calendarTitle: "Termin wählen",
+        announceChanges: true
+      });
+
+      pick("#demoLocaleFr", {
+        locale: "fr",
+        enableTime: true,
+        time_24hr: true,
+        disableMobile: true,
+        dateFormat: "d/m/Y H:i",
+        calendarTitle: "Choisir une date",
+        announceChanges: true
+      });
+
+      pick("#demoLocaleJa", {
+        locale: "ja",
+        enableTime: true,
+        time_24hr: true,
+        disableMobile: true,
+        dateFormat: "Y/m/d H:i",
+        calendarTitle: "日付を選択",
+        announceChanges: true
+      });
+
+      pick("#demoDeBusinessHours", {
+        locale: "de",
+        enableTime: true,
+        time_24hr: true,
+        disableMobile: true,
+        dateFormat: "d.m.Y H:i",
+        timeRules: [
+          { days: [1, 2, 3, 4, 5], from: "08:00", to: "17:00" },
+          { days: [6], from: "10:00", to: "14:00" }
+        ],
+        calendarTitle: "Termine innerhalb der Oeffnungszeiten",
+        announceChanges: true
+      });
+
       if (typeof plugins_weekSelect !== "undefined" && typeof plugins_weekSelect.default === "function") {
         pick("#demoWeekSelect", {
           weekNumbers: true,
@@ -740,6 +975,54 @@
           announceChanges: true
         });
       }
+
+      var rangePluginFactory =
+        typeof rangePlugin === "function"
+          ? rangePlugin
+          : typeof plugins_rangePlugin !== "undefined" &&
+            plugins_rangePlugin &&
+            typeof plugins_rangePlugin.default === "function"
+          ? plugins_rangePlugin.default
+          : null;
+
+      function initResponsiveRangeCard() {
+        var isMobileRange = window.matchMedia("(max-width: 920px)").matches;
+
+        destroyIfExists("#demoRange3Months");
+        destroyIfExists("#demoRangeFrom");
+
+        if (isMobileRange && rangePluginFactory) {
+          pick("#demoRangeFrom", {
+            mode: "range",
+            showMonths: 1,
+            disableMobile: true,
+            dateFormat: "Y-m-d",
+            plugins: [new rangePluginFactory({ input: "#demoRangeTo" })],
+            calendarTitle: "Select start and end date",
+            announceChanges: true
+          });
+          return;
+        }
+
+        pick("#demoRange3Months", {
+          mode: "range",
+          showMonths: 3,
+          disableMobile: true,
+          dateFormat: "Y-m-d",
+          calendarTitle: "Select a date range",
+          announceChanges: true
+        });
+      }
+
+      var mobileRangeState = window.matchMedia("(max-width: 920px)").matches;
+      window.addEventListener("resize", function () {
+        var next = window.matchMedia("(max-width: 920px)").matches;
+        if (next === mobileRangeState) return;
+        mobileRangeState = next;
+        initResponsiveRangeCard();
+      });
+
+      initResponsiveRangeCard();
 
       function destroyIfExists(selector) {
         var el = document.querySelector(selector);
@@ -1057,6 +1340,58 @@
           }
         });
       }
+
+      function announceDemoShortcut(message) {
+        var live = document.getElementById("demoShortcutsLive");
+        if (!live) return;
+        live.textContent = "";
+        window.setTimeout(function() {
+          live.textContent = message;
+        }, 10);
+      }
+
+      function focusDemoField(selector, label) {
+        var el = document.querySelector(selector);
+        if (!el) return;
+        if (typeof el.scrollIntoView === "function") {
+          el.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+        if (typeof el.focus === "function") {
+          el.focus();
+        }
+        announceDemoShortcut("Shortcut: " + label);
+      }
+
+      document.addEventListener("keydown", function(event) {
+        if (!event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) {
+          return;
+        }
+
+        var key = (event.key || "").toLowerCase();
+        if (key === "1") {
+          event.preventDefault();
+          focusDemoField("#demoSingleDateTime", "Single Date + Time");
+        } else if (key === "2") {
+          event.preventDefault();
+          focusDemoField("#demoTimeOnly", "Time Wheel");
+        } else if (key === "3") {
+          event.preventDefault();
+          focusDemoField("#demoDeMaster", "Month and Year Wheel");
+        } else if (key === "4") {
+          event.preventDefault();
+          focusDemoField("#demoDeBusinessHours", "DE Oeffnungszeiten");
+        } else if (key === "0") {
+          event.preventDefault();
+          focusDemoField("#demoPlayground", "Optional Playground");
+        } else if (key === "k") {
+          event.preventDefault();
+          var section = document.getElementById("demoA11yShortcuts");
+          if (section && typeof section.scrollIntoView === "function") {
+            section.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+          announceDemoShortcut("Shortcut: Accessibility section");
+        }
+      });
 
       applyThemeVars("balanced", themeVars.balanced);
     })();
