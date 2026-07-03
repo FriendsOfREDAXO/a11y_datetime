@@ -747,6 +747,22 @@
     .flatpickr-day.endRange {
       font-weight: 700;
     }
+
+    :root[data-a11y-datetime-selection-style="ring"] .flatpickr-day.selected,
+    :root[data-a11y-datetime-selection-style="ring"] .flatpickr-day.startRange,
+    :root[data-a11y-datetime-selection-style="ring"] .flatpickr-day.endRange {
+      background: transparent;
+      color: var(--a11y-dt-day-fg);
+      border: 3px solid var(--a11y-dt-selected-bg);
+      box-shadow: none;
+    }
+
+    :root[data-a11y-datetime-selection-style="ring"] .flatpickr-day.today:not(.selected):not(.startRange):not(.endRange) {
+      background: transparent;
+      color: var(--a11y-dt-today-color);
+      border: 1.5px solid var(--a11y-dt-today-color);
+      box-shadow: none;
+    }
   </style>
   <link rel="stylesheet" href="./dist/a11y_datetime.css?v=5.2.1" />
 </head>
@@ -1029,6 +1045,13 @@
                 <button type="button" data-theme-mode="light">Light</button>
                 <button type="button" data-theme-mode="dark">Dark</button>
               </div>
+            </div>
+            <div>
+              <label for="themeSelectionStyle">Selection style</label>
+              <select id="themeSelectionStyle">
+                <option value="filled" selected>Filled circle</option>
+                <option value="ring">Ring (thick selected, thin today)</option>
+              </select>
             </div>
             <div>
               <label for="themeShadow">Shadow</label>
@@ -1387,6 +1410,7 @@
       var rootEl = document.documentElement;
       var themePresetSelect = document.getElementById("themePreset");
       var themeShadowSelect = document.getElementById("themeShadow");
+      var themeSelectionStyleSelect = document.getElementById("themeSelectionStyle");
       var themeBuilderInputs = Array.prototype.slice.call(document.querySelectorAll(".theme-color-input"));
       var globalThemeButtons = Array.prototype.slice.call(document.querySelectorAll("#global-theme-switch [data-theme-mode]"));
       var localThemeButtons = Array.prototype.slice.call(document.querySelectorAll("#theme-local-switch [data-theme-mode]"));
@@ -1395,6 +1419,7 @@
       var activeThemeName = "highContrast";
       var activeThemeCore = null;
       var activeShadowMode = "subtle";
+      var activeSelectionStyle = "filled";
       var themeModeState = "system";
       var themeVars = {
         highContrast: {
@@ -1726,6 +1751,7 @@
 
         var lines = [
           "/* active theme: " + name + " */",
+          "/* selection style: " + activeSelectionStyle + " */",
           "/* copy-ready: light + dark */",
           ":root[data-a11y-datetime-theme=\"light\"] {"
         ];
@@ -1750,6 +1776,14 @@
       function applyShadowMode(vars) {
         var mode = resolveThemeMode();
         applyShadowModeForMode(vars, mode);
+      }
+
+      function applySelectionStyle(style) {
+        activeSelectionStyle = style || "filled";
+        rootEl.setAttribute("data-a11y-datetime-selection-style", activeSelectionStyle);
+        if (themeSelectionStyleSelect) {
+          themeSelectionStyleSelect.value = activeSelectionStyle;
+        }
       }
 
       function applyShadowModeForMode(vars, mode) {
@@ -1833,6 +1867,13 @@
         activeShadowMode = themeShadowSelect.value || "subtle";
         applyThemeVars(activeThemeName || "highContrast", activeThemeCore || themeVars.highContrast);
       });
+
+      if (themeSelectionStyleSelect) {
+        themeSelectionStyleSelect.addEventListener("change", function() {
+          applySelectionStyle(themeSelectionStyleSelect.value || "filled");
+          applyThemeVars(activeThemeName || "highContrast", activeThemeCore || themeVars.highContrast);
+        });
+      }
 
       globalThemeButtons.forEach(function(button) {
         button.addEventListener("click", function () {
@@ -1986,6 +2027,7 @@
       });
 
       applyPageLanguage("en");
+      applySelectionStyle("filled");
       applyThemeVars("highContrast", themeVars.highContrast);
       populateThemeBuilder(themeVars.highContrast);
       updateThemeModeButtons(themeModeState);
