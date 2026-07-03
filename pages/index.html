@@ -414,6 +414,94 @@
       margin-top: 10px;
     }
 
+    .theme-builder-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      margin-top: 10px;
+    }
+
+    .theme-mode-card {
+      margin: 0;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+      min-width: 0;
+    }
+
+    .theme-mode-card legend {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: var(--sub);
+      padding: 0 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .theme-mode-card .theme-controls {
+      margin-top: 0;
+    }
+
+    .theme-a11y-check {
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: var(--panel);
+      padding: 10px;
+    }
+
+    .theme-a11y-title {
+      margin: 0 0 8px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .contrast-section {
+      margin-top: 8px;
+    }
+
+    .contrast-section:first-child {
+      margin-top: 0;
+    }
+
+    .contrast-mode-title {
+      margin: 0 0 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--sub);
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .contrast-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+      padding: 5px 0;
+      border-bottom: 1px dashed var(--line);
+      font-size: 0.82rem;
+      color: var(--sub);
+    }
+
+    .contrast-row:last-child {
+      border-bottom: none;
+    }
+
+    .contrast-status {
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .contrast-status.pass {
+      color: #0a7d3a;
+    }
+
+    .contrast-status.fail {
+      color: #b84025;
+    }
+
     .theme-code {
       margin-top: 12px;
       border: 1px solid var(--line);
@@ -424,6 +512,11 @@
       font-size: 0.84rem;
       color: var(--theme-code-fg);
       white-space: pre-wrap;
+    }
+
+    .inline-theme-preview .flatpickr-calendar.inline {
+      margin-top: 10px;
+      border: 1px solid var(--a11y-dt-calendar-border, var(--line));
     }
 
     label {
@@ -921,7 +1014,7 @@
 
       <div class="demo-grid">
         <article class="demo-block">
-          <h3>Custom Theme</h3>
+          <h3>Custom Theme Builder (Light + Dark)</h3>
           <div class="theme-controls">
             <div>
               <label for="themeShadow">Shadow</label>
@@ -930,24 +1023,62 @@
                 <option value="subtle" selected>subtle</option>
               </select>
             </div>
-            <div>
-              <label for="themeAccent">Accent color</label>
-              <input id="themeAccent" type="color" value="#0b5fd3" />
-            </div>
-            <div>
-              <label for="themeCalendarBg">Calendar background</label>
-              <input id="themeCalendarBg" type="color" value="#ffffff" />
-            </div>
-            <div>
-              <label for="themeDayText">Day text color</label>
-              <input id="themeDayText" type="color" value="#1c2230" />
-            </div>
+          </div>
+
+          <div class="theme-builder-grid">
+            <fieldset class="theme-mode-card">
+              <legend>Light</legend>
+              <div class="theme-controls">
+                <div><label for="themeLightCalendarBg">Calendar bg</label><input id="themeLightCalendarBg" class="theme-color-input" data-theme-mode="light" data-theme-key="calendarBg" type="color" value="#ffffff" /></div>
+                <div><label for="themeLightCalendarBorder">Calendar border</label><input id="themeLightCalendarBorder" class="theme-color-input" data-theme-mode="light" data-theme-key="calendarBorder" type="color" value="#d7dce6" /></div>
+                <div><label for="themeLightMonthBg">Month bg</label><input id="themeLightMonthBg" class="theme-color-input" data-theme-mode="light" data-theme-key="monthBg" type="color" value="#ffffff" /></div>
+                <div><label for="themeLightMonthFg">Month text</label><input id="themeLightMonthFg" class="theme-color-input" data-theme-mode="light" data-theme-key="monthFg" type="color" value="#1c2230" /></div>
+                <div><label for="themeLightWeekdaysBg">Weekdays bg</label><input id="themeLightWeekdaysBg" class="theme-color-input" data-theme-mode="light" data-theme-key="weekdaysBg" type="color" value="#ffffff" /></div>
+                <div><label for="themeLightWeekdaysFg">Weekdays text</label><input id="themeLightWeekdaysFg" class="theme-color-input" data-theme-mode="light" data-theme-key="weekdaysFg" type="color" value="#4c566d" /></div>
+                <div><label for="themeLightDayFg">Day text</label><input id="themeLightDayFg" class="theme-color-input" data-theme-mode="light" data-theme-key="dayFg" type="color" value="#1c2230" /></div>
+                <div><label for="themeLightDayHoverBg">Day hover bg</label><input id="themeLightDayHoverBg" class="theme-color-input" data-theme-mode="light" data-theme-key="dayHoverBg" type="color" value="#e6eefb" /></div>
+                <div><label for="themeLightSelectedBg">Selected bg</label><input id="themeLightSelectedBg" class="theme-color-input" data-theme-mode="light" data-theme-key="selectedBg" type="color" value="#0b5fd3" /></div>
+                <div><label for="themeLightSelectedFg">Selected text</label><input id="themeLightSelectedFg" class="theme-color-input" data-theme-mode="light" data-theme-key="selectedFg" type="color" value="#ffffff" /></div>
+                <div><label for="themeLightTodayColor">Today color</label><input id="themeLightTodayColor" class="theme-color-input" data-theme-mode="light" data-theme-key="todayColor" type="color" value="#0b5fd3" /></div>
+                <div><label for="themeLightFocusColor">Focus color</label><input id="themeLightFocusColor" class="theme-color-input" data-theme-mode="light" data-theme-key="focusColor" type="color" value="#0b5fd3" /></div>
+              </div>
+            </fieldset>
+
+            <fieldset class="theme-mode-card">
+              <legend>Dark</legend>
+              <div class="theme-controls">
+                <div><label for="themeDarkCalendarBg">Calendar bg</label><input id="themeDarkCalendarBg" class="theme-color-input" data-theme-mode="dark" data-theme-key="calendarBg" type="color" value="#141b27" /></div>
+                <div><label for="themeDarkCalendarBorder">Calendar border</label><input id="themeDarkCalendarBorder" class="theme-color-input" data-theme-mode="dark" data-theme-key="calendarBorder" type="color" value="#3f4e67" /></div>
+                <div><label for="themeDarkMonthBg">Month bg</label><input id="themeDarkMonthBg" class="theme-color-input" data-theme-mode="dark" data-theme-key="monthBg" type="color" value="#141b27" /></div>
+                <div><label for="themeDarkMonthFg">Month text</label><input id="themeDarkMonthFg" class="theme-color-input" data-theme-mode="dark" data-theme-key="monthFg" type="color" value="#e4ecfa" /></div>
+                <div><label for="themeDarkWeekdaysBg">Weekdays bg</label><input id="themeDarkWeekdaysBg" class="theme-color-input" data-theme-mode="dark" data-theme-key="weekdaysBg" type="color" value="#141b27" /></div>
+                <div><label for="themeDarkWeekdaysFg">Weekdays text</label><input id="themeDarkWeekdaysFg" class="theme-color-input" data-theme-mode="dark" data-theme-key="weekdaysFg" type="color" value="#cfd5df" /></div>
+                <div><label for="themeDarkDayFg">Day text</label><input id="themeDarkDayFg" class="theme-color-input" data-theme-mode="dark" data-theme-key="dayFg" type="color" value="#e4ecfa" /></div>
+                <div><label for="themeDarkDayHoverBg">Day hover bg</label><input id="themeDarkDayHoverBg" class="theme-color-input" data-theme-mode="dark" data-theme-key="dayHoverBg" type="color" value="#2e3643" /></div>
+                <div><label for="themeDarkSelectedBg">Selected bg</label><input id="themeDarkSelectedBg" class="theme-color-input" data-theme-mode="dark" data-theme-key="selectedBg" type="color" value="#66a6ff" /></div>
+                <div><label for="themeDarkSelectedFg">Selected text</label><input id="themeDarkSelectedFg" class="theme-color-input" data-theme-mode="dark" data-theme-key="selectedFg" type="color" value="#0f1725" /></div>
+                <div><label for="themeDarkTodayColor">Today color</label><input id="themeDarkTodayColor" class="theme-color-input" data-theme-mode="dark" data-theme-key="todayColor" type="color" value="#66a6ff" /></div>
+                <div><label for="themeDarkFocusColor">Focus color</label><input id="themeDarkFocusColor" class="theme-color-input" data-theme-mode="dark" data-theme-key="focusColor" type="color" value="#66a6ff" /></div>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="theme-a11y-check" id="themeContrastReport" aria-live="polite">
+            <p class="theme-a11y-title">A11y contrast check (WCAG)</p>
+            Contrast report appears after changing builder values.
           </div>
 
           <div class="theme-presets" style="margin-top:12px;">
             <button id="applyCustomTheme" type="button" class="theme-chip-btn">Apply custom</button>
             <button id="resetTheme" type="button" class="theme-chip-btn">Reset</button>
           </div>
+        </article>
+
+        <article class="demo-block inline-theme-preview">
+          <h3>Inline Preview Calendar</h3>
+          <label for="themeInlinePreview">Preview input</label>
+          <input id="themeInlinePreview" type="text" placeholder="YYYY-MM-DD" />
+          <p class="mobile-note">Der Inline-Kalender zeigt Theme-Änderungen sofort in Light und Dark.</p>
         </article>
       </div>
 
@@ -1063,6 +1194,15 @@
         disableMobile: true,
         dateFormat: "Y/m/d H:i",
         calendarTitle: "日付を選択",
+        announceChanges: true
+      });
+
+      pick("#themeInlinePreview", {
+        inline: true,
+        disableMobile: true,
+        dateFormat: "Y-m-d",
+        defaultDate: new Date(),
+        calendarTitle: "Theme preview calendar",
         announceChanges: true
       });
 
@@ -1228,10 +1368,12 @@
       initGermanVariantPicker();
 
       var themeCode = document.getElementById("themeCode");
+      var themeContrastReport = document.getElementById("themeContrastReport");
       var rootStyle = document.documentElement.style;
       var rootEl = document.documentElement;
       var themePresetSelect = document.getElementById("themePreset");
       var themeShadowSelect = document.getElementById("themeShadow");
+      var themeBuilderInputs = Array.prototype.slice.call(document.querySelectorAll(".theme-color-input"));
       var globalThemeButtons = Array.prototype.slice.call(document.querySelectorAll("#global-theme-switch [data-theme-mode]"));
       var globalLanguageButtons = Array.prototype.slice.call(document.querySelectorAll("#global-language-switch [data-language]"));
       var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -1371,31 +1513,154 @@
         }
       }
 
-      function buildThemePalette(core) {
-        var mode = resolveThemeMode();
+      function buildThemePalette(core, modeOverride) {
+        var mode = modeOverride || resolveThemeMode();
         var isDark = mode === "dark";
-        var calendarBg = core.calendarBg;
-        var calendarBorder = core.calendarBorder;
-        var dayFg = core.dayFg;
-        var accent = core.accent;
-        var selectedFg = contrastColor(accent);
+        var fallbackAccent = isDark ? "#66a6ff" : "#0b5fd3";
+        var calendarBg = core.calendarBg || (isDark ? "#141b27" : "#ffffff");
+        var dayFg = core.dayFg || core.monthFg || (isDark ? "#e4ecfa" : "#1c2230");
+        var accent = core.accent || core.selectedBg || core.todayColor || fallbackAccent;
+        var calendarBorder = core.calendarBorder || accent;
+        var monthBg = core.monthBg || calendarBg;
+        var monthFg = core.monthFg || dayFg;
+        var weekdaysBg = core.weekdaysBg || calendarBg;
+        var weekdaysFg = core.weekdaysFg || (isDark ? "#cfd5df" : "#4c566d");
+        var dayHoverBg = core.dayHoverBg || (isDark ? "#2e3643" : "#e6eefb");
+        var selectedBg = core.selectedBg || accent;
+        var selectedFg = core.selectedFg || contrastColor(selectedBg);
+        var todayColor = core.todayColor || accent;
+        var focusColor = core.focusColor || accent;
 
         return {
           "--a11y-dt-calendar-bg": calendarBg,
           "--a11y-dt-calendar-border": calendarBorder,
-          "--a11y-dt-month-bg": calendarBg,
-          "--a11y-dt-month-fg": dayFg,
-          "--a11y-dt-weekdays-bg": calendarBg,
-          "--a11y-dt-weekdays-fg": isDark ? "#cfd5df" : "#4c566d",
+          "--a11y-dt-month-bg": monthBg,
+          "--a11y-dt-month-fg": monthFg,
+          "--a11y-dt-weekdays-bg": weekdaysBg,
+          "--a11y-dt-weekdays-fg": weekdaysFg,
           "--a11y-dt-day-fg": dayFg,
           "--a11y-dt-day-disabled-fg": toRgba(dayFg, isDark ? 0.45 : 0.42),
           "--a11y-dt-day-not-allowed-fg": toRgba(dayFg, isDark ? 0.62 : 0.58),
-          "--a11y-dt-day-hover-bg": isDark ? "#2e3643" : "#e6eefb",
-          "--a11y-dt-selected-bg": accent,
+          "--a11y-dt-day-hover-bg": dayHoverBg,
+          "--a11y-dt-selected-bg": selectedBg,
           "--a11y-dt-selected-fg": selectedFg,
-          "--a11y-dt-today-color": accent,
-          "--a11y-dt-focus-ring": "2px solid " + accent
+          "--a11y-dt-today-color": todayColor,
+          "--a11y-dt-focus-ring": "2px solid " + focusColor
         };
+      }
+
+      function resolveCoreByRequestedMode(coreOrModes, mode) {
+        if (coreOrModes && coreOrModes.light && coreOrModes.dark) {
+          return coreOrModes[mode] || coreOrModes.light;
+        }
+        return coreOrModes;
+      }
+
+      function getThemeInput(mode, key) {
+        return document.querySelector('.theme-color-input[data-theme-mode="' + mode + '"][data-theme-key="' + key + '"]');
+      }
+
+      function getThemeInputValue(mode, key, fallback) {
+        var input = getThemeInput(mode, key);
+        if (!input || !input.value) return fallback;
+        return input.value;
+      }
+
+      function setThemeInputValue(mode, key, value) {
+        var input = getThemeInput(mode, key);
+        if (input && value) {
+          input.value = value;
+        }
+      }
+
+      function modeCoreFromInputs(mode, fallbackCore) {
+        var selectedBg = getThemeInputValue(mode, "selectedBg", fallbackCore.selectedBg || fallbackCore.accent || (mode === "dark" ? "#66a6ff" : "#0b5fd3"));
+        return {
+          calendarBg: getThemeInputValue(mode, "calendarBg", fallbackCore.calendarBg),
+          calendarBorder: getThemeInputValue(mode, "calendarBorder", fallbackCore.calendarBorder || selectedBg),
+          monthBg: getThemeInputValue(mode, "monthBg", fallbackCore.monthBg || fallbackCore.calendarBg),
+          monthFg: getThemeInputValue(mode, "monthFg", fallbackCore.monthFg || fallbackCore.dayFg),
+          weekdaysBg: getThemeInputValue(mode, "weekdaysBg", fallbackCore.weekdaysBg || fallbackCore.calendarBg),
+          weekdaysFg: getThemeInputValue(mode, "weekdaysFg", fallbackCore.weekdaysFg),
+          dayFg: getThemeInputValue(mode, "dayFg", fallbackCore.dayFg),
+          dayHoverBg: getThemeInputValue(mode, "dayHoverBg", fallbackCore.dayHoverBg),
+          selectedBg: selectedBg,
+          selectedFg: getThemeInputValue(mode, "selectedFg", fallbackCore.selectedFg || contrastColor(selectedBg)),
+          todayColor: getThemeInputValue(mode, "todayColor", fallbackCore.todayColor || selectedBg),
+          focusColor: getThemeInputValue(mode, "focusColor", fallbackCore.focusColor || selectedBg),
+          accent: selectedBg
+        };
+      }
+
+      function buildCustomThemeFromInputs() {
+        var source = activeThemeCore || themeVars.highContrast;
+        var lightFallback = resolveCoreByRequestedMode(source, "light") || {};
+        var darkFallback = resolveCoreByRequestedMode(source, "dark") || {};
+
+        return {
+          light: modeCoreFromInputs("light", lightFallback),
+          dark: modeCoreFromInputs("dark", darkFallback)
+        };
+      }
+
+      function extractHexFromFocusRing(value) {
+        var match = (value || "").match(/#([0-9a-f]{3}|[0-9a-f]{6})/i);
+        return match ? "#" + match[1] : "#0b5fd3";
+      }
+
+      function contrastRatio(fg, bg) {
+        var l1 = luminance(fg);
+        var l2 = luminance(bg);
+        var bright = Math.max(l1, l2);
+        var dark = Math.min(l1, l2);
+        return (bright + 0.05) / (dark + 0.05);
+      }
+
+      function renderContrastRow(label, fg, bg, minRatio) {
+        var ratio = contrastRatio(fg, bg);
+        var pass = ratio >= minRatio;
+        return '<div class="contrast-row"><span>' + label + ' (' + minRatio.toFixed(1) + ':1)</span><span class="contrast-status ' + (pass ? 'pass' : 'fail') + '">' + ratio.toFixed(2) + ':1 ' + (pass ? 'PASS' : 'FAIL') + '</span></div>';
+      }
+
+      function renderThemeContrast(coreOrModes) {
+        if (!themeContrastReport) return;
+        var sections = ["light", "dark"].map(function(mode) {
+          var modeCore = resolveCoreByRequestedMode(coreOrModes, mode) || {};
+          var vars = buildThemePalette(modeCore, mode);
+          var focusColor = extractHexFromFocusRing(vars["--a11y-dt-focus-ring"]);
+          var rows = [
+            renderContrastRow("Day text", vars["--a11y-dt-day-fg"], vars["--a11y-dt-calendar-bg"], 4.5),
+            renderContrastRow("Weekdays text", vars["--a11y-dt-weekdays-fg"], vars["--a11y-dt-weekdays-bg"], 4.5),
+            renderContrastRow("Month text", vars["--a11y-dt-month-fg"], vars["--a11y-dt-month-bg"], 4.5),
+            renderContrastRow("Selected day", vars["--a11y-dt-selected-fg"], vars["--a11y-dt-selected-bg"], 4.5),
+            renderContrastRow("Focus ring", focusColor, vars["--a11y-dt-calendar-bg"], 3.0)
+          ];
+          return '<div class="contrast-section"><p class="contrast-mode-title">' + (mode === 'dark' ? 'Dark mode' : 'Light mode') + '</p>' + rows.join('') + '</div>';
+        });
+
+        themeContrastReport.innerHTML = '<p class="theme-a11y-title">A11y contrast check (WCAG)</p>' + sections.join('');
+      }
+
+      function populateThemeBuilder(coreOrModes) {
+        ["light", "dark"].forEach(function(mode) {
+          var modeCore = resolveCoreByRequestedMode(coreOrModes, mode) || {};
+          var vars = buildThemePalette(modeCore, mode);
+
+          setThemeInputValue(mode, "calendarBg", vars["--a11y-dt-calendar-bg"]);
+          setThemeInputValue(mode, "calendarBorder", vars["--a11y-dt-calendar-border"]);
+          setThemeInputValue(mode, "monthBg", vars["--a11y-dt-month-bg"]);
+          setThemeInputValue(mode, "monthFg", vars["--a11y-dt-month-fg"]);
+          setThemeInputValue(mode, "weekdaysBg", vars["--a11y-dt-weekdays-bg"]);
+          setThemeInputValue(mode, "weekdaysFg", vars["--a11y-dt-weekdays-fg"]);
+          setThemeInputValue(mode, "dayFg", vars["--a11y-dt-day-fg"]);
+          setThemeInputValue(mode, "dayHoverBg", vars["--a11y-dt-day-hover-bg"]);
+          setThemeInputValue(mode, "selectedBg", vars["--a11y-dt-selected-bg"]);
+          setThemeInputValue(mode, "selectedFg", vars["--a11y-dt-selected-fg"]);
+          setThemeInputValue(mode, "todayColor", vars["--a11y-dt-today-color"]);
+          setThemeInputValue(mode, "focusColor", extractHexFromFocusRing(vars["--a11y-dt-focus-ring"]));
+        });
+
+        renderThemeContrast(coreOrModes);
       }
 
       function renderThemeCode(name, vars) {
@@ -1414,10 +1679,7 @@
 
       function resolveCoreByMode(coreOrModes) {
         var mode = resolveThemeMode();
-        if (coreOrModes && coreOrModes.light && coreOrModes.dark) {
-          return coreOrModes[mode] || coreOrModes.light;
-        }
-        return coreOrModes;
+        return resolveCoreByRequestedMode(coreOrModes, mode);
       }
 
       function applyShadowMode(vars) {
@@ -1453,6 +1715,7 @@
           }
         }
         renderThemeCode(name, vars);
+        renderThemeContrast(coreOrModes);
       }
 
       if (themePresetSelect) {
@@ -1460,34 +1723,25 @@
           var preset = themePresetSelect.value;
           if (!preset || !themeVars[preset]) return;
           applyThemeVars(preset, themeVars[preset]);
+          populateThemeBuilder(themeVars[preset]);
         });
       }
 
       document.getElementById("applyCustomTheme").addEventListener("click", function() {
-        var accent = document.getElementById("themeAccent").value;
-        var bg = document.getElementById("themeCalendarBg").value;
-        var day = document.getElementById("themeDayText").value;
-        var darkBg = luminance(bg) > 0.4 ? "#1a2331" : bg;
-        var darkDay = luminance(day) < 0.45 ? "#e8edf7" : day;
-        var custom = {
-          light: {
-            calendarBg: bg,
-            calendarBorder: accent,
-            dayFg: day,
-            accent: accent
-          },
-          dark: {
-            calendarBg: darkBg,
-            calendarBorder: accent,
-            dayFg: darkDay,
-            accent: accent
-          }
-        };
+        var custom = buildCustomThemeFromInputs();
         applyThemeVars("custom", custom);
+        populateThemeBuilder(custom);
       });
 
       document.getElementById("resetTheme").addEventListener("click", function() {
         applyThemeVars("highContrast", themeVars.highContrast);
+        populateThemeBuilder(themeVars.highContrast);
+      });
+
+      themeBuilderInputs.forEach(function(input) {
+        input.addEventListener("input", function() {
+          renderThemeContrast(buildCustomThemeFromInputs());
+        });
       });
 
       themeShadowSelect.addEventListener("change", function() {
@@ -1645,6 +1899,7 @@
 
       applyPageLanguage("en");
       applyThemeVars("highContrast", themeVars.highContrast);
+      populateThemeBuilder(themeVars.highContrast);
       if (themePresetSelect) {
         themePresetSelect.value = "highContrast";
       }
