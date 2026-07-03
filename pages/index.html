@@ -753,15 +753,15 @@
     :root[data-a11y-datetime-selection-style="ring"] .flatpickr-day.endRange {
       background: transparent;
       color: var(--a11y-dt-day-fg);
-      border: 3px solid var(--a11y-dt-selected-bg);
-      box-shadow: none;
+      border-color: transparent;
+      box-shadow: inset 0 0 0 3px var(--a11y-dt-selected-bg);
     }
 
     :root[data-a11y-datetime-selection-style="ring"] .flatpickr-day.today:not(.selected):not(.startRange):not(.endRange) {
       background: transparent;
       color: var(--a11y-dt-today-color);
-      border: 1.5px solid var(--a11y-dt-today-color);
-      box-shadow: none;
+      border-color: transparent;
+      box-shadow: inset 0 0 0 1.5px var(--a11y-dt-today-color);
     }
   </style>
   <link rel="stylesheet" href="./dist/a11y_datetime.css?v=5.2.1" />
