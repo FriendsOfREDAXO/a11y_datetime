@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [5.2.1] - 2026-07-03
+
+### Changed
+- Website and demo color tuning aligned closer to the current live appearance.
+- Theme preset control moved to the header area for faster access.
+- Demo docs asset query versions updated for reliable cache invalidation.
+
+### Fixed
+- Calendar month header spacing adjusted to avoid visual overlap with weekday/day rows.
+
 ## [5.2.0] - 2026-07-02
 
 ### Added

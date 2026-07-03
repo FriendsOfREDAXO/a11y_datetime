@@ -1,42 +1,78 @@
 <!doctype html>
-<html lang="de">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>a11y_datetime - Demo and Docs</title>
   <style>
     :root {
-      --bg: #edf2f8;
+      --bg: #f3f6fb;
       --panel: #ffffff;
-      --panel-soft: #f6f9fd;
-      --ink: #1d2f49;
-      --sub: #4d617e;
-      --line: #ced9e8;
-      --brand: #2f78c4;
-      --brand-2: #3ea0db;
+      --panel-soft: #eef2f8;
+      --ink: #343f50;
+      --sub: #6f7d90;
+      --line: #c8d2e0;
+      --brand: #343f50;
+      --brand-2: #ef7f1a;
       --control-bg: #ffffff;
-      --control-border: #b6c7de;
-      --theme-code-bg: #eef4fd;
-      --theme-code-fg: #1f416a;
-      --shadow: 0 14px 36px rgba(28, 46, 79, 0.14);
+      --control-border: #9ca5b2;
+      --theme-code-bg: #e9eef5;
+      --theme-code-fg: #2d394c;
+      --shadow: 0 2px 10px rgba(52, 63, 80, 0.08);
+      --hero-shadow: 0 2px 10px rgba(52, 63, 80, 0.08);
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --bg: #0c1224;
-        --panel: #121d35;
-        --panel-soft: #182742;
-        --ink: #e9f1ff;
-        --sub: #b4c4df;
-        --line: #2b3f63;
-        --brand: #58a9ff;
-        --brand-2: #22c2e6;
-        --control-bg: #0f1a31;
-        --control-border: #36527c;
-        --theme-code-bg: #0d1a34;
-        --theme-code-fg: #d0e4ff;
-        --shadow: 0 16px 44px rgba(1, 6, 18, 0.56);
+        --bg: #141c28;
+        --panel: #1c2635;
+        --panel-soft: #202b3b;
+        --ink: #e7edf7;
+        --sub: #a9b5c7;
+        --line: #495a74;
+        --brand: #e7edf7;
+        --brand-2: #f19442;
+        --control-bg: #1a2230;
+        --control-border: #5b677a;
+        --theme-code-bg: #182231;
+        --theme-code-fg: #d7e2f2;
+        --shadow: 0 8px 22px rgba(0, 0, 0, 0.34);
+        --hero-shadow: 0 8px 22px rgba(0, 0, 0, 0.34);
       }
+    }
+
+    :root[data-a11y-datetime-theme="light"] {
+      --bg: #f3f6fb;
+      --panel: #ffffff;
+      --panel-soft: #eef2f8;
+      --ink: #343f50;
+      --sub: #6f7d90;
+      --line: #c8d2e0;
+      --brand: #343f50;
+      --brand-2: #ef7f1a;
+      --control-bg: #ffffff;
+      --control-border: #9ca5b2;
+      --theme-code-bg: #e9eef5;
+      --theme-code-fg: #2d394c;
+      --shadow: 0 2px 10px rgba(52, 63, 80, 0.08);
+      --hero-shadow: 0 2px 10px rgba(52, 63, 80, 0.08);
+    }
+
+    :root[data-a11y-datetime-theme="dark"] {
+      --bg: #141c28;
+      --panel: #1c2635;
+      --panel-soft: #202b3b;
+      --ink: #e7edf7;
+      --sub: #a9b5c7;
+      --line: #495a74;
+      --brand: #e7edf7;
+      --brand-2: #f19442;
+      --control-bg: #1a2230;
+      --control-border: #5b677a;
+      --theme-code-bg: #182231;
+      --theme-code-fg: #d7e2f2;
+      --shadow: 0 8px 22px rgba(0, 0, 0, 0.34);
+      --hero-shadow: 0 8px 22px rgba(0, 0, 0, 0.34);
     }
 
     * {
@@ -48,10 +84,7 @@
       font-family: "Avenir Next", "Segoe UI", Helvetica, Arial, sans-serif;
       color: var(--ink);
       color-scheme: light dark;
-      background:
-        radial-gradient(circle at 8% -15%, #c9ddf7 0%, transparent 40%),
-        radial-gradient(circle at 100% 0%, #d7ebff 0%, transparent 36%),
-        var(--bg);
+      background: var(--bg);
       line-height: 1.5;
     }
 
@@ -80,11 +113,12 @@
     }
 
     .hero {
-      background: linear-gradient(135deg, #2a69ad 0%, #2f78c4 55%, #3ea0db 100%);
-      color: #eef4ff;
-      border-radius: 20px;
-      padding: 28px;
-      box-shadow: var(--shadow);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: var(--hero-shadow);
+      border: 1px solid var(--line);
     }
 
     .hero-top {
@@ -95,13 +129,13 @@
     }
 
     .hero-logo {
-      width: 86px;
-      height: 86px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.4);
+      width: 72px;
+      height: 72px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
       object-fit: cover;
-      background: #233453;
-      box-shadow: 0 8px 18px rgba(13, 34, 72, 0.35);
+      background: var(--panel-soft);
+      box-shadow: 0 7px 16px rgba(31, 48, 74, 0.18);
     }
 
     .hero-copy {
@@ -117,7 +151,52 @@
     .hero p {
       margin: 0;
       max-width: 75ch;
-      color: #d8e7ff;
+      color: var(--sub);
+    }
+
+    .hero-tools {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .hero-tool-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--sub);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .switch-group {
+      display: inline-flex;
+      gap: 4px;
+      border: 1px solid var(--line);
+      background: var(--panel-soft);
+      border-radius: 12px;
+      padding: 3px;
+      width: fit-content;
+      max-width: 100%;
+    }
+
+    .switch-group button {
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--ink);
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .switch-group button.is-active {
+      background: var(--control-bg);
+      border-color: var(--control-border);
+      box-shadow: 0 3px 10px rgba(52, 63, 80, 0.2);
     }
 
     .links {
@@ -130,9 +209,9 @@
     .links a {
       display: inline-block;
       text-decoration: none;
-      color: #0f3d70;
-      background: rgba(255, 255, 255, 0.96);
-      border: 1px solid rgba(255, 255, 255, 0.92);
+      color: var(--ink);
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
       border-radius: 999px;
       padding: 9px 14px;
       font-weight: 600;
@@ -148,21 +227,9 @@
     }
 
     @media (prefers-color-scheme: dark) {
-      body {
-        background:
-          radial-gradient(circle at 12% -18%, #213464 0%, transparent 38%),
-          radial-gradient(circle at 96% -8%, #0f6e8b 0%, transparent 35%),
-          var(--bg);
-      }
-
-      .hero {
-        background: linear-gradient(145deg, #0f2c59 0%, #114b7b 45%, #0a6b72 100%);
-      }
-
       .links a {
-        color: #d7e8ff;
-        background: rgba(10, 20, 40, 0.55);
-        border-color: rgba(134, 178, 241, 0.45);
+        background: var(--panel-soft);
+        border-color: var(--line);
       }
     }
 
@@ -524,11 +591,58 @@
         transition: none;
       }
     }
+
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-calendar {
+      --a11y-dt-font-size: 13px;
+      --a11y-dt-shadow: 0 1px 4px rgba(52, 63, 80, 0.06);
+    }
+
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-calendar,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-day,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-current-month .flatpickr-monthDropdown-months,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-close-button,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-keyboard-help-button,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-time-wheel-trigger,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-am-pm {
+      border-radius: 1px;
+    }
+
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-months {
+      border-bottom: 1px solid var(--a11y-dt-calendar-border);
+    }
+
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-current-month .flatpickr-monthDropdown-months {
+      border: 1px solid var(--a11y-dt-calendar-border);
+      background: var(--a11y-dt-month-bg);
+      font-weight: 600;
+      letter-spacing: 0.01em;
+      padding: 0.12rem 0.7rem;
+      border-radius: 2px;
+    }
+
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-close-button,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-keyboard-help-button,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-time-wheel-trigger,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-am-pm {
+      border: 1px solid var(--a11y-dt-calendar-border);
+      background: var(--a11y-dt-calendar-bg);
+    }
+
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-day.today:not(.selected):not(.startRange):not(.endRange) {
+      border-color: var(--a11y-dt-selected-bg);
+      color: var(--a11y-dt-day-fg);
+    }
+
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-day.selected,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-day.startRange,
+    :root[data-a11y-datetime-preset="modern"] .flatpickr-day.endRange {
+      box-shadow: inset 0 0 0 2px var(--a11y-dt-calendar-bg);
+    }
   </style>
-  <link rel="stylesheet" href="./dist/a11y_datetime.css?v=5.1.3" />
+  <link rel="stylesheet" href="../dist/a11y_datetime.css?v=5.2.1" />
 </head>
 <body>
-  <a class="skip-link" href="#main-content">Direkt zum Inhalt springen</a>
+  <a id="skip-link" class="skip-link" href="#main-content">Skip to content</a>
   <main id="main-content" class="shell" tabindex="-1">
     <section class="hero">
       <div class="hero-top">
@@ -540,37 +654,46 @@
         />
         <div class="hero-copy">
           <h1>a11y_datetime</h1>
-          <p>
-            Accessible datetime picker fork based on flatpickr. This page contains a bilingual quick intro,
-            and a compact website-native live demo.
-          </p>
+          <p id="hero-copy-text">Accessible datetime picker fork based on flatpickr. This page follows the counter-style visual direction and keeps picker demos practical.</p>
+          <div class="hero-tools" aria-label="Global controls">
+            <div>
+              <span class="hero-tool-label">Dark / Light</span>
+              <div class="switch-group" id="global-theme-switch" role="group" aria-label="Global dark light switch">
+                <button type="button" data-theme-mode="system" class="is-active">System</button>
+                <button type="button" data-theme-mode="light">Light</button>
+                <button type="button" data-theme-mode="dark">Dark</button>
+              </div>
+            </div>
+            <div>
+              <span class="hero-tool-label">Language</span>
+              <div class="switch-group" id="global-language-switch" role="group" aria-label="Global language switch">
+                <button type="button" data-language="en" class="is-active">English</button>
+                <button type="button" data-language="de">Deutsch</button>
+              </div>
+            </div>
+            <div>
+              <span class="hero-tool-label">Theme</span>
+              <select id="themePreset" aria-label="Theme preset">
+                <option value="highContrast" selected>High Contrast</option>
+                <option value="balanced">Balanced</option>
+                <option value="modern">Modern</option>
+                <option value="ocean">Ocean</option>
+                <option value="sunset">Sunset</option>
+                <option value="mono">Mono</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
       <div class="links">
         <a href="https://github.com/FriendsOfREDAXO/a11y_datetime" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
         <a href="https://friendsofredaxo.github.io" target="_blank" rel="noopener noreferrer">FriendsOfREDAXO</a>
-        <a href="./dist/demo/index.html" target="_blank" rel="noopener noreferrer">Open Full Demo</a>
+        <a href="../dist/demo/index.html" target="_blank" rel="noopener noreferrer">Open Full Demo</a>
       </div>
     </section>
 
     <section class="layout">
       <article class="card">
-        <span class="pill">Deutsch</span>
-        <div class="lang" lang="de">
-          <h2>Was ist a11y_datetime?</h2>
-          <p>
-            a11y_datetime ist ein zuganglichkeitsorientierter Fork von flatpickr.
-            Der Schwerpunkt liegt auf besserer Tastaturbedienung, klarerer ARIA-Semantik und modernem Theming.
-          </p>
-          <h3>Highlights</h3>
-          <ul>
-            <li>Bessere Screenreader-Unterstuetzung durch ARIA-Verbesserungen</li>
-            <li>Starkere Keyboard-Navigation im Kalender</li>
-            <li>Design ueber CSS Variablen flexibel anpassbar</li>
-            <li>Kompatibel zu flatpickr-typischen Integrationen</li>
-          </ul>
-        </div>
-
         <span class="pill">English</span>
         <div class="lang" lang="en">
           <h2>What is a11y_datetime?</h2>
@@ -589,14 +712,14 @@
       </article>
 
       <article class="card">
-        <h2>Quick Demo / Schnelle Demo</h2>
+        <h2 id="quick-demo-title">Quick Demo</h2>
         <div class="inline-demo">
           <div>
-            <label for="demoDate">Date / Datum</label>
+            <label for="demoDate">Date</label>
             <input id="demoDate" type="text" placeholder="YYYY-MM-DD" />
           </div>
           <div>
-            <label for="demoDateTime">Date Time / Datum Zeit</label>
+            <label for="demoDateTime">Date Time</label>
             <input id="demoDateTime" type="text" placeholder="YYYY-MM-DD HH:mm" />
           </div>
         </div>
@@ -607,8 +730,8 @@
     </section>
 
     <section class="card" style="margin-top: 18px;">
-      <span class="group-kicker">Typ A</span>
-      <h2>Basis & Interaktion</h2>
+      <span class="group-kicker">Type A</span>
+      <h2 id="type-a-title">Core Interaction</h2>
       <div class="demo-grid">
         <article class="demo-block">
           <h3>Single Date + Time</h3>
@@ -637,11 +760,11 @@
           <input id="demoRange3Months" class="range-desktop-only" type="text" placeholder="YYYY-MM-DD to YYYY-MM-DD" />
           <div class="range-mobile-only">
             <div>
-              <label for="demoRangeFrom">Von / From</label>
+              <label for="demoRangeFrom">From</label>
               <input id="demoRangeFrom" type="text" placeholder="YYYY-MM-DD" />
             </div>
             <div>
-              <label for="demoRangeTo">Bis / To</label>
+              <label for="demoRangeTo">To</label>
               <input id="demoRangeTo" type="text" placeholder="YYYY-MM-DD" />
             </div>
           </div>
@@ -686,15 +809,7 @@
 
       <div class="demo-grid" style="margin-top:12px;">
         <article class="demo-block">
-          <h3>DE: Mobile Fallback</h3>
-          <p class="mobile-note" style="margin-top:0;">
-            Bei vielen mobilen Browsern nutzt der Picker automatisch native Eingabefelder.
-            Das ist Absicht: bessere Bedienung, vertraute UI und weniger Fehler auf Touch-Geraeten.
-            Im Playground kannst du mit "force custom picker" auf die komplette Kalender-UI wechseln.
-          </p>
-        </article>
-        <article class="demo-block">
-          <h3>EN: Mobile fallback</h3>
+          <h3>Mobile fallback</h3>
           <p class="mobile-note" style="margin-top:0;">
             On many mobile browsers, the picker intentionally falls back to native controls.
             This improves usability and reliability for touch input.
@@ -705,27 +820,27 @@
     </section>
 
     <section class="card" style="margin-top: 18px;">
-      <span class="group-kicker">Typ B</span>
-      <h2>Deutsch: Ausgabe & Oeffnungszeiten</h2>
-      <p class="notice" style="margin-top:0;">
-        Waehle die Schreibweise und sieh sie direkt im Input-Feld (wie im Playground).
+      <span class="group-kicker">Type B</span>
+      <h2 id="type-b-title">German Locale Formats and Business Hours</h2>
+      <p class="notice" id="type-b-note" style="margin-top:0;">
+        Choose a format variant and preview it directly in the input field.
       </p>
 
       <div class="demo-grid">
         <article class="demo-block">
           <h3>DE Master Picker</h3>
-          <label for="demoDeMaster">Datum + Uhrzeit</label>
+          <label for="demoDeMaster">Date + Time</label>
           <input id="demoDeMaster" type="text" placeholder="TT.MM.JJJJ HH:mm" />
           <div class="control-grid" style="margin-top:10px;">
             <div>
-              <label for="deFormatVariant" style="display:block; margin-bottom:4px;">Schreibweise</label>
+              <label for="deFormatVariant" style="display:block; margin-bottom:4px;">Format</label>
               <select id="deFormatVariant">
-                <option value="datetime_short">Datum + Uhrzeit (kurz) - 22.05.2026 17:23</option>
-                <option value="datetime_long">Datum + Uhrzeit (lang) - Freitag, 22. Mai 2026 17:23</option>
-                <option value="date_short">Datum (kurz) - 22.05.2026</option>
-                <option value="date_long">Datum (lang) - Freitag, 22. Mai 2026</option>
-                <option value="time_24">Uhrzeit - 17:23</option>
-                <option value="calendar_month">Kalenderansicht (Monat/Jahr) - Mai 2026</option>
+                <option value="datetime_short">Date + Time (short) - 22.05.2026 17:23</option>
+                <option value="datetime_long">Date + Time (long) - Friday, 22 May 2026 17:23</option>
+                <option value="date_short">Date (short) - 22.05.2026</option>
+                <option value="date_long">Date (long) - Friday, 22 May 2026</option>
+                <option value="time_24">Time - 17:23</option>
+                <option value="calendar_month">Calendar view (month/year) - May 2026</option>
               </select>
             </div>
             <div>
@@ -738,33 +853,33 @@
           </div>
 
           <div style="margin-top:10px;">
-            <button id="deApplyVariant" type="button">Schreibweise anwenden</button>
+            <button id="deApplyVariant" type="button">Apply format</button>
           </div>
-          <p class="mobile-note">Locale: de, 24h-Uhrzeit; Format direkt im Input sichtbar.</p>
+          <p class="mobile-note">Locale: de, 24h clock; output is shown directly in the input.</p>
         </article>
 
         <article class="demo-block">
-          <h3>DE Oeffnungszeiten (So deaktiviert)</h3>
-          <label for="demoDeBusinessHours">Termin (Mo-Sa)</label>
+          <h3>DE Business Hours (Sunday disabled)</h3>
+          <label for="demoDeBusinessHours">Appointment (Mon-Sat)</label>
           <input id="demoDeBusinessHours" type="text" placeholder="TT.MM.JJJJ HH:mm" />
           <p class="mobile-note">
-            Zeitfenster: Mo-Fr 08:00-17:00, Sa 10:00-14:00. Sonntag hat keine Regel und ist deshalb nicht auswaehlbar.
+            Time windows: Mon-Fri 08:00-17:00, Sat 10:00-14:00. Sunday has no rule and is disabled.
           </p>
         </article>
       </div>
     </section>
 
     <section class="card" style="margin-top: 18px;">
-      <span class="group-kicker">Typ C</span>
-      <h2>Locale & Mehrsprachigkeit</h2>
-      <p class="notice" style="margin-top:0;">
-        Beispiele mit lokalisierten Monats- und Wochentagen sowie formatspezifischer Ausgabe fuer Deutsch, Franzoesisch und Japanisch.
+      <span class="group-kicker">Type C</span>
+      <h2 id="type-c-title">Locale and Multilanguage</h2>
+      <p class="notice" id="type-c-note" style="margin-top:0;">
+        Localized month/day names and output formats for German, French, and Japanese.
       </p>
 
       <div class="demo-grid">
         <article class="demo-block">
-          <h3>Deutsch (de)</h3>
-          <label for="demoLocaleDe">Termin</label>
+          <h3>German (de)</h3>
+          <label for="demoLocaleDe">Appointment</label>
           <input id="demoLocaleDe" type="text" placeholder="TT.MM.JJJJ HH:mm" />
           <p class="mobile-note">Locale: de, 24h, Format: d.m.Y H:i</p>
         </article>
@@ -786,106 +901,94 @@
     </section>
 
     <section class="card" style="margin-top: 18px;">
-      <span class="group-kicker">Typ D</span>
-      <h2>Theme Varianten & Akzentfarben</h2>
-      <p class="notice" style="margin-top:0;">
-        Hier kannst du fertige Themes und individuelle Farben live auf alle Demo-Picker anwenden.
+      <span class="group-kicker">Type D</span>
+      <h2 id="type-d-title">Theme Variants and Accent Color</h2>
+      <p class="notice" id="type-d-note" style="margin-top:0;">
+        Apply preset themes and custom colors live to all demo pickers.
+        Modern follows the counter-inspired visual direction.
       </p>
 
       <div class="demo-grid">
         <article class="demo-block">
-          <h3>Presets</h3>
-          <div class="theme-controls" style="margin-top:0; margin-bottom:8px;">
-            <div>
-              <label for="themeMode" style="display:block; margin-bottom:4px;">Theme mode</label>
-              <select id="themeMode">
-                <option value="system">system</option>
-                <option value="light">light</option>
-                <option value="dark">dark</option>
-              </select>
-            </div>
-          </div>
-          <div class="theme-presets" role="group" aria-label="Theme presets">
-            <button type="button" class="theme-chip-btn" data-theme-preset="balanced">Balanced</button>
-            <button type="button" class="theme-chip-btn" data-theme-preset="ocean">Ocean</button>
-            <button type="button" class="theme-chip-btn" data-theme-preset="sunset">Sunset</button>
-            <button type="button" class="theme-chip-btn" data-theme-preset="mono">Mono</button>
-          </div>
-        </article>
-
-        <article class="demo-block">
           <h3>Custom Theme</h3>
           <div class="theme-controls">
             <div>
-              <label for="themeAccent">Akzentfarbe</label>
+              <label for="themeShadow">Shadow</label>
+              <select id="themeShadow">
+                <option value="none">none</option>
+                <option value="subtle" selected>subtle</option>
+              </select>
+            </div>
+            <div>
+              <label for="themeAccent">Accent color</label>
               <input id="themeAccent" type="color" value="#0b5fd3" />
             </div>
             <div>
-              <label for="themeCalendarBg">Kalender-Hintergrund</label>
+              <label for="themeCalendarBg">Calendar background</label>
               <input id="themeCalendarBg" type="color" value="#ffffff" />
             </div>
             <div>
-              <label for="themeDayText">Tages-Textfarbe</label>
+              <label for="themeDayText">Day text color</label>
               <input id="themeDayText" type="color" value="#1c2230" />
             </div>
           </div>
 
           <div class="theme-presets" style="margin-top:12px;">
-            <button id="applyCustomTheme" type="button" class="theme-chip-btn">Custom anwenden</button>
+            <button id="applyCustomTheme" type="button" class="theme-chip-btn">Apply custom</button>
             <button id="resetTheme" type="button" class="theme-chip-btn">Reset</button>
           </div>
         </article>
       </div>
 
-      <div id="themeCode" class="theme-code" role="status" aria-live="polite">Noch kein Theme aktiv.</div>
+      <div id="themeCode" class="theme-code" role="status" aria-live="polite">No active theme yet.</div>
     </section>
 
     <section class="card" style="margin-top: 18px;" id="demoA11yShortcuts">
-      <span class="group-kicker">Typ E</span>
-      <h2>A11y-Loesungen & Shortcuts</h2>
-      <p class="notice" style="margin-top:0;">
-        Die Demo zeigt zentrale Accessibility-Verbesserungen und bietet zusaetzliche Tastatur-Shortcuts fuer schnelle Tests.
+      <span class="group-kicker">Type E</span>
+      <h2 id="type-e-title">A11y Solutions and Shortcuts</h2>
+      <p class="notice" id="type-e-note" style="margin-top:0;">
+        This demo highlights core accessibility behavior and quick keyboard shortcuts.
       </p>
 
-      <div class="a11y-grid" aria-label="A11y-Loesungen im Ueberblick">
+      <div class="a11y-grid" aria-label="A11y solutions overview">
         <article class="a11y-item">
-          <h3>Screenreader-Ansagen</h3>
-          <p>Monats- und Datumswechsel werden ueber aria-live angesagt.</p>
+          <h3>Screen Reader Announcements</h3>
+          <p>Month and date updates are announced via aria-live.</p>
         </article>
         <article class="a11y-item">
-          <h3>Fokus-Falle in Popovern</h3>
-          <p>Time- und Month/Year-Popover halten den Tab-Fokus stabil bis Done, Enter oder Escape.</p>
+          <h3>Popover Focus Traps</h3>
+          <p>Time and month/year popovers keep tab focus stable until Done, Enter, or Escape.</p>
         </article>
         <article class="a11y-item">
-          <h3>Regelbasierte Verfuegbarkeit</h3>
-          <p>timeRules koennen Zeiten begrenzen und nicht konfigurierte Wochentage deaktivieren.</p>
+          <h3>Rule-based Availability</h3>
+          <p>timeRules can restrict time windows and disable weekdays without matching rules.</p>
         </article>
         <article class="a11y-item">
-          <h3>Themebarrierefreiheit</h3>
-          <p>Kontrast und Motion lassen sich per Presets und Variablen schnell pruefen.</p>
+          <h3>Theme Accessibility</h3>
+          <p>Contrast and motion can be verified quickly via presets and variables.</p>
         </article>
       </div>
 
-      <div class="shortcut-grid" aria-label="Demo-Shortcuts">
-        <div class="shortcut-item"><span>Single Date + Time fokussieren</span><kbd>Alt+1</kbd></div>
-        <div class="shortcut-item"><span>Time Wheel Demo fokussieren</span><kbd>Alt+2</kbd></div>
-        <div class="shortcut-item"><span>Month/Year Wheel Demo fokussieren</span><kbd>Alt+3</kbd></div>
-        <div class="shortcut-item"><span>DE Oeffnungszeiten fokussieren</span><kbd>Alt+4</kbd></div>
-        <div class="shortcut-item"><span>Optional Playground fokussieren</span><kbd>Alt+0</kbd></div>
-        <div class="shortcut-item"><span>Zu diesem Abschnitt springen</span><kbd>Alt+K</kbd></div>
+      <div class="shortcut-grid" aria-label="Demo shortcuts">
+        <div class="shortcut-item"><span>Focus Single Date + Time</span><kbd>Alt+1</kbd></div>
+        <div class="shortcut-item"><span>Focus Time Wheel Demo</span><kbd>Alt+2</kbd></div>
+        <div class="shortcut-item"><span>Focus Month/Year Wheel Demo</span><kbd>Alt+3</kbd></div>
+        <div class="shortcut-item"><span>Focus DE Business Hours</span><kbd>Alt+4</kbd></div>
+        <div class="shortcut-item"><span>Focus Optional Playground</span><kbd>Alt+0</kbd></div>
+        <div class="shortcut-item"><span>Jump to this section</span><kbd>Alt+K</kbd></div>
       </div>
 
-      <p class="notice">Shortcuts sind ausserhalb von Eingabefeldern aktiv und werden zusaetzlich ueber ein verborgenes Live-Region-Element angesagt.</p>
+      <p class="notice">Shortcuts are active outside input fields and are announced in the hidden live region.</p>
       <div id="demoShortcutsLive" class="flatpickr-visually-hidden" aria-live="polite" aria-atomic="true"></div>
     </section>
   </main>
 
-  <script src="./dist/a11y_datetime.js?v=5.1.3"></script>
-  <script src="./dist/plugins/rangePlugin.js?v=5.1.3"></script>
-  <script src="./dist/plugins/weekSelect/weekSelect.js?v=5.1.3"></script>
-  <script src="./dist/l10n/de.js?v=5.1.3"></script>
-  <script src="./dist/l10n/fr.js?v=5.1.3"></script>
-  <script src="./dist/l10n/ja.js?v=5.1.3"></script>
+  <script src="../dist/a11y_datetime.js?v=5.2.1"></script>
+  <script src="../dist/plugins/rangePlugin.js?v=5.2.1"></script>
+  <script src="../dist/plugins/weekSelect/weekSelect.js?v=5.2.1"></script>
+  <script src="../dist/l10n/de.js?v=5.2.1"></script>
+  <script src="../dist/l10n/fr.js?v=5.2.1"></script>
+  <script src="../dist/l10n/ja.js?v=5.2.1"></script>
   <script>
     (function () {
       var pick = window.a11y_datetime || window.flatpickr;
@@ -1116,14 +1219,30 @@
       var themeCode = document.getElementById("themeCode");
       var rootStyle = document.documentElement.style;
       var rootEl = document.documentElement;
-      var themeModeSelect = document.getElementById("themeMode");
+      var themePresetSelect = document.getElementById("themePreset");
+      var themeShadowSelect = document.getElementById("themeShadow");
+      var globalThemeButtons = Array.prototype.slice.call(document.querySelectorAll("#global-theme-switch [data-theme-mode]"));
+      var globalLanguageButtons = Array.prototype.slice.call(document.querySelectorAll("#global-language-switch [data-language]"));
       var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      var activeThemeName = "balanced";
+      var activeThemeName = "highContrast";
       var activeThemeCore = null;
-      var themePresetButtons = Array.prototype.slice.call(
-        document.querySelectorAll("[data-theme-preset]")
-      );
+      var activeShadowMode = "subtle";
+      var themeModeState = "system";
       var themeVars = {
+        highContrast: {
+          light: {
+            calendarBg: "#ffffff",
+            calendarBorder: "#5a6578",
+            dayFg: "#1b2433",
+            accent: "#ff6a2a"
+          },
+          dark: {
+            calendarBg: "#111822",
+            calendarBorder: "#9fb1cc",
+            dayFg: "#f2f6ff",
+            accent: "#ff7a3d"
+          }
+        },
         balanced: {
           light: {
             calendarBg: "#ffffff",
@@ -1136,6 +1255,20 @@
             calendarBorder: "#3f4e67",
             dayFg: "#e4ecfa",
             accent: "#66a6ff"
+          }
+        },
+        modern: {
+          light: {
+            calendarBg: "#fcfdff",
+            calendarBorder: "#c7ccd4",
+            dayFg: "#2f3642",
+            accent: "#ff6a2a"
+          },
+          dark: {
+            calendarBg: "#131a26",
+            calendarBorder: "#536077",
+            dayFg: "#e4ebf6",
+            accent: "#ff7a3d"
           }
         },
         ocean: {
@@ -1214,16 +1347,16 @@
       }
 
       function resolveThemeMode() {
-        if (themeModeSelect.value === "dark") return "dark";
-        if (themeModeSelect.value === "light") return "light";
+        if (themeModeState === "dark") return "dark";
+        if (themeModeState === "light") return "light";
         return systemThemeQuery.matches ? "dark" : "light";
       }
 
       function applyThemeModeAttribute() {
-        if (themeModeSelect.value === "system") {
+        if (themeModeState === "system") {
           rootEl.removeAttribute("data-a11y-datetime-theme");
         } else {
-          rootEl.setAttribute("data-a11y-datetime-theme", themeModeSelect.value);
+          rootEl.setAttribute("data-a11y-datetime-theme", themeModeState);
         }
       }
 
@@ -1276,31 +1409,48 @@
         return coreOrModes;
       }
 
+      function applyShadowMode(vars) {
+        var mode = resolveThemeMode();
+        if (activeShadowMode === "none") {
+          vars["--a11y-dt-shadow"] = "none";
+          return;
+        }
+
+        vars["--a11y-dt-shadow"] = mode === "dark"
+          ? "0 18px 42px rgba(0, 0, 0, 0.52)"
+          : "0 14px 34px rgba(20, 34, 56, 0.24)";
+      }
+
       function applyThemeVars(name, coreOrModes) {
         var core = resolveCoreByMode(coreOrModes);
         var vars = buildThemePalette(core);
+        applyShadowMode(vars);
         applyThemeModeAttribute();
+        rootEl.setAttribute("data-a11y-datetime-preset", name);
 
         Object.keys(vars).forEach(function(key) {
           rootStyle.setProperty(key, vars[key]);
         });
         activeThemeName = name;
         activeThemeCore = coreOrModes;
-        themePresetButtons.forEach(function(btn) {
-          var isActive = btn.getAttribute("data-theme-preset") === name;
-          btn.setAttribute("aria-pressed", isActive ? "true" : "false");
-        });
+        if (themePresetSelect) {
+          var hasOption = Array.prototype.some.call(themePresetSelect.options, function (opt) {
+            return opt.value === name;
+          });
+          if (hasOption) {
+            themePresetSelect.value = name;
+          }
+        }
         renderThemeCode(name, vars);
       }
 
-      themePresetButtons.forEach(function(btn) {
-        btn.setAttribute("aria-pressed", "false");
-        btn.addEventListener("click", function() {
-          var preset = btn.getAttribute("data-theme-preset");
+      if (themePresetSelect) {
+        themePresetSelect.addEventListener("change", function() {
+          var preset = themePresetSelect.value;
           if (!preset || !themeVars[preset]) return;
           applyThemeVars(preset, themeVars[preset]);
         });
-      });
+      }
 
       document.getElementById("applyCustomTheme").addEventListener("click", function() {
         var accent = document.getElementById("themeAccent").value;
@@ -1326,17 +1476,82 @@
       });
 
       document.getElementById("resetTheme").addEventListener("click", function() {
-        applyThemeVars("balanced", themeVars.balanced);
+        applyThemeVars("highContrast", themeVars.highContrast);
       });
 
-      themeModeSelect.addEventListener("change", function() {
-        applyThemeVars(activeThemeName || "balanced", activeThemeCore || themeVars.balanced);
+      themeShadowSelect.addEventListener("change", function() {
+        activeShadowMode = themeShadowSelect.value || "subtle";
+        applyThemeVars(activeThemeName || "highContrast", activeThemeCore || themeVars.highContrast);
+      });
+
+      globalThemeButtons.forEach(function(button) {
+        button.addEventListener("click", function () {
+          var mode = button.getAttribute("data-theme-mode") || "system";
+          themeModeState = mode;
+          globalThemeButtons.forEach(function(btn) {
+            btn.classList.toggle("is-active", btn === button);
+          });
+          applyThemeVars(activeThemeName || "highContrast", activeThemeCore || themeVars.highContrast);
+        });
+      });
+
+      function applyPageLanguage(lang) {
+        var skipLink = document.getElementById("skip-link");
+        var heroText = document.getElementById("hero-copy-text");
+        var quickDemoTitle = document.getElementById("quick-demo-title");
+        var typeATitle = document.getElementById("type-a-title");
+        var typeBTitle = document.getElementById("type-b-title");
+        var typeBNote = document.getElementById("type-b-note");
+        var typeCTitle = document.getElementById("type-c-title");
+        var typeCNote = document.getElementById("type-c-note");
+        var typeDTitle = document.getElementById("type-d-title");
+        var typeDNote = document.getElementById("type-d-note");
+        var typeETitle = document.getElementById("type-e-title");
+        var typeENote = document.getElementById("type-e-note");
+        document.documentElement.lang = lang;
+        if (lang === "de") {
+          if (skipLink) skipLink.textContent = "Zum Inhalt springen";
+          if (heroText) heroText.textContent = "Barriereorientierter Datetime-Picker-Fork auf Basis von flatpickr. Diese Seite folgt der Counter-Optik und zeigt praxisnahe Picker-Demos.";
+          if (quickDemoTitle) quickDemoTitle.textContent = "Schnelle Demo";
+          if (typeATitle) typeATitle.textContent = "Kerninteraktion";
+          if (typeBTitle) typeBTitle.textContent = "Deutsche Formatvarianten und Öffnungszeiten";
+          if (typeBNote) typeBNote.textContent = "Wähle eine Formatvariante und sieh die Ausgabe direkt im Eingabefeld.";
+          if (typeCTitle) typeCTitle.textContent = "Locale und Mehrsprachigkeit";
+          if (typeCNote) typeCNote.textContent = "Lokalisierte Monats-/Wochentagsnamen und formatspezifische Ausgabe für Deutsch, Französisch und Japanisch.";
+          if (typeDTitle) typeDTitle.textContent = "Theme-Varianten und Akzentfarbe";
+          if (typeDNote) typeDNote.textContent = "Wende Preset-Themes und individuelle Farben live auf alle Demo-Picker an. Modern folgt der Counter-Designrichtung.";
+          if (typeETitle) typeETitle.textContent = "A11y-Lösungen und Shortcuts";
+          if (typeENote) typeENote.textContent = "Die Demo zeigt zentrale Accessibility-Verbesserungen und schnelle Tastatur-Shortcuts.";
+        } else {
+          if (skipLink) skipLink.textContent = "Skip to content";
+          if (heroText) heroText.textContent = "Accessible datetime picker fork based on flatpickr. This page follows the counter-style visual direction and keeps picker demos practical.";
+          if (quickDemoTitle) quickDemoTitle.textContent = "Quick Demo";
+          if (typeATitle) typeATitle.textContent = "Core Interaction";
+          if (typeBTitle) typeBTitle.textContent = "German Locale Formats and Business Hours";
+          if (typeBNote) typeBNote.textContent = "Choose a format variant and preview it directly in the input field.";
+          if (typeCTitle) typeCTitle.textContent = "Locale and Multilanguage";
+          if (typeCNote) typeCNote.textContent = "Localized month/day names and output formats for German, French, and Japanese.";
+          if (typeDTitle) typeDTitle.textContent = "Theme Variants and Accent Color";
+          if (typeDNote) typeDNote.textContent = "Apply preset themes and custom colors live to all demo pickers. Modern follows the counter-inspired visual direction.";
+          if (typeETitle) typeETitle.textContent = "A11y Solutions and Shortcuts";
+          if (typeENote) typeENote.textContent = "This demo highlights core accessibility behavior and quick keyboard shortcuts.";
+        }
+      }
+
+      globalLanguageButtons.forEach(function(button) {
+        button.addEventListener("click", function () {
+          var lang = button.getAttribute("data-language") || "en";
+          globalLanguageButtons.forEach(function(btn) {
+            btn.classList.toggle("is-active", btn === button);
+          });
+          applyPageLanguage(lang);
+        });
       });
 
       if (systemThemeQuery && systemThemeQuery.addEventListener) {
         systemThemeQuery.addEventListener("change", function() {
-          if (themeModeSelect.value === "system") {
-            applyThemeVars(activeThemeName || "balanced", activeThemeCore || themeVars.balanced);
+          if (themeModeState === "system") {
+            applyThemeVars(activeThemeName || "highContrast", activeThemeCore || themeVars.highContrast);
           }
         });
       }
@@ -1393,7 +1608,11 @@
         }
       });
 
-      applyThemeVars("balanced", themeVars.balanced);
+      applyPageLanguage("en");
+      applyThemeVars("highContrast", themeVars.highContrast);
+      if (themePresetSelect) {
+        themePresetSelect.value = "highContrast";
+      }
     })();
   </script>
 </body>

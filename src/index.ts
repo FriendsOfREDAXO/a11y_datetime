@@ -3052,6 +3052,14 @@ function FlatpickrInstance(
 
       switch (e.keyCode) {
         case 13:
+          if (eventTarget === keyboardHelpButton) {
+            e.preventDefault();
+            const isOpen =
+              keyboardHelpButton.getAttribute("aria-expanded") === "true";
+            setKeyboardHelpOpen(!isOpen);
+            break;
+          }
+
           if (eventTarget === self.closeButton) {
             e.preventDefault();
             focusAndClose();
@@ -3112,6 +3120,14 @@ function FlatpickrInstance(
           break;
 
         case 32:
+          if (eventTarget === keyboardHelpButton) {
+            e.preventDefault();
+            const isOpen =
+              keyboardHelpButton.getAttribute("aria-expanded") === "true";
+            setKeyboardHelpOpen(!isOpen);
+            break;
+          }
+
           if (
             eventTarget === self.prevMonthNav ||
             eventTarget === self.nextMonthNav
