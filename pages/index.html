@@ -1040,6 +1040,17 @@
           <h3>Custom Theme Builder (Light + Dark)</h3>
           <div class="theme-controls">
             <div>
+              <label for="themePresetLocal">Theme preset</label>
+              <select id="themePresetLocal" aria-label="Theme preset in builder">
+                <option value="highContrast" selected>High Contrast</option>
+                <option value="balanced">Balanced</option>
+                <option value="modern">Modern</option>
+                <option value="ocean">Ocean</option>
+                <option value="sunset">Sunset</option>
+                <option value="mono">Mono</option>
+              </select>
+            </div>
+            <div>
               <label>Preview mode</label>
               <div class="switch-group" id="theme-local-switch" role="group" aria-label="Theme editor preview mode">
                 <button type="button" data-theme-mode="system" class="is-active">System</button>
@@ -1410,6 +1421,7 @@
       var rootStyle = document.documentElement.style;
       var rootEl = document.documentElement;
       var themePresetSelect = document.getElementById("themePreset");
+      var themePresetLocalSelect = document.getElementById("themePresetLocal");
       var themeShadowSelect = document.getElementById("themeShadow");
       var themeSelectionStyleSelect = document.getElementById("themeSelectionStyle");
       var themeBuilderInputs = Array.prototype.slice.call(document.querySelectorAll(".theme-color-input"));
@@ -1810,14 +1822,15 @@
         });
         activeThemeName = name;
         activeThemeCore = coreOrModes;
-        if (themePresetSelect) {
-          var hasOption = Array.prototype.some.call(themePresetSelect.options, function (opt) {
+        [themePresetSelect, themePresetLocalSelect].forEach(function(selectEl) {
+          if (!selectEl) return;
+          var hasOption = Array.prototype.some.call(selectEl.options, function (opt) {
             return opt.value === name;
           });
           if (hasOption) {
-            themePresetSelect.value = name;
+            selectEl.value = name;
           }
-        }
+        });
         renderThemeCode(name, coreOrModes);
         renderThemeContrast(coreOrModes);
       }
@@ -1840,6 +1853,15 @@
       if (themePresetSelect) {
         themePresetSelect.addEventListener("change", function() {
           var preset = themePresetSelect.value;
+          if (!preset || !themeVars[preset]) return;
+          applyThemeVars(preset, themeVars[preset]);
+          populateThemeBuilder(themeVars[preset]);
+        });
+      }
+
+      if (themePresetLocalSelect) {
+        themePresetLocalSelect.addEventListener("change", function() {
+          var preset = themePresetLocalSelect.value;
           if (!preset || !themeVars[preset]) return;
           applyThemeVars(preset, themeVars[preset]);
           populateThemeBuilder(themeVars[preset]);
@@ -2037,6 +2059,9 @@
       updateThemeModeButtons(themeModeState);
       if (themePresetSelect) {
         themePresetSelect.value = "highContrast";
+      }
+      if (themePresetLocalSelect) {
+        themePresetLocalSelect.value = "highContrast";
       }
     })();
   </script>
