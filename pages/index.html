@@ -813,6 +813,7 @@
       <div class="links">
         <a href="https://github.com/FriendsOfREDAXO/a11y_datetime" target="_blank" rel="noopener noreferrer">GitHub Repository</a>
         <a href="https://friendsofredaxo.github.io" target="_blank" rel="noopener noreferrer">FriendsOfREDAXO</a>
+        <a id="themeBuilderLink" href="#type-d-title">Zum Theme-Builder</a>
         <a href="./dist/demo/index.html" target="_blank" rel="noopener noreferrer">Open Full Demo</a>
       </div>
     </section>
@@ -1892,6 +1893,7 @@
       function applyPageLanguage(lang) {
         var skipLink = document.getElementById("skip-link");
         var heroText = document.getElementById("hero-copy-text");
+        var themeBuilderLink = document.getElementById("themeBuilderLink");
         var introTitle = document.getElementById("intro-title");
         var introDescription = document.getElementById("intro-description");
         var introHighlightsTitle = document.getElementById("intro-highlights-title");
@@ -1914,6 +1916,7 @@
         if (lang === "de") {
           if (skipLink) skipLink.textContent = "Zum Inhalt springen";
           if (heroText) heroText.textContent = "Barriereorientierter Datetime-Picker-Fork auf Basis von flatpickr. Diese Seite folgt der Counter-Optik und zeigt praxisnahe Picker-Demos.";
+          if (themeBuilderLink) themeBuilderLink.textContent = "Zum Theme-Builder";
           if (introTitle) introTitle.textContent = "Was ist a11y_datetime?";
           if (introDescription) introDescription.textContent = "a11y_datetime ist ein barriereorientierter Fork von flatpickr. Es verbessert Tastaturbedienung, ARIA-Semantik und Design-Anpassungen über CSS-Variablen.";
           if (introHighlightsTitle) introHighlightsTitle.textContent = "Highlights";
@@ -1935,6 +1938,7 @@
         } else {
           if (skipLink) skipLink.textContent = "Skip to content";
           if (heroText) heroText.textContent = "Accessible datetime picker fork based on flatpickr. This page follows the counter-style visual direction and keeps picker demos practical.";
+          if (themeBuilderLink) themeBuilderLink.textContent = "Jump to Theme Builder";
           if (introTitle) introTitle.textContent = "What is a11y_datetime?";
           if (introDescription) introDescription.textContent = "a11y_datetime is an accessibility-focused fork of flatpickr. It improves keyboard behavior, ARIA semantics, and design customization through CSS variables.";
           if (introHighlightsTitle) introHighlightsTitle.textContent = "Highlights";
