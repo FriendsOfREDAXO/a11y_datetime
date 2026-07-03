@@ -1396,13 +1396,17 @@
             calendarBg: "#ffffff",
             calendarBorder: "#5a6578",
             dayFg: "#1b2433",
-            accent: "#ff6a2a"
+            accent: "#ff6a2a",
+            selectedFg: "#1b2433",
+            focusColor: "#8a2f00"
           },
           dark: {
             calendarBg: "#111822",
             calendarBorder: "#9fb1cc",
             dayFg: "#f2f6ff",
-            accent: "#ff7a3d"
+            accent: "#ff7a3d",
+            selectedFg: "#111822",
+            focusColor: "#ffb07a"
           }
         },
         balanced: {
@@ -1505,7 +1509,30 @@
       }
 
       function contrastColor(hex) {
-        return luminance(hex) > 0.45 ? "#0f1725" : "#ffffff";
+        var dark = "#0f1725";
+        var light = "#ffffff";
+        return contrastRatio(dark, hex) >= contrastRatio(light, hex) ? dark : light;
+      }
+
+      function pickAccessibleColor(preferred, bg, minRatio, fallbacks) {
+        var candidates = [preferred].concat(fallbacks || []);
+        var best = candidates[0] || "#0f1725";
+        var bestRatio = contrastRatio(best, bg);
+
+        for (var i = 0; i < candidates.length; i++) {
+          var candidate = candidates[i];
+          if (!candidate) continue;
+          var ratio = contrastRatio(candidate, bg);
+          if (ratio >= minRatio) {
+            return candidate;
+          }
+          if (ratio > bestRatio) {
+            best = candidate;
+            bestRatio = ratio;
+          }
+        }
+
+        return best;
       }
 
       function resolveThemeMode() {
@@ -1536,9 +1563,19 @@
         var weekdaysFg = core.weekdaysFg || (isDark ? "#cfd5df" : "#4c566d");
         var dayHoverBg = core.dayHoverBg || (isDark ? "#2e3643" : "#e6eefb");
         var selectedBg = core.selectedBg || accent;
-        var selectedFg = core.selectedFg || contrastColor(selectedBg);
+        var selectedFg = pickAccessibleColor(
+          core.selectedFg || contrastColor(selectedBg),
+          selectedBg,
+          4.5,
+          [dayFg, "#0f1725", "#ffffff"]
+        );
         var todayColor = core.todayColor || accent;
-        var focusColor = core.focusColor || accent;
+        var focusColor = pickAccessibleColor(
+          core.focusColor || accent,
+          calendarBg,
+          3.0,
+          [calendarBorder, dayFg, "#0f1725", "#ffffff"]
+        );
 
         return {
           "--a11y-dt-calendar-bg": calendarBg,
@@ -1613,7 +1650,7 @@
       }
 
       function extractHexFromFocusRing(value) {
-        var match = (value || "").match(/#([0-9a-f]{3}|[0-9a-f]{6})/i);
+        var match = (value || "").match(/#([0-9a-f]{6}|[0-9a-f]{3})/i);
         return match ? "#" + match[1] : "#0b5fd3";
       }
 
