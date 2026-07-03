@@ -519,6 +519,12 @@
       border: 1px solid var(--a11y-dt-calendar-border, var(--line));
     }
 
+    .inline-theme-preview {
+      position: sticky;
+      top: 12px;
+      align-self: start;
+    }
+
     label {
       font-size: 0.92rem;
       color: var(--sub);
@@ -679,6 +685,11 @@
       .range-mobile-only {
         display: grid;
         grid-template-columns: 1fr;
+      }
+
+      .inline-theme-preview {
+        position: static;
+        top: auto;
       }
     }
 
