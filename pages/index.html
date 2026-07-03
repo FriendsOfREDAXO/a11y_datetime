@@ -741,6 +741,12 @@
     :root[data-a11y-datetime-preset="modern"] .flatpickr-day.endRange {
       box-shadow: inset 0 0 0 2px var(--a11y-dt-calendar-bg);
     }
+
+    .flatpickr-day.selected,
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange {
+      font-weight: 700;
+    }
   </style>
   <link rel="stylesheet" href="./dist/a11y_datetime.css?v=5.2.1" />
 </head>
@@ -1396,16 +1402,16 @@
             calendarBg: "#ffffff",
             calendarBorder: "#5a6578",
             dayFg: "#1b2433",
-            accent: "#ff6a2a",
-            selectedFg: "#1b2433",
-            focusColor: "#8a2f00"
+            accent: "#b64000",
+            selectedFg: "#ffffff",
+            focusColor: "#7a2b00"
           },
           dark: {
             calendarBg: "#111822",
             calendarBorder: "#9fb1cc",
             dayFg: "#f2f6ff",
-            accent: "#ff7a3d",
-            selectedFg: "#111822",
+            accent: "#b84a17",
+            selectedFg: "#ffffff",
             focusColor: "#ffb07a"
           }
         },
