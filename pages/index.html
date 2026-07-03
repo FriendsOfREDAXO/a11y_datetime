@@ -1017,6 +1017,14 @@
           <h3>Custom Theme Builder (Light + Dark)</h3>
           <div class="theme-controls">
             <div>
+              <label>Preview mode</label>
+              <div class="switch-group" id="theme-local-switch" role="group" aria-label="Theme editor preview mode">
+                <button type="button" data-theme-mode="system" class="is-active">System</button>
+                <button type="button" data-theme-mode="light">Light</button>
+                <button type="button" data-theme-mode="dark">Dark</button>
+              </div>
+            </div>
+            <div>
               <label for="themeShadow">Shadow</label>
               <select id="themeShadow">
                 <option value="none">none</option>
@@ -1375,6 +1383,7 @@
       var themeShadowSelect = document.getElementById("themeShadow");
       var themeBuilderInputs = Array.prototype.slice.call(document.querySelectorAll(".theme-color-input"));
       var globalThemeButtons = Array.prototype.slice.call(document.querySelectorAll("#global-theme-switch [data-theme-mode]"));
+      var localThemeButtons = Array.prototype.slice.call(document.querySelectorAll("#theme-local-switch [data-theme-mode]"));
       var globalLanguageButtons = Array.prototype.slice.call(document.querySelectorAll("#global-language-switch [data-language]"));
       var systemThemeQuery = window.matchMedia("(prefers-color-scheme: dark)");
       var activeThemeName = "highContrast";
@@ -1663,15 +1672,28 @@
         renderThemeContrast(coreOrModes);
       }
 
-      function renderThemeCode(name, vars) {
+      function renderThemeCode(name, coreOrModes) {
         if (!themeCode) return;
+        var lightCore = resolveCoreByRequestedMode(coreOrModes, "light") || {};
+        var darkCore = resolveCoreByRequestedMode(coreOrModes, "dark") || {};
+        var lightVars = buildThemePalette(lightCore, "light");
+        var darkVars = buildThemePalette(darkCore, "dark");
+        applyShadowModeForMode(lightVars, "light");
+        applyShadowModeForMode(darkVars, "dark");
+
         var lines = [
           "/* active theme: " + name + " */",
-          "/* mode: " + resolveThemeMode() + " */",
-          ":root {"
+          "/* copy-ready: light + dark */",
+          ":root[data-a11y-datetime-theme=\"light\"] {"
         ];
-        Object.keys(vars).forEach(function(key) {
-          lines.push("  " + key + ": " + vars[key] + ";");
+        Object.keys(lightVars).forEach(function(key) {
+          lines.push("  " + key + ": " + lightVars[key] + ";");
+        });
+        lines.push("}");
+        lines.push("");
+        lines.push(":root[data-a11y-datetime-theme=\"dark\"] {");
+        Object.keys(darkVars).forEach(function(key) {
+          lines.push("  " + key + ": " + darkVars[key] + ";");
         });
         lines.push("}");
         themeCode.textContent = lines.join("\n");
@@ -1684,6 +1706,10 @@
 
       function applyShadowMode(vars) {
         var mode = resolveThemeMode();
+        applyShadowModeForMode(vars, mode);
+      }
+
+      function applyShadowModeForMode(vars, mode) {
         if (activeShadowMode === "none") {
           vars["--a11y-dt-shadow"] = "none";
           return;
@@ -1714,8 +1740,23 @@
             themePresetSelect.value = name;
           }
         }
-        renderThemeCode(name, vars);
+        renderThemeCode(name, coreOrModes);
         renderThemeContrast(coreOrModes);
+      }
+
+      function updateThemeModeButtons(activeMode) {
+        globalThemeButtons.forEach(function(btn) {
+          btn.classList.toggle("is-active", (btn.getAttribute("data-theme-mode") || "system") === activeMode);
+        });
+        localThemeButtons.forEach(function(btn) {
+          btn.classList.toggle("is-active", (btn.getAttribute("data-theme-mode") || "system") === activeMode);
+        });
+      }
+
+      function setThemeMode(mode) {
+        themeModeState = mode || "system";
+        updateThemeModeButtons(themeModeState);
+        applyThemeVars(activeThemeName || "highContrast", activeThemeCore || themeVars.highContrast);
       }
 
       if (themePresetSelect) {
@@ -1740,7 +1781,8 @@
 
       themeBuilderInputs.forEach(function(input) {
         input.addEventListener("input", function() {
-          renderThemeContrast(buildCustomThemeFromInputs());
+          var liveCustom = buildCustomThemeFromInputs();
+          applyThemeVars("custom", liveCustom);
         });
       });
 
@@ -1752,11 +1794,14 @@
       globalThemeButtons.forEach(function(button) {
         button.addEventListener("click", function () {
           var mode = button.getAttribute("data-theme-mode") || "system";
-          themeModeState = mode;
-          globalThemeButtons.forEach(function(btn) {
-            btn.classList.toggle("is-active", btn === button);
-          });
-          applyThemeVars(activeThemeName || "highContrast", activeThemeCore || themeVars.highContrast);
+          setThemeMode(mode);
+        });
+      });
+
+      localThemeButtons.forEach(function(button) {
+        button.addEventListener("click", function () {
+          var mode = button.getAttribute("data-theme-mode") || "system";
+          setThemeMode(mode);
         });
       });
 
@@ -1900,6 +1945,7 @@
       applyPageLanguage("en");
       applyThemeVars("highContrast", themeVars.highContrast);
       populateThemeBuilder(themeVars.highContrast);
+      updateThemeModeButtons(themeModeState);
       if (themePresetSelect) {
         themePresetSelect.value = "highContrast";
       }
