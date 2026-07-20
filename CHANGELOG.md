@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [5.2.3] - 2026-07-20
+
+### Changed
+- `minuteIncrement` nutzt jetzt standardmäßig `1` statt `5`.
+
+### Fixed
+- Minutenwerte werden jetzt auf den nächstliegenden gültigen Schritt normalisiert; bei Gleichstand wird auf den nächsten Schritt gerundet.
+- Das Time-Wheel behält immer einen aktiven Minutenwert und fällt nie in einen leeren Auswahlzustand.
+- Wheel-Controls sind jetzt robuster gegen globale Framework-Styles auf `button` und `input`, damit Host-CSS das Popover-Layout nicht vergrößert.
+
 ## [5.2.2] - 2026-07-20
 
 ### Fixed
