@@ -593,6 +593,21 @@ function FlatpickrInstance(
     }
   }
 
+  function centerWheelSelection(options: HTMLButtonElement[]) {
+    const selected =
+      options.find((option) => option.tabIndex === 0) ||
+      options.find((option) => option.classList.contains("is-selected"));
+
+    if (!selected) return;
+
+    const column = selected.parentElement as HTMLElement | null;
+    if (!column) return;
+
+    const targetScrollTop =
+      selected.offsetTop - (column.clientHeight - selected.offsetHeight) / 2;
+    column.scrollTop = Math.max(0, targetScrollTop);
+  }
+
   function syncTimeWheelPopover() {
     if (!timeWheelPopover || !self.hourElement || !self.minuteElement) return;
 
@@ -622,6 +637,12 @@ function FlatpickrInstance(
         `${self.l10n.selectedTimeAriaLabel}: ${label}`
       );
     }
+
+    if (timeWheelPopover.classList.contains("is-open")) {
+      centerWheelSelection(timeWheelHourOptions);
+      centerWheelSelection(timeWheelMinuteOptions);
+      centerWheelSelection(timeWheelAmPmOptions);
+    }
   }
 
   function setTimeWheelPopoverOpen(open: boolean) {
@@ -633,6 +654,11 @@ function FlatpickrInstance(
       if (timeWheelTrigger) {
         timeWheelTrigger.setAttribute("aria-expanded", "true");
       }
+      window.requestAnimationFrame(() => {
+        centerWheelSelection(timeWheelHourOptions);
+        centerWheelSelection(timeWheelMinuteOptions);
+        centerWheelSelection(timeWheelAmPmOptions);
+      });
       const initialFocus =
         timeWheelHourOptions.find((option) => option.tabIndex === 0) ||
         timeWheelHourOptions[0];
@@ -1721,6 +1747,11 @@ function FlatpickrInstance(
     )} ${self.currentYear}`;
     monthYearWheelTrigger.textContent = label;
     monthYearWheelTrigger.setAttribute("aria-label", label);
+
+    if (monthYearWheelPopover.classList.contains("is-open")) {
+      centerWheelSelection(monthWheelOptions);
+      centerWheelSelection(yearWheelOptions);
+    }
   }
 
   function setMonthYearWheelPopoverOpen(open: boolean) {
@@ -1730,6 +1761,10 @@ function FlatpickrInstance(
       monthYearWheelPopover.removeAttribute("hidden");
       monthYearWheelPopover.classList.add("is-open");
       monthYearWheelTrigger?.setAttribute("aria-expanded", "true");
+      window.requestAnimationFrame(() => {
+        centerWheelSelection(monthWheelOptions);
+        centerWheelSelection(yearWheelOptions);
+      });
       const initialFocus =
         monthWheelOptions.find((option) => option.tabIndex === 0) ||
         monthWheelOptions[0] ||

@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [5.2.2] - 2026-07-20
+
+### Fixed
+- Wheel-Listen zentrieren beim Oeffnen und bei aktiver Synchronisierung jetzt alle Spalten konsistent.
+- Monat/Jahr-Wheel: Jahrspalte scrollt nun wie die Monatsspalte auf den aktiven Wert.
+- Zeit-Wheel: Minutenspalte scrollt nun wie die Stundenspalte auf den aktiven Wert.
+
 ## [5.2.1] - 2026-07-03
 
 ### Changed
