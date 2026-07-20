@@ -211,9 +211,6 @@ By default, Flatpickr utilizes native datetime widgets unless certain options (e
   /* Date selection mode, defaults to "single" */
   mode: "single" | "multiple" | "range" | "time";
 
-  /* Mobile behavior for range mode: keep default calendar range UI or use split native date inputs. */
-  mobileRangeMode: "default" | "split";
-
   /* How the month selector in the calendar should be shown */
   monthSelectorType: "dropdown" | "static";
 
@@ -368,7 +365,6 @@ export interface ParsedOptions {
   yearWheelManualInput: boolean;
   minuteIncrement: number;
   mode: BaseOptions["mode"];
-  mobileRangeMode: BaseOptions["mobileRangeMode"];
   monthSelectorType: string;
   nextArrow: string;
   noCalendar: boolean;
@@ -462,7 +458,6 @@ export const defaults: ParsedOptions = {
   yearWheelManualInput: true,
   minuteIncrement: 1,
   mode: "single",
-  mobileRangeMode: "default",
   monthSelectorType: "dropdown",
   nextArrow:
     "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' viewBox='0 0 17 17'><g></g><path d='M13.207 8.472l-7.854 7.854-0.707-0.707 7.146-7.146-7.146-7.148 0.707-0.707 7.854 7.854z' /></svg>",
