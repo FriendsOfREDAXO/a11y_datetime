@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [5.2.4] - 2026-07-20
+
+### Changed
+- Inline mode now hides the text input so the calendar is the only visible control.
+- `dateFormat` and `altFormat` help text clarified the automatic defaults and token-based input expectations.
+
+### Fixed
+- The seconds wheel now keeps the correct second selected instead of falling back to `00`.
+- The visible time trigger now shows seconds when they are enabled.
+- Invalid inline preloads no longer leave a raw placeholder value visible in the input.
+
 ## [5.2.3] - 2026-07-20
 
 ### Changed

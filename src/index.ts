@@ -84,6 +84,7 @@ function FlatpickrInstance(
   let timeWheelTrigger: HTMLButtonElement | undefined;
   let timeWheelHourOptions: HTMLButtonElement[] = [];
   let timeWheelMinuteOptions: HTMLButtonElement[] = [];
+  let timeWheelSecondOptions: HTMLButtonElement[] = [];
   let timeWheelAmPmOptions: HTMLButtonElement[] = [];
   let monthYearWheelPopover: HTMLDivElement | undefined;
   let monthYearWheelTrigger: HTMLButtonElement | undefined;
@@ -93,6 +94,7 @@ function FlatpickrInstance(
   let monthScrollAnimationTimer: number | undefined;
   let keyboardHelpButton: HTMLButtonElement | undefined;
   let keyboardHelpPanel: HTMLDivElement | undefined;
+  let configuredShowMonths = 1;
   const calendarInstanceId = `a11y-dt-${Math.random()
     .toString(36)
     .slice(2, 10)}`;
@@ -167,6 +169,35 @@ function FlatpickrInstance(
       ((self.calendarContainer?.getRootNode() as unknown) as DocumentOrShadowRoot)
         .activeElement || document.activeElement
     );
+  }
+
+  function getResponsiveShowMonths(maxShowMonths: number) {
+    const viewportWidth =
+      window.innerWidth || document.documentElement.clientWidth || 0;
+
+    if (maxShowMonths <= 1) return 1;
+    if (viewportWidth > 0 && viewportWidth < 640) return 1;
+    if (viewportWidth > 0 && viewportWidth < 960) return Math.min(maxShowMonths, 2);
+
+    return maxShowMonths;
+  }
+
+  function syncResponsiveShowMonths() {
+    const nextShowMonths = getResponsiveShowMonths(configuredShowMonths);
+
+    if (self.config.showMonths !== nextShowMonths) {
+      self.config.showMonths = nextShowMonths;
+      return true;
+    }
+
+    return false;
+  }
+
+  function needsResponsiveMonthRedraw() {
+    if (self.config.noCalendar || self.isMobile) return false;
+
+    const renderedMonthCount = self.monthElements ? self.monthElements.length : 0;
+    return renderedMonthCount !== self.config.showMonths;
   }
 
   function bindToInstance<F extends Function>(fn: F): F {
@@ -474,6 +505,14 @@ function FlatpickrInstance(
       option.setAttribute("aria-disabled", enabled ? "false" : "true");
     });
 
+    timeWheelSecondOptions.forEach((option) => {
+      const second = parseInt(option.dataset.value || "0", 10) || 0;
+      const enabled = isTimeWithinBounds(currentHour, currentMinute, second);
+      option.disabled = !enabled;
+      option.classList.toggle("is-disabled", !enabled);
+      option.setAttribute("aria-disabled", enabled ? "false" : "true");
+    });
+
     timeWheelAmPmOptions.forEach((option) => {
       const meridiem = String(option.dataset.value || "");
       const hour = ampm2military(activeHour, meridiem || self.l10n.amPM[0]);
@@ -652,6 +691,13 @@ function FlatpickrInstance(
     markWheelSelection(timeWheelHourOptions, hourValue);
     markWheelSelection(timeWheelMinuteOptions, minuteValue);
 
+    if (self.secondElement !== undefined) {
+      markWheelSelection(
+        timeWheelSecondOptions,
+        String(parseInt(self.secondElement.value, 10) || 0)
+      );
+    }
+
     if (self.amPM !== undefined) {
       markWheelSelection(
         timeWheelAmPmOptions,
@@ -663,6 +709,9 @@ function FlatpickrInstance(
 
     if (timeWheelTrigger) {
       let label = `${pad(self.hourElement.value)}:${pad(self.minuteElement.value)}`;
+      if (self.secondElement !== undefined) {
+        label += `:${pad(self.secondElement.value)}`;
+      }
       if (self.amPM !== undefined && self.amPM.textContent) {
         label += ` ${self.amPM.textContent}`;
       }
@@ -676,6 +725,7 @@ function FlatpickrInstance(
     if (timeWheelPopover.classList.contains("is-open")) {
       centerWheelSelection(timeWheelHourOptions);
       centerWheelSelection(timeWheelMinuteOptions);
+      centerWheelSelection(timeWheelSecondOptions);
       centerWheelSelection(timeWheelAmPmOptions);
     }
   }
@@ -692,6 +742,7 @@ function FlatpickrInstance(
       window.requestAnimationFrame(() => {
         centerWheelSelection(timeWheelHourOptions);
         centerWheelSelection(timeWheelMinuteOptions);
+        centerWheelSelection(timeWheelSecondOptions);
         centerWheelSelection(timeWheelAmPmOptions);
       });
       const initialFocus =
@@ -714,6 +765,8 @@ function FlatpickrInstance(
       timeWheelHourOptions[0] ||
       timeWheelMinuteOptions.find((option) => option.tabIndex === 0) ||
       timeWheelMinuteOptions[0] ||
+      timeWheelSecondOptions.find((option) => option.tabIndex === 0) ||
+      timeWheelSecondOptions[0] ||
       timeWheelAmPmOptions.find((option) => option.tabIndex === 0) ||
       timeWheelAmPmOptions[0] ||
       self.hourElement
@@ -879,6 +932,25 @@ function FlatpickrInstance(
     );
     timeWheelMinuteOptions = minuteColumn.options;
     wheelContent.appendChild(minuteColumn.column);
+
+    if (self.config.enableSeconds) {
+      const secondValues = Array.from({ length: 60 }, (_, i) => String(i));
+      const secondColumn = buildColumn(
+        "flatpickr-time-wheel-column flatpickr-time-wheel-seconds",
+        self.l10n.secondAriaLabel || "Second",
+        secondValues,
+        (value) => {
+          if (!self.secondElement) return;
+          self.secondElement.value = pad(value);
+          updateTime();
+          syncTimeWheelPopover();
+        }
+      );
+      timeWheelSecondOptions = secondColumn.options;
+      wheelContent.appendChild(secondColumn.column);
+    } else {
+      timeWheelSecondOptions = [];
+    }
 
     if (!self.config.time_24hr && self.amPM !== undefined) {
       const amPmValues = [self.l10n.amPM[0], self.l10n.amPM[1]];
@@ -3561,6 +3633,14 @@ function FlatpickrInstance(
   }
 
   function onResize() {
+    syncResponsiveShowMonths();
+
+    if (configuredShowMonths > 1 && needsResponsiveMonthRedraw()) {
+      redraw();
+    }
+
+    setCalendarWidth();
+
     if (self.isOpen && !self.config.static && !self.config.inline)
       positionCalendar();
   }
@@ -3595,6 +3675,11 @@ function FlatpickrInstance(
     }
 
     const wasOpen = self.isOpen;
+
+    syncResponsiveShowMonths();
+    if (needsResponsiveMonthRedraw()) {
+      redraw();
+    }
 
     self.isOpen = true;
 
@@ -3695,6 +3780,19 @@ function FlatpickrInstance(
       ...instanceConfig,
     } as Options;
 
+    const datasetConfig = element.dataset as Record<string, string | undefined>;
+    if (typeof userConfig.showMonths === "undefined" && datasetConfig.showmonths) {
+      userConfig.showMonths = Number(datasetConfig.showmonths) as any;
+    }
+
+    if (typeof userConfig.yearRange === "undefined" && datasetConfig.yearrange) {
+      try {
+        userConfig.yearRange = JSON.parse(datasetConfig.yearrange) as any;
+      } catch (e) {
+        userConfig.yearRange = datasetConfig.yearrange as any;
+      }
+    }
+
     const formats = {} as Record<"dateFormat" | "altFormat", string>;
 
     self.config.parseDate = userConfig.parseDate;
@@ -3777,6 +3875,9 @@ function FlatpickrInstance(
       (self.config as any)[boolOpts[i]] =
         self.config[boolOpts[i]] === true ||
         self.config[boolOpts[i]] === "true";
+
+    configuredShowMonths = Math.max(1, Number(self.config.showMonths || 1));
+    self.config.showMonths = getResponsiveShowMonths(configuredShowMonths);
 
     // Month/year wheel is now the default and only header interaction model.
     self.config.monthYearWheel = true;
@@ -3996,9 +4097,12 @@ function FlatpickrInstance(
   function redraw() {
     if (self.config.noCalendar || self.isMobile) return;
 
+    syncResponsiveShowMonths();
+
     buildMonthSwitch();
     updateNavigationCurrentMonth();
     buildDays();
+    setCalendarWidth();
   }
 
   function focusAndClose() {
@@ -4121,7 +4225,15 @@ function FlatpickrInstance(
 
   const CALLBACKS: { [k in keyof Options]: Function[] } = {
     locale: [setupLocale, updateWeekdays],
-    showMonths: [buildMonths, setCalendarWidth, buildWeekdays],
+    showMonths: [
+      () => {
+        configuredShowMonths = Math.max(1, Number(self.config.showMonths || 1));
+        self.config.showMonths = getResponsiveShowMonths(configuredShowMonths);
+      },
+      buildMonths,
+      setCalendarWidth,
+      buildWeekdays,
+    ],
     minDate: [jumpToDate],
     maxDate: [jumpToDate],
     positionElement: [updatePositionElement],
@@ -4282,6 +4394,10 @@ function FlatpickrInstance(
 
     if (preloadedDate) setSelectedDate(preloadedDate, self.config.dateFormat);
 
+    if (preloadedDate && self.selectedDates.length === 0 && self._input) {
+      self._input.value = "";
+    }
+
     self._initialDate =
       self.selectedDates.length > 0
         ? self.selectedDates[0]
@@ -4353,6 +4469,13 @@ function FlatpickrInstance(
           self.altInput,
           self.input.nextSibling
         );
+    }
+
+    if (self.config.inline) {
+      self.input.type = "hidden";
+      if (self.altInput !== undefined) {
+        self.altInput.type = "hidden";
+      }
     }
 
     if (!self.config.allowInput)
