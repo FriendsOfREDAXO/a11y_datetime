@@ -94,6 +94,8 @@ function FlatpickrInstance(
   let monthScrollAnimationTimer: number | undefined;
   let keyboardHelpButton: HTMLButtonElement | undefined;
   let keyboardHelpPanel: HTMLDivElement | undefined;
+  let mobileRangeStartInput: HTMLInputElement | undefined;
+  let mobileRangeEndInput: HTMLInputElement | undefined;
   let configuredShowMonths = 1;
   const calendarInstanceId = `a11y-dt-${Math.random()
     .toString(36)
@@ -207,31 +209,94 @@ function FlatpickrInstance(
   function setCalendarWidth() {
     const config = self.config;
 
-    if (config.weekNumbers === false && config.showMonths === 1) {
+    if (config.noCalendar === true) {
       return;
-    } else if (config.noCalendar !== true) {
-      window.requestAnimationFrame(function () {
-        if (self.calendarContainer !== undefined) {
-          self.calendarContainer.style.visibility = "hidden";
-          self.calendarContainer.style.display = "block";
-        }
-        if (self.daysContainer !== undefined) {
-          const daysWidth = (self.days.offsetWidth + 1) * config.showMonths;
-
-          self.daysContainer.style.width = daysWidth + "px";
-
-          self.calendarContainer.style.width =
-            daysWidth +
-            (self.weekWrapper !== undefined
-              ? self.weekWrapper.offsetWidth
-              : 0) +
-            "px";
-
-          self.calendarContainer.style.removeProperty("visibility");
-          self.calendarContainer.style.removeProperty("display");
-        }
-      });
     }
+
+    window.requestAnimationFrame(function () {
+      if (self.calendarContainer !== undefined) {
+        self.calendarContainer.style.visibility = "hidden";
+        self.calendarContainer.style.display = "block";
+      }
+
+      if (!self.calendarContainer) {
+        return;
+      }
+
+      const firstDayContainer = self.calendarContainer.querySelector(
+        ".dayContainer"
+      ) as HTMLDivElement | null;
+      const monthCount = Math.max(1, Number(config.showMonths || 1));
+      const monthWidth = firstDayContainer
+        ? Math.round(firstDayContainer.getBoundingClientRect().width)
+        : 0;
+      const monthElements = self.monthNav
+        ? Array.from(self.monthNav.querySelectorAll(".flatpickr-month"))
+        : [];
+      const weekdayGroups = self.weekdayContainer
+        ? Array.from(
+            self.weekdayContainer.querySelectorAll(".flatpickr-weekdaycontainer")
+          )
+        : [];
+
+      monthElements.forEach((monthEl, index) => {
+        (monthEl as HTMLElement).style.display = index < monthCount ? "" : "none";
+      });
+
+      weekdayGroups.forEach((weekdayEl, index) => {
+        (weekdayEl as HTMLElement).style.display = index < monthCount ? "" : "none";
+      });
+
+      if (monthCount === 1 && config.weekNumbers === false) {
+        if (self.daysContainer) {
+          self.daysContainer.style.removeProperty("width");
+        }
+        if (self.rContainer) {
+          self.rContainer.style.removeProperty("width");
+        }
+        if (self.monthNav) {
+          self.monthNav.style.removeProperty("width");
+        }
+        if (self.weekdayContainer) {
+          self.weekdayContainer.style.removeProperty("width");
+        }
+        self.calendarContainer.style.removeProperty("width");
+        self.calendarContainer.classList.remove("multiMonth");
+        self.calendarContainer.style.removeProperty("visibility");
+        self.calendarContainer.style.removeProperty("display");
+        return;
+      }
+
+      const daysWidth =
+        monthWidth > 0
+          ? monthWidth * monthCount
+          : self.days !== undefined
+          ? (self.days.offsetWidth + 1) * monthCount
+          : 0;
+
+      if (daysWidth > 0) {
+        if (self.daysContainer) {
+          self.daysContainer.style.width = daysWidth + "px";
+        }
+        if (self.rContainer) {
+          self.rContainer.style.width = daysWidth + "px";
+        }
+        if (self.monthNav) {
+          self.monthNav.style.width = daysWidth + "px";
+        }
+        if (self.weekdayContainer) {
+          self.weekdayContainer.style.width = daysWidth + "px";
+        }
+        self.calendarContainer.classList.toggle("multiMonth", monthCount > 1);
+        self.calendarContainer.style.width =
+          daysWidth +
+          (self.weekWrapper !== undefined ? self.weekWrapper.offsetWidth : 0) +
+          "px";
+      }
+
+      self.calendarContainer.style.removeProperty("visibility");
+      self.calendarContainer.style.removeProperty("display");
+    });
   }
 
   /**
@@ -2782,6 +2847,8 @@ function FlatpickrInstance(
     if (self.altInput !== undefined) self.altInput.value = "";
 
     if (self.mobileInput !== undefined) self.mobileInput.value = "";
+    if (mobileRangeStartInput !== undefined) mobileRangeStartInput.value = "";
+    if (mobileRangeEndInput !== undefined) mobileRangeEndInput.value = "";
 
     self.selectedDates = [];
     self.latestSelectedDateObj = undefined;
@@ -2842,6 +2909,12 @@ function FlatpickrInstance(
       if (self.mobileInput.parentNode)
         self.mobileInput.parentNode.removeChild(self.mobileInput);
       self.mobileInput = undefined;
+      mobileRangeStartInput = undefined;
+    }
+    if (mobileRangeEndInput) {
+      if (mobileRangeEndInput.parentNode)
+        mobileRangeEndInput.parentNode.removeChild(mobileRangeEndInput);
+      mobileRangeEndInput = undefined;
     } else if (self.calendarContainer && self.calendarContainer.parentNode) {
       if (self.config.static && self.calendarContainer.parentNode) {
         const wrapper = self.calendarContainer.parentNode;
@@ -3784,6 +3857,12 @@ function FlatpickrInstance(
     if (typeof userConfig.showMonths === "undefined" && datasetConfig.showmonths) {
       userConfig.showMonths = Number(datasetConfig.showmonths) as any;
     }
+    if (
+      typeof userConfig.mobileRangeMode === "undefined" &&
+      datasetConfig.mobilerangemode
+    ) {
+      userConfig.mobileRangeMode = datasetConfig.mobilerangemode as any;
+    }
 
     if (typeof userConfig.yearRange === "undefined" && datasetConfig.yearrange) {
       try {
@@ -3900,16 +3979,25 @@ function FlatpickrInstance(
       self.config[hook] = arrayify(self.config[hook] || []).map(bindToInstance);
     });
 
-    self.isMobile =
+    const supportsNativeMobile =
       !self.config.disableMobile &&
       !self.config.inline &&
-      self.config.mode === "single" &&
       !self.config.disable.length &&
       !self.config.enable &&
       !self.config.weekNumbers &&
       /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
         navigator.userAgent
       );
+    const mobileRangeMode = String(
+      self.config.mobileRangeMode || "default"
+    ).toLowerCase();
+    const allowRangeSplitOnMobile =
+      self.config.mode === "range" &&
+      mobileRangeMode === "split" &&
+      self.config.enableTime === false;
+    self.isMobile =
+      supportsNativeMobile &&
+      (self.config.mode === "single" || allowRangeSplitOnMobile);
 
     for (let i = 0; i < self.config.plugins.length; i++) {
       const pluginConf = self.config.plugins[i](self) || ({} as Options);
@@ -4489,6 +4577,16 @@ function FlatpickrInstance(
   }
 
   function setupMobile() {
+    if (
+      self.config.mode === "range" &&
+      String(self.config.mobileRangeMode || "default").toLowerCase() ===
+        "split" &&
+      self.config.enableTime === false
+    ) {
+      setupMobileRangeSplit();
+      return;
+    }
+
     const inputType = self.config.enableTime
       ? self.config.noCalendar
         ? "time"
@@ -4548,6 +4646,126 @@ function FlatpickrInstance(
       triggerEvent("onChange");
       triggerEvent("onClose");
     });
+  }
+
+  function setupMobileRangeSplit() {
+    const toDateValue = (value: string): string => {
+      const trimmed = String(value || "").trim();
+      return /^\d{4}-\d{2}-\d{2}$/.test(trimmed) ? trimmed : "";
+    };
+
+    const splitRangeValue = (value: string): [string, string] => {
+      const normalized = String(value || "").trim();
+      if (normalized === "") {
+        return ["", ""];
+      }
+
+      const parts = normalized.split(/\s+to\s+/i);
+      if (parts.length === 2) {
+        return [parts[0].trim(), parts[1].trim()];
+      }
+
+      return [normalized, ""];
+    };
+
+    const startInput = createElement<HTMLInputElement>(
+      "input",
+      self.input.className + " flatpickr-mobile flatpickr-mobile-range-start"
+    );
+    const endInput = createElement<HTMLInputElement>(
+      "input",
+      self.input.className + " flatpickr-mobile flatpickr-mobile-range-end"
+    );
+
+    startInput.type = "date";
+    endInput.type = "date";
+    startInput.tabIndex = 1;
+    endInput.tabIndex = 1;
+    startInput.disabled = self.input.disabled;
+    endInput.disabled = self.input.disabled;
+    startInput.required = self.input.required;
+    endInput.required = self.input.required;
+    startInput.placeholder = self.input.placeholder;
+    endInput.placeholder = self.input.placeholder;
+
+    const sourceId = self.input.getAttribute("id") || "flatpickr-mobile-range";
+    startInput.setAttribute("id", sourceId + "__start");
+    endInput.setAttribute("id", sourceId + "__end");
+    startInput.setAttribute(
+      "aria-label",
+      self.input.getAttribute("data-mobilerangestartlabel") || "Start date"
+    );
+    endInput.setAttribute(
+      "aria-label",
+      self.input.getAttribute("data-mobilerangeendlabel") || "End date"
+    );
+
+    if (self.config.minDate) {
+      const min = self.formatDate(self.config.minDate, "Y-m-d");
+      startInput.min = min;
+      endInput.min = min;
+    }
+    if (self.config.maxDate) {
+      const max = self.formatDate(self.config.maxDate, "Y-m-d");
+      startInput.max = max;
+      endInput.max = max;
+    }
+
+    if (self.selectedDates.length > 0) {
+      startInput.value = self.formatDate(self.selectedDates[0], "Y-m-d");
+    }
+    if (self.selectedDates.length > 1) {
+      endInput.value = self.formatDate(self.selectedDates[1], "Y-m-d");
+    }
+    if (self.selectedDates.length === 0) {
+      const values = splitRangeValue(self.input.value);
+      startInput.value = toDateValue(values[0]);
+      endInput.value = toDateValue(values[1]);
+    }
+
+    self.mobileInput = startInput;
+    mobileRangeStartInput = startInput;
+    mobileRangeEndInput = endInput;
+    self.mobileFormatStr = "Y-m-d";
+
+    self.input.type = "hidden";
+    if (self.altInput !== undefined) {
+      self.altInput.type = "hidden";
+    }
+
+    const syncRangeValue = () => {
+      const startValue = toDateValue(startInput.value);
+      const endValue = toDateValue(endInput.value);
+
+      if (startValue !== "" && endValue !== "") {
+        self.setDate([startValue, endValue], false, "Y-m-d");
+        self.input.value = startValue + " to " + endValue;
+      } else if (startValue !== "") {
+        self.setDate(startValue, false, "Y-m-d");
+        self.input.value = startValue;
+      } else if (endValue !== "") {
+        self.setDate(endValue, false, "Y-m-d");
+        self.input.value = endValue;
+      } else {
+        self.clear(false, false);
+        self.input.value = "";
+      }
+
+      triggerEvent("onChange");
+      triggerEvent("onClose");
+    };
+
+    try {
+      if (self.input.parentNode) {
+        self.input.parentNode.insertBefore(startInput, self.input.nextSibling);
+        self.input.parentNode.insertBefore(endInput, startInput.nextSibling);
+      }
+    } catch {}
+
+    bind(startInput, "change", syncRangeValue);
+    bind(endInput, "change", syncRangeValue);
+    bind(startInput, "input", syncRangeValue);
+    bind(endInput, "input", syncRangeValue);
   }
 
   function toggle(e?: FocusEvent | MouseEvent) {
@@ -4686,6 +4904,17 @@ function FlatpickrInstance(
    * Updates the values of inputs associated with the calendar
    */
   function updateValue(triggerChange = true) {
+    if (mobileRangeStartInput !== undefined && mobileRangeEndInput !== undefined) {
+      mobileRangeStartInput.value =
+        self.selectedDates.length > 0
+          ? self.formatDate(self.selectedDates[0], "Y-m-d")
+          : "";
+      mobileRangeEndInput.value =
+        self.selectedDates.length > 1
+          ? self.formatDate(self.selectedDates[1], "Y-m-d")
+          : "";
+    }
+
     if (self.mobileInput !== undefined && self.mobileFormatStr) {
       self.mobileInput.value =
         self.latestSelectedDateObj !== undefined
