@@ -205,7 +205,7 @@ By default, Flatpickr utilizes native datetime widgets unless certain options (e
   yearWheelManualInput: boolean;
 
   /* Adjusts the step for the minute input (incl. scrolling)
-  Defaults to 5 */
+  Defaults to 1 */
   minuteIncrement: number;
 
   /* Date selection mode, defaults to "single" */
@@ -456,7 +456,7 @@ export const defaults: ParsedOptions = {
   showMonthNavArrows: false,
   yearRange: { past: 10, future: 10 },
   yearWheelManualInput: true,
-  minuteIncrement: 5,
+  minuteIncrement: 1,
   mode: "single",
   monthSelectorType: "dropdown",
   nextArrow:

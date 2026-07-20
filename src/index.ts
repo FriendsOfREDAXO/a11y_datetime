@@ -484,6 +484,26 @@ function FlatpickrInstance(
     });
   }
 
+  function normalizeMinuteToIncrement(minute: number) {
+    const normalizedMinute = ((minute % 60) + 60) % 60;
+    const step = Math.max(1, self.config.minuteIncrement || 1);
+
+    if (step === 1) return normalizedMinute;
+
+    const lower = Math.floor(normalizedMinute / step) * step;
+    const upper = lower + step;
+
+    if (upper >= 60) {
+      return lower;
+    }
+
+    const deltaToLower = normalizedMinute - lower;
+    const deltaToUpper = upper - normalizedMinute;
+
+    // Tie-break towards the next step to keep wheel movement intuitive.
+    return deltaToUpper <= deltaToLower ? upper : lower;
+  }
+
   /**
    * Syncs the selected date object time with user's time input
    */
@@ -492,7 +512,9 @@ function FlatpickrInstance(
       return;
 
     let hours = (parseInt(self.hourElement.value.slice(-2), 10) || 0) % 24,
-      minutes = (parseInt(self.minuteElement.value, 10) || 0) % 60,
+      minutes = normalizeMinuteToIncrement(
+        parseInt(self.minuteElement.value, 10) || 0
+      ),
       seconds =
         self.secondElement !== undefined
           ? (parseInt(self.secondElement.value, 10) || 0) % 60
@@ -589,7 +611,10 @@ function FlatpickrInstance(
     });
 
     if (!hasSelected && options[0]) {
-      options[0].tabIndex = 0;
+      const fallback = options[0];
+      fallback.classList.add("is-selected");
+      fallback.setAttribute("aria-selected", "true");
+      fallback.tabIndex = 0;
     }
   }
 
@@ -612,7 +637,17 @@ function FlatpickrInstance(
     if (!timeWheelPopover || !self.hourElement || !self.minuteElement) return;
 
     const hourValue = String(parseInt(self.hourElement.value, 10));
-    const minuteValue = String(parseInt(self.minuteElement.value, 10));
+    const normalizedMinute = normalizeMinuteToIncrement(
+      parseInt(self.minuteElement.value, 10) || 0
+    );
+    const minuteValue = String(normalizedMinute);
+
+    if (parseInt(self.minuteElement.value, 10) !== normalizedMinute) {
+      self.minuteElement.value = pad(normalizedMinute);
+      if (self.latestSelectedDateObj instanceof Date) {
+        self.latestSelectedDateObj.setMinutes(normalizedMinute);
+      }
+    }
 
     markWheelSelection(timeWheelHourOptions, hourValue);
     markWheelSelection(timeWheelMinuteOptions, minuteValue);
@@ -946,6 +981,8 @@ function FlatpickrInstance(
    * @param {Number} seconds the seconds (optional)
    */
   function setHours(hours: number, minutes: number, seconds: number) {
+    minutes = normalizeMinuteToIncrement(minutes);
+
     if (self.latestSelectedDateObj !== undefined) {
       self.latestSelectedDateObj.setHours(hours % 24, minutes, seconds || 0, 0);
     }

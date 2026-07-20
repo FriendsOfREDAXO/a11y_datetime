@@ -41,6 +41,14 @@ Key behavior differences:
 - `monthYearWheel` defaults to `true` and uses a wheel-style month/year popover.
 - Header arrows are now optional via `showMonthNavArrows` (default `false`).
 - `timeRules` can restrict allowed times by weekday.
+- `minuteIncrement` defaults to `1`.
+- Wheel controls use explicit control-level typography/box metrics so host-framework defaults (for example global `button` or `input` rules) do not distort the popover layout.
+
+`minuteIncrement` normalization behavior:
+
+- If a provided minute value does not match the configured increment, it is normalized to the nearest valid step.
+- Ties are resolved to the next step.
+- The time wheel always keeps one minute option selected (never an empty selection state).
 
 `timeRules` no-match behavior:
 
@@ -93,6 +101,7 @@ Quick reference for new/changed parameters:
 | `showCloseButton` | `boolean` | `true` | Render close button in title bar |
 | `initialDayFocus` | `"today" \| "selected" \| "firstAvailable"` | `"today"` | Initial day-grid focus strategy |
 | `timeRules` | `TimeRule[]` | `[]` | Weekday-based time windows; non-matching weekdays are disabled |
+| `minuteIncrement` | `number` | `1` | Minute step size; non-matching minute values normalize to nearest valid step |
 | `monthYearWheel` | `boolean` | `true` | Enable month/year wheel popover |
 | `showMonthNavArrows` | `boolean` | `false` | Show previous/next month arrow buttons in header |
 | `yearRange` | `{ past: number, future: number }` | `{ past: 10, future: 10 }` | Year range for wheel |
