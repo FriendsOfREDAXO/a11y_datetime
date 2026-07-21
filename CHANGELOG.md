@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [5.2.6] - 2026-07-21
+
+### Fixed
+- Responsive month rendering is now stabilized for `showMonths`: resize/open handling now forces a redraw when rendered month containers do not match the effective responsive target.
+- `showMonths` and `yearRange` from HTML dataset attributes are now normalized more robustly, so lowercase dataset keys are interpreted correctly.
+- Time-only popups (`noCalendar + hasTime`) no longer show stray visual separator artifacts below/around the popup: arrow pseudo-elements are disabled and the top border separator is excluded for time-only mode.
+
 ## [5.2.4] - 2026-07-20
 
 ### Changed

@@ -1,6 +1,6 @@
 {
   "name": "a11y_datetime",
-  "version": "5.2.5",
+  "version": "5.2.6",
   "description": "Accessible datetime picker based on flatpickr",
   "scripts": {
     "build": "run-s build:pre build:build build:esm build:types build:post",

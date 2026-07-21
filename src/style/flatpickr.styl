@@ -202,7 +202,7 @@
     .hasWeeks .dayContainer
       border-left 0
 
-  &.hasTime
+  &.hasTime:not(.noCalendar)
     .flatpickr-time
       height var(--a11y-dt-time-height)
       border-top 1px solid var(--a11y-dt-calendar-border)
@@ -217,6 +217,9 @@
   &.noCalendar.hasTime
     .flatpickr-time
       height auto
+
+    &:before, &:after
+      display none
 
   &:before, &:after
     position absolute
