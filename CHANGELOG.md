@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [5.2.6] - 2026-07-21
+## [5.2.7] - 2026-07-21
 
 ### Fixed
 - Responsive month rendering is now stabilized for `showMonths`: resize/open handling now forces a redraw when rendered month containers do not match the effective responsive target.
