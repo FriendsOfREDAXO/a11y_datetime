@@ -3,7 +3,8 @@ import path from "path";
 import chokidar from "chokidar";
 import glob from "glob";
 import stylus from "stylus";
-import stylusAutoprefixer from "autoprefixer-stylus";
+import autoprefixer from "autoprefixer";
+import postcss from "postcss";
 import { build as esbuild } from "esbuild";
 
 import pkg from "../package.json" with { type: "json" };
@@ -101,8 +102,19 @@ async function transpileStyle(source, { compress = false } = {}) {
     stylus(source, { compress })
       .include(`${process.cwd()}/src/style`)
       .include(`${process.cwd()}/src/style/themes`)
-      .use(stylusAutoprefixer())
-      .render((err, css) => (err ? reject(err) : resolve(css)));
+      .render(async (err, css) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        try {
+          const result = await postcss([autoprefixer()]).process(css, { from: undefined });
+          resolve(result.css);
+        } catch (postcssError) {
+          reject(postcssError);
+        }
+      });
   });
 }
 
