@@ -1,5 +1,7 @@
 # a11y_datetime
 
+👋 this is not a REDAXO Addon. 
+
 Repository: https://github.com/FriendsOfREDAXO/a11y_datetime
 
 a11y_datetime is a fork of flatpickr focused on accessibility.
