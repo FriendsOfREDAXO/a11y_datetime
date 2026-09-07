@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [5.2.8] - 2026-09-07
+
+### Fixed
+- Selecting a new hour/minute in the time wheel popover no longer intermittently reverts to the previously selected value: a capturing `blur` handler on the time container was re-syncing (and re-scrolling) the wheel from the still-stale input value while a click on a wheel option was in progress, which could shift the option out from under the pointer before the click landed.
+
 ## [5.2.7] - 2026-07-21
 
 ### Fixed
