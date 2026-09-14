@@ -3032,6 +3032,8 @@ function FlatpickrInstance(
           self.selectedDates.length === 1
         )
           self.clear(false);
+
+        self.close();
       }
     }
   }

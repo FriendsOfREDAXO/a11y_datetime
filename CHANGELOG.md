@@ -2,7 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [5.2.9] - 2026-09-14
+
+### Fixed
+- `documentClick` (the "click outside closes the picker" handler) correctly detected loss of focus but never actually called `self.close()`, so the calendar stayed open regardless of where the user clicked next — including clicking directly into another picker instance on the same page, which could leave multiple calendars open at once. Added the missing `self.close()` call.
 
 ## [5.2.8] - 2026-09-07
 
