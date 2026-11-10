@@ -1,6 +1,6 @@
 {
   "name": "a11y_datetime",
-  "version": "5.3.1",
+  "version": "5.3.2",
   "description": "Accessible datetime picker based on flatpickr",
   "scripts": {
     "build": "run-s build:pre build:build build:esm build:types build:post",
@@ -36,6 +36,7 @@
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "jest": "^30.4.2",
+    "jest-environment-jsdom": "^30.5.2",
     "npm-run-all": ">=4.1.5",
     "postcss": "^8.5.26",
     "prettier": "^2.2.1",

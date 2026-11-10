@@ -97,6 +97,31 @@ describe("monthSelect", () => {
   });
 
   describe("year nav", () => {
+    it("renders prev/next year buttons and the year input instead of the month/year wheel", () => {
+      expect(getPrevButton()).toBeTruthy();
+      expect(getNextButton()).toBeTruthy();
+      expect(
+        fp().calendarContainer.querySelector(
+          ".flatpickr-month-year-wheel-trigger"
+        )
+      ).toBeNull();
+      expect(fp().currentYearElement.isConnected).toBe(true);
+    });
+
+    it("tab from input reaches the year input", () => {
+      const input = fp().input;
+      document.body.appendChild(input);
+      fp().open();
+      input.focus();
+
+      input.dispatchEvent(
+        new KeyboardEvent("keydown", { keyCode: 9, bubbles: true } as any)
+      );
+
+      expect(document.activeElement).toBe(fp().currentYearElement);
+      input.remove();
+    });
+
     describe("next/prev year buttons", () => {
       const thisYear = new Date().getFullYear();
 

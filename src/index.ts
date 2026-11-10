@@ -1250,9 +1250,11 @@ function FlatpickrInstance(
     if (!self.config.inline && !self.config.static)
       bind(window, "resize", debouncedResize);
 
+    // Always listen for mousedown: touch-capable desktop browsers expose
+    // window.ontouchstart but are still operated with a mouse.
+    bind(window.document, "mousedown", documentClick);
     if (window.ontouchstart !== undefined)
       bind(window.document, "touchstart", documentClick);
-    else bind(window.document, "mousedown", documentClick);
     bind(window.document, "focus", documentClick, { capture: true });
 
     if (self.config.clickOpens === true) {
@@ -3059,14 +3061,19 @@ function FlatpickrInstance(
           self.minuteElement !== undefined &&
           self.hourElement !== undefined &&
           self.input.value !== "" &&
-          self.input.value !== undefined &&
+          self.input.value !== undefined
+        ) {
+          updateTime();
+        }
+
+        self.close();
+
+        if (
           self.config &&
           self.config.mode === "range" &&
           self.selectedDates.length === 1
         )
           self.clear(false);
-
-        self.close();
       }
     }
   }
@@ -3533,9 +3540,12 @@ function FlatpickrInstance(
             const headerPrimary = !self.config.noCalendar
               ? self.config.monthYearWheel
                 ? monthYearWheelTrigger
-                : self.monthsDropdownContainer ||
-                  self.currentYearElement ||
-                  prevMonthEnabled
+                : // plugins (e.g. monthSelect) may detach the month dropdown
+                  [
+                    self.monthsDropdownContainer,
+                    self.currentYearElement,
+                    prevMonthEnabled,
+                  ].find((el) => el !== undefined && el.isConnected)
               : undefined;
 
             const tabOrder = ([

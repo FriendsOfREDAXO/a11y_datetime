@@ -91,6 +91,28 @@ function simulate(
   onElement.dispatchEvent(evt);
 }
 
+// Since 5.2.0 the month/year wheel is the only header interaction model
+// (the native month <select> and the header year input are gone) and the
+// prev/next month arrows are opt-in via `showMonthNavArrows`.
+const getMonthYearWheelTrigger = () =>
+  fp.calendarContainer.querySelector(
+    ".flatpickr-month-year-wheel-trigger"
+  ) as HTMLButtonElement;
+
+const getMonthWheelOptions = () =>
+  Array.from(
+    fp.calendarContainer.querySelectorAll(
+      ".flatpickr-month-wheel .flatpickr-month-year-wheel-option"
+    )
+  ) as HTMLButtonElement[];
+
+const getYearWheelOptions = () =>
+  Array.from(
+    fp.calendarContainer.querySelectorAll(
+      ".flatpickr-year-wheel .flatpickr-month-year-wheel-option"
+    )
+  ) as HTMLButtonElement[];
+
 // simulate click
 const clickOn = (element: Node) => {
   simulate("click", element, { which: 1 }, CustomEvent);
@@ -774,6 +796,18 @@ describe("flatpickr", () => {
         expect(fp._input.value).toBe("22 January 2020 03:04");
       });
 
+      it("should close popup on touchstart outside on touch devices", () => {
+        createInstance({});
+
+        fp.open();
+        expect(fp.isOpen).toBe(true);
+
+        // jsdom exposes window.ontouchstart like touch-capable browsers do
+        expect(window.ontouchstart).not.toBeUndefined();
+        simulate("touchstart", window.document.body, {}, CustomEvent);
+        expect(fp.isOpen).toBe(false);
+      });
+
       it("should trigger onChange only once", () => {
         let timesFired = 0;
 
@@ -974,6 +1008,10 @@ describe("flatpickr", () => {
 
       fp._input.focus();
       simulate("keydown", fp._input, { keyCode: 13 }); // Enter
+      // Enter opens the calendar and focuses the first header control
+      expect(document.activeElement).toBe(getMonthYearWheelTrigger());
+
+      simulate("keydown", getMonthYearWheelTrigger(), { keyCode: 9 }); // Tab
 
       const active = document.activeElement as HTMLElement;
       expect(active.classList.contains("flatpickr-day")).toBe(true);
@@ -983,46 +1021,65 @@ describe("flatpickr", () => {
     });
 
     it("month and year controls are keyboard focusable", () => {
-      createInstance({
-        monthSelectorType: "dropdown",
-      });
+      createInstance();
 
-      expect(fp.monthsDropdownContainer.tabIndex).toBe(0);
-      expect(fp.currentYearElement.tabIndex).toBe(0);
+      const trigger = getMonthYearWheelTrigger();
+      expect(trigger.tagName).toBe("BUTTON");
+      expect(trigger.tabIndex).toBe(0);
+      expect(trigger.getAttribute("aria-haspopup")).toBe("dialog");
+
+      // roving tabindex: the selected month and year are the tab stops
+      const focusableMonths = getMonthWheelOptions().filter(
+        (o) => o.tabIndex === 0
+      );
+      const focusableYears = getYearWheelOptions().filter(
+        (o) => o.tabIndex === 0
+      );
+      expect(focusableMonths.length).toBe(1);
+      expect(focusableMonths[0].dataset.value).toBe(String(fp.currentMonth));
+      expect(focusableYears.length).toBe(1);
+      expect(focusableYears[0].dataset.value).toBe(String(fp.currentYear));
     });
 
     it("tab from input reaches month and year controls", () => {
       createInstance();
 
+      fp.open();
       fp._input.focus();
-      simulate("keydown", fp._input, { keyCode: 13 }); // Enter
       simulate("keydown", fp._input, { keyCode: 9 }); // Tab
 
-      expect(document.activeElement).toBe(fp.prevMonthNav);
+      const trigger = getMonthYearWheelTrigger();
+      expect(document.activeElement).toBe(trigger);
 
-      simulate("keydown", fp.prevMonthNav, { keyCode: 9 }); // Tab
-      expect(document.activeElement).toBe(fp.monthsDropdownContainer);
+      simulate("keydown", trigger, { keyCode: 13 }); // Enter opens the wheel
+      expect(trigger.getAttribute("aria-expanded")).toBe("true");
 
-      simulate("keydown", fp.monthsDropdownContainer, { keyCode: 9 }); // Tab
-      expect(document.activeElement).toBe(fp.currentYearElement);
+      const selectedMonth = getMonthWheelOptions()[fp.currentMonth];
+      expect(document.activeElement).toBe(selectedMonth);
+
+      simulate("keydown", selectedMonth, { keyCode: 39 }); // ArrowRight
+      expect((document.activeElement as HTMLElement).dataset.value).toBe(
+        String(fp.currentYear)
+      );
+      expect(
+        (document.activeElement as HTMLElement).closest(".flatpickr-year-wheel")
+      ).toBeTruthy();
     });
 
     it("tab to day grid focuses today first", () => {
       createInstance();
 
       fp._input.focus();
-      simulate("keydown", fp._input, { keyCode: 13 }); // Enter
-      simulate("keydown", fp._input, { keyCode: 9 }); // Tab -> prev
-      simulate("keydown", fp.prevMonthNav, { keyCode: 9 }); // Tab -> month
-      simulate("keydown", fp.monthsDropdownContainer, { keyCode: 9 }); // Tab -> year
-      simulate("keydown", fp.currentYearElement, { keyCode: 9 }); // Tab -> next
-      simulate("keydown", fp.nextMonthNav, { keyCode: 9 }); // Tab -> day
+      simulate("keydown", fp._input, { keyCode: 13 }); // Enter -> month/year
+      expect(document.activeElement).toBe(getMonthYearWheelTrigger());
+
+      simulate("keydown", getMonthYearWheelTrigger(), { keyCode: 9 }); // Tab -> day
 
       expect(document.activeElement).toBe(fp.todayDateElem);
     });
 
     it("shift+tab from day moves focus back to next-month arrow", () => {
-      createInstance();
+      createInstance({ showMonthNavArrows: true });
       fp.open();
 
       const firstDay = fp.days.childNodes[0] as HTMLElement;
@@ -1034,6 +1091,21 @@ describe("flatpickr", () => {
       });
 
       expect(document.activeElement).toBe(fp.nextMonthNav);
+    });
+
+    it("shift+tab from day moves focus back to month/year trigger without arrows", () => {
+      createInstance();
+      fp.open();
+
+      const firstDay = fp.days.childNodes[0] as HTMLElement;
+      firstDay.focus();
+
+      simulate("keydown", firstDay, {
+        keyCode: 9,
+        shiftKey: true,
+      });
+
+      expect(document.activeElement).toBe(getMonthYearWheelTrigger());
     });
 
     it("tab from day moves focus forward to time trigger", () => {
@@ -1064,22 +1136,19 @@ describe("flatpickr", () => {
 
       simulate("keydown", firstDay, { keyCode: 77 }); // M
 
-      expect(document.activeElement).toBe(fp.monthsDropdownContainer);
+      expect(document.activeElement).toBe(getMonthYearWheelTrigger());
     });
 
-    it("month control changes month via native select change", () => {
+    it("month control changes month via month wheel", () => {
       createInstance({
-        monthSelectorType: "dropdown",
         defaultDate: new Date(2019, 1, 1),
       });
       fp.open();
 
-      fp.monthsDropdownContainer.value = "2";
-      simulate("change", fp.monthsDropdownContainer);
+      clickOn(getMonthWheelOptions()[2]);
       expect(fp.currentMonth).toBe(2);
 
-      fp.monthsDropdownContainer.value = "1";
-      simulate("change", fp.monthsDropdownContainer);
+      clickOn(getMonthWheelOptions()[1]);
       expect(fp.currentMonth).toBe(1);
     });
 
@@ -1146,13 +1215,19 @@ describe("flatpickr", () => {
       );
     });
 
-    it("renders month control as native select with available options", () => {
+    it("renders month control as month/year wheel with available options", () => {
       createInstance();
       fp.open();
 
-      expect(fp.monthsDropdownContainer.tagName).toBe("SELECT");
-      expect(fp.monthsDropdownContainer.options.length).toBeGreaterThan(0);
-      expect(fp.monthsDropdownContainer.value).toBe(fp.currentMonth.toString());
+      const months = getMonthWheelOptions();
+      expect(months.length).toBe(12);
+      const selected = months.filter((o) =>
+        o.classList.contains("is-selected")
+      );
+      expect(selected.length).toBe(1);
+      expect(selected[0].dataset.value).toBe(fp.currentMonth.toString());
+      expect(selected[0].getAttribute("aria-selected")).toBe("true");
+      expect(getYearWheelOptions().length).toBeGreaterThan(0);
     });
 
     it("initialDayFocus selected prioritizes selected day", () => {
@@ -1163,12 +1238,8 @@ describe("flatpickr", () => {
       });
 
       fp._input.focus();
-      simulate("keydown", fp._input, { keyCode: 13 }); // Enter
-      simulate("keydown", fp._input, { keyCode: 9 }); // Tab -> prev
-      simulate("keydown", fp.prevMonthNav, { keyCode: 9 }); // Tab -> month
-      simulate("keydown", fp.monthsDropdownContainer, { keyCode: 9 }); // Tab -> year
-      simulate("keydown", fp.currentYearElement, { keyCode: 9 }); // Tab -> next
-      simulate("keydown", fp.nextMonthNav, { keyCode: 9 }); // Tab -> day
+      simulate("keydown", fp._input, { keyCode: 13 }); // Enter -> month/year
+      simulate("keydown", getMonthYearWheelTrigger(), { keyCode: 9 }); // Tab -> day
 
       expect(document.activeElement).toBe(fp.selectedDateElem);
     });
@@ -1234,6 +1305,7 @@ describe("flatpickr", () => {
         mode: "range",
         maxDate: "today",
         defaultDate: ["2019-02-01", "2019-02-27"],
+        showMonthNavArrows: true,
       });
 
       fp.open();
@@ -1529,18 +1601,28 @@ describe("flatpickr", () => {
     });
 
     it("year input", () => {
-      createInstance();
-      fp.currentYearElement.value = "2000";
-      simulate("keyup", fp.currentYearElement, KeyboardEvent);
+      createInstance({ yearWheelManualInput: true });
 
-      expect(fp.currentYear).toEqual(2000);
-      incrementTime("currentYearElement", 1);
+      const yearInput = fp.calendarContainer.querySelector(
+        ".flatpickr-month-year-wheel-input"
+      ) as HTMLInputElement;
+      expect(yearInput).toBeTruthy();
 
-      expect(fp.currentYear).toEqual(2001);
-      expect(fp.currentYearElement.value).toEqual("2001");
+      yearInput.value = "2020";
+      simulate("change", yearInput);
+      expect(fp.currentYear).toEqual(2020);
+
+      const selectedYear = getYearWheelOptions().find(
+        (o) => o.dataset.value === "2020"
+      ) as HTMLButtonElement;
+      expect(selectedYear.classList.contains("is-selected")).toBe(true);
+
+      simulate("keydown", selectedYear, { keyCode: 40 }); // ArrowDown
+      expect(fp.currentYear).toEqual(2021);
+      expect(yearInput.value).toEqual("2021");
       expect(
         (fp.days.childNodes[10] as DayElement).dateObj.getFullYear()
-      ).toEqual(2001);
+      ).toEqual(2021);
     });
 
     it("time input and increments", () => {
@@ -1548,6 +1630,7 @@ describe("flatpickr", () => {
         enableTime: true,
         defaultDate: "2017-1-1 10:00",
         //minDate: "2017-1-01 3:35",
+        minuteIncrement: 5, // default is 1 since 5.2.3
       });
 
       expect(fp.hourElement).toBeDefined();
@@ -1916,6 +1999,7 @@ describe("flatpickr", () => {
         dateFormat: "Y-m-d H:i",
         defaultDate: "2017-1-1 4:00",
         minDate: "2017-1-01 3:35",
+        minuteIncrement: 5, // default is 1 since 5.2.3
       });
 
       expect(!!fp.minDateHasTime).toBe(true);
@@ -1955,6 +2039,7 @@ describe("flatpickr", () => {
         enableTime: true,
         defaultDate: "2017-1-1 3:00",
         maxDate: "2017-1-01 3:35",
+        minuteIncrement: 5, // default is 1 since 5.2.3
       });
 
       const [hourElem, minuteElem] = [
@@ -2373,6 +2458,7 @@ describe("flatpickr", () => {
         minDate: "2099-1-1",
         maxDate: "2099-3-4",
         inline: true,
+        showMonthNavArrows: true,
       });
 
       expect(fp.currentMonth).toBe(0);
@@ -2402,49 +2488,59 @@ describe("flatpickr", () => {
       expect(fp._input.value).toEqual("");
     });
 
-    it("time-picker focuses out onto input", () => {
+    it("time-picker keeps keyboard focus inside the time wheel", () => {
+      // Since 5.2.0 time-only pickers render the time wheel directly and Tab /
+      // Shift+Tab cycle inside it (hour, minute, AM/PM, Done) instead of
+      // leaving the picker; the hour/minute inputs are hidden value holders.
       createInstance({ mode: "time" });
       fp.open();
 
       expect(fp.hourElement).toBeDefined();
       expect(fp.minuteElement).toBeDefined();
       expect(fp.amPM).toBeDefined();
+      expect(fp.minuteElement && fp.minuteElement.tabIndex).toBe(-1);
 
-      if (!fp.hourElement || !fp.minuteElement || !fp.amPM) return;
+      const popover = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-popover"
+      ) as HTMLElement | null;
+      const selectedHour = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-hours .flatpickr-time-wheel-option.is-selected"
+      ) as HTMLElement | null;
+      const done = fp.timeContainer?.querySelector(
+        ".flatpickr-time-wheel-done"
+      ) as HTMLElement | null;
 
-      fp.minuteElement.focus();
-      expect(document.activeElement).toStrictEqual(fp.minuteElement);
+      expect(popover).toBeTruthy();
+      expect(selectedHour).toBeTruthy();
+      expect(done).toBeTruthy();
+      if (!popover || !selectedHour || !done) return;
+
+      selectedHour.focus();
+      const visited: Element[] = [selectedHour];
+      for (let i = 0; i < 10; i++) {
+        simulate(
+          "keydown",
+          document.activeElement as HTMLElement,
+          { keyCode: 9, key: "Tab" },
+          KeyboardEvent
+        );
+        expect(popover.contains(document.activeElement)).toBe(true);
+        if (document.activeElement === selectedHour) break;
+        visited.push(document.activeElement as Element);
+      }
+
+      // the cycle passes the Done button and wraps back to the hour
+      expect(visited).toContain(done);
+      expect(document.activeElement).toBe(selectedHour);
 
       simulate(
         "keydown",
-        fp.minuteElement,
-        {
-          keyCode: 9, // Tab
-        },
+        selectedHour,
+        { keyCode: 9, key: "Tab", shiftKey: true },
         KeyboardEvent
       );
-      expect(document.activeElement).toStrictEqual(fp.amPM);
-
-      simulate(
-        "keydown",
-        fp.amPM,
-        {
-          keyCode: 9, // Tab
-          shiftKey: true,
-        },
-        KeyboardEvent
-      );
-      expect(document.activeElement).toStrictEqual(fp.minuteElement);
-
-      simulate(
-        "keydown",
-        fp.amPM,
-        {
-          keyCode: 9, // Tab
-        },
-        KeyboardEvent
-      );
-      expect(document.activeElement).toStrictEqual(fp._input);
+      expect(document.activeElement).toBe(done);
+      expect(document.activeElement).not.toBe(fp._input);
     });
 
     it("month control respects minDate when navigating backwards", () => {
@@ -2453,22 +2549,22 @@ describe("flatpickr", () => {
         minDate: new Date(2019, 4, 11),
       }) as Instance;
 
-      const monthControl = fp.calendarContainer.querySelector(
-        ".flatpickr-monthDropdown-months"
-      ) as HTMLSelectElement;
+      const months = getMonthWheelOptions();
+      expect(months.length).toEqual(12);
 
-      expect(monthControl).toBeTruthy();
-      if (!monthControl) return;
-
-      monthControl.value = "4";
-      simulate("change", monthControl);
-
-      monthControl.value = "3";
-      simulate("change", monthControl);
+      clickOn(months[4]);
+      clickOn(months[3]); // disabled, before minDate
 
       expect(fp.currentMonth).toEqual(4);
-      expect(monthControl.options.length).toEqual(8);
-      expect(monthControl.options[0].textContent).toEqual("May");
+      months.slice(0, 4).forEach((o) => {
+        expect(o.disabled).toBe(true);
+        expect(o.getAttribute("aria-disabled")).toBe("true");
+      });
+      expect(months[4].disabled).toBe(false);
+
+      // keyboard: ArrowUp in the month wheel cannot go below minDate either
+      simulate("keydown", months[4], { keyCode: 38 });
+      expect(fp.currentMonth).toEqual(4);
     });
 
     it("month control respects maxDate when navigating forwards", () => {
@@ -2477,40 +2573,34 @@ describe("flatpickr", () => {
         maxDate: new Date(2019, 8, 11),
       }) as Instance;
 
-      const monthControl = fp.calendarContainer.querySelector(
-        ".flatpickr-monthDropdown-months"
-      ) as HTMLSelectElement;
+      const months = getMonthWheelOptions();
 
-      expect(monthControl).toBeTruthy();
-      if (!monthControl) return;
-
-      monthControl.value = "8";
-      simulate("change", monthControl);
-
-      monthControl.value = "9";
-      simulate("change", monthControl);
+      clickOn(months[8]);
+      clickOn(months[9]); // disabled, after maxDate
 
       expect(fp.currentMonth).toEqual(8);
-      expect(monthControl.options.length).toEqual(9);
-      expect(
-        monthControl.options[monthControl.options.length - 1].textContent
-      ).toEqual("September");
+      months.slice(9).forEach((o) => {
+        expect(o.disabled).toBe(true);
+        expect(o.getAttribute("aria-disabled")).toBe("true");
+      });
+      expect(months[8].disabled).toBe(false);
+
+      simulate("keydown", months[8], { keyCode: 40 }); // ArrowDown
+      expect(fp.currentMonth).toEqual(8);
     });
 
-    it("month control should change month on select change", () => {
+    it("month control should change month on wheel selection", () => {
       const fp = createInstance({
         defaultDate: new Date(2019, 1, 1),
       }) as Instance;
 
-      const monthControl = fp.calendarContainer.querySelector(
-        ".flatpickr-monthDropdown-months"
-      ) as HTMLSelectElement;
-
-      monthControl.value = "3";
-      simulate("change", monthControl);
+      clickOn(getMonthWheelOptions()[3]);
 
       expect(fp.currentMonth).toEqual(3);
-      expect(monthControl.value).toEqual("3");
+      expect(getMonthWheelOptions()[3].classList.contains("is-selected")).toBe(
+        true
+      );
+      expect(getMonthYearWheelTrigger().textContent).toBe("April 2019");
     });
 
     it("datetime mode does not auto-focus time input after mouse date click", () => {
