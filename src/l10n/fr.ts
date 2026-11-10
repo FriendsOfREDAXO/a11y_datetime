@@ -11,6 +11,7 @@ const fp =
 
 export const French: CustomLocale = {
   firstDayOfWeek: 1,
+  calendarTitle: "Calendrier",
 
   weekdays: {
     shorthand: ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"],

@@ -103,7 +103,7 @@ export interface BaseOptions {
   /* Whether calendar should close after date selection */
   closeOnSelect: boolean;
 
-  /* Title shown in the calendar title bar. */
+  /* Title shown in the calendar title bar. Empty = locale text (l10n.calendarTitle). */
   calendarTitle: string;
 
   /* Whether to render the calendar title bar. */
@@ -415,7 +415,7 @@ export const defaults: ParsedOptions = {
   focusOpens: false,
   clickOpens: true,
   closeOnSelect: true,
-  calendarTitle: "Calendar",
+  calendarTitle: "",
   showTitleBar: true,
   showCloseButton: true,
   conjunction: ", ",

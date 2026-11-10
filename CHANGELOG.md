@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.3.0] - 2026-11-10
+
+### Added
+- New locale key `calendarTitle` for the title bar and the dialog label of the calendar. Translations for German (`Kalender`), Dutch, French, Italian and Spanish.
+- German locale: missing screen reader labels `yearAriaLabel`, `monthAriaLabel`, `hourAriaLabel` and `minuteAriaLabel`.
+
+### Changed
+- The `calendarTitle` option now defaults to an empty string; the title comes from the locale. An explicitly set `calendarTitle` still takes precedence. Previously the title was always the English "Calendar", even with a German locale.
+
 ## [5.2.9] - 2026-09-14
 
 ### Fixed

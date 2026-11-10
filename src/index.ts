@@ -111,6 +111,15 @@ function FlatpickrInstance(
     }, 10);
   }
 
+  /** Title of the calendar dialog: explicit option first, otherwise the locale text */
+  function calendarTitle(): string {
+    return (
+      self.config.calendarTitle ||
+      (self.l10n && self.l10n.calendarTitle) ||
+      "Calendar"
+    );
+  }
+
   function setupHelperFunctions() {
     self.utils = {
       getDaysInMonth(month = self.currentMonth, yr = self.currentYear) {
@@ -1402,10 +1411,7 @@ function FlatpickrInstance(
     self.calendarContainer.setAttribute("role", "dialog");
     self.calendarContainer.setAttribute("aria-modal", "false");
     self.calendarContainer.setAttribute("aria-hidden", "true");
-    self.calendarContainer.setAttribute(
-      "aria-label",
-      self.config.calendarTitle || "Calendar"
-    );
+    self.calendarContainer.setAttribute("aria-label", calendarTitle());
 
     self._input.setAttribute("aria-haspopup", "dialog");
     self._input.setAttribute("aria-controls", self.calendarContainer.id);
@@ -1492,7 +1498,7 @@ function FlatpickrInstance(
           const titleText = createElement<HTMLSpanElement>(
             "span",
             "flatpickr-title",
-            self.config.calendarTitle
+            calendarTitle()
           );
           titleBar.appendChild(titleText);
         }

@@ -2519,6 +2519,29 @@ describe("flatpickr", () => {
       expect(fp.l10n.months.longhand[0]).toEqual("January");
     });
 
+    it("uses the locale text as calendar title", () => {
+      createInstance({ locale: German });
+      expect(fp.calendarContainer.getAttribute("aria-label")).toEqual(
+        "Kalender"
+      );
+      const title = fp.calendarContainer.querySelector(".flatpickr-title");
+      expect(title && title.textContent).toEqual("Kalender");
+      expect(fp.l10n.yearAriaLabel).toEqual("Jahr");
+      expect(fp.l10n.hourAriaLabel).toEqual("Stunde");
+
+      createInstance();
+      expect(fp.calendarContainer.getAttribute("aria-label")).toEqual(
+        "Calendar"
+      );
+    });
+
+    it("prefers an explicit calendarTitle option", () => {
+      createInstance({ locale: German, calendarTitle: "Wunschtermin" });
+      expect(fp.calendarContainer.getAttribute("aria-label")).toEqual(
+        "Wunschtermin"
+      );
+    });
+
     it("By overriding default locale", () => {
       flatpickr.localize(Russian);
       expect(flatpickr.l10ns.default.months.longhand[0]).toEqual("Январь");

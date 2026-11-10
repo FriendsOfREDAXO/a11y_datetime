@@ -69,6 +69,7 @@ export const english: Locale = {
   hourAriaLabel: "Hour",
   minuteAriaLabel: "Minute",
   secondAriaLabel: "Second",
+  calendarTitle: "Calendar",
   timeLabel: "Time",
   timePickerAriaLabel: "Time picker popover",
   doneButtonLabel: "Done",
