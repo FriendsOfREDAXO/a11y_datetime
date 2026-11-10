@@ -1447,6 +1447,30 @@ describe("flatpickr", () => {
           expect(mobileInput.required).toBe(true);
         });
 
+        it("is labelled like the original input and keeps the natural tab order", () => {
+          const wrap = document.createElement("div");
+          wrap.innerHTML =
+            '<label for="fp-mobile-a11y">Wunschtermin</label><input id="fp-mobile-a11y" aria-describedby="fp-mobile-help"><p id="fp-mobile-help">Hinweis</p>';
+          document.body.appendChild(wrap);
+          const input = wrap.querySelector("input") as HTMLInputElement;
+
+          mockAgent = "Android";
+          createInstance({}, input);
+
+          const mobileInput = fp.mobileInput as HTMLInputElement;
+          const label = wrap.querySelector("label") as HTMLLabelElement;
+
+          expect(mobileInput.hasAttribute("tabindex")).toBe(false);
+          expect(label.id).not.toBe("");
+          expect(mobileInput.getAttribute("aria-labelledby")).toBe(label.id);
+          expect(mobileInput.getAttribute("aria-describedby")).toBe(
+            "fp-mobile-help"
+          );
+
+          destroyInstance();
+          document.body.removeChild(wrap);
+        });
+
         it("with confirmDatePlugin", () => {
           mockAgent = "Android";
           createInstance({
