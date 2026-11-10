@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.3.2] - 2026-11-10
+
+### Fixed
+- Clicking outside the picker now also closes it on touch-capable desktop browsers: the outside-click handler was bound to `touchstart` only whenever `window.ontouchstart` exists, so mouse clicks on such devices were ignored. `mousedown` is now always handled, `touchstart` additionally on touch devices.
+- Closing a range picker by clicking outside with only one date selected discards the incomplete range again, and with `enableTime` the typed time is committed before closing. Both had been lost by an accidental merge of two conditions in `documentClick`.
+- `monthSelect` plugin: the previous/next year buttons are rendered again. The plugin now disables the month/year wheel and enables the header arrows, which are its year navigation; previously the arrows were hidden by the `showMonthNavArrows: false` default, leaving no working year navigation.
+- Tab from the input no longer gets stuck when the month dropdown has been removed from the header (as the `monthSelect` plugin does); focus moves to the first connected header control.
+
 ## [5.3.1] - 2026-11-10
 
 ### Fixed

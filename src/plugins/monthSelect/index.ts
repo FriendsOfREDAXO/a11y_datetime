@@ -327,6 +327,10 @@ function monthSelectPlugin(pluginConfig?: Partial<Config>): Plugin {
     return {
       onParseConfig() {
         fp.config.enableTime = false;
+        // The month grid replaces the month/year wheel, and the prev/next
+        // arrows are the plugin's year navigation, so they must be rendered.
+        fp.config.monthYearWheel = false;
+        fp.config.showMonthNavArrows = true;
       },
       onValueUpdate: setCurrentlySelected,
       onKeyDown,
