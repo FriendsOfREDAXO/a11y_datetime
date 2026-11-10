@@ -4626,7 +4626,7 @@ function FlatpickrInstance(
       "input",
       self.input.className + " flatpickr-mobile"
     );
-    self.mobileInput.tabIndex = 1;
+    // natural tab order: a positive tabindex would move the field to the front of the page's tab sequence
     self.mobileInput.type = inputType;
     self.mobileInput.disabled = self.input.disabled;
     self.mobileInput.required = self.input.required;
@@ -4655,6 +4655,8 @@ function FlatpickrInstance(
     if (self.input.getAttribute("step"))
       self.mobileInput.step = String(self.input.getAttribute("step"));
 
+    linkMobileInputLabel(self.mobileInput);
+
     self.input.type = "hidden";
     if (self.altInput !== undefined) self.altInput.type = "hidden";
 
@@ -4674,6 +4676,53 @@ function FlatpickrInstance(
       );
       triggerEvent("onChange");
       triggerEvent("onClose");
+    });
+  }
+
+  /**
+   * The native mobile input replaces the original (now hidden) input, so the original's
+   * <label for> no longer names it. Reference the label(s) via aria-labelledby and carry over
+   * the accessibility attributes of the original input.
+   */
+  function linkMobileInputLabel(mobileInput: HTMLInputElement) {
+    const original = self.input;
+    const labels: HTMLElement[] = [];
+    if (original.id && typeof document !== "undefined") {
+      const escaped =
+        typeof CSS !== "undefined" && CSS.escape
+          ? CSS.escape(original.id)
+          : original.id.replace(/"/g, '\\"');
+      document
+        .querySelectorAll<HTMLLabelElement>(`label[for="${escaped}"]`)
+        .forEach((label) => labels.push(label));
+    }
+    const wrapping = original.closest("label");
+    if (wrapping && labels.indexOf(wrapping) === -1) labels.push(wrapping);
+
+    const labelledBy = original.getAttribute("aria-labelledby");
+    if (labelledBy) {
+      mobileInput.setAttribute("aria-labelledby", labelledBy);
+    } else if (labels.length > 0) {
+      mobileInput.setAttribute(
+        "aria-labelledby",
+        labels
+          .map((label, i) => {
+            if (!label.id) label.id = `${calendarInstanceId}-label${i || ""}`;
+            return label.id;
+          })
+          .join(" ")
+      );
+    }
+
+    [
+      "aria-label",
+      "aria-describedby",
+      "aria-invalid",
+      "aria-required",
+      "autocomplete",
+    ].forEach((name) => {
+      const value = original.getAttribute(name);
+      if (value !== null) mobileInput.setAttribute(name, value);
     });
   }
 

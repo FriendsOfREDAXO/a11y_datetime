@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [5.3.1] - 2026-11-10
+
+### Fixed
+- Mobile native input (`flatpickr-mobile`, used on touch devices instead of the calendar): it had `tabindex="1"`, which moved it to the front of the page's tab order, and it lost the association with the original input's `<label>` (the original becomes `type="hidden"`). Screen readers announced it without a name; Lighthouse/axe reported "Form elements do not have associated labels" and "tabindex greater than 0". The mobile input now keeps the natural tab order, references the original label(s) via `aria-labelledby` (an id is generated for the label if needed) and takes over `aria-label`, `aria-describedby`, `aria-invalid`, `aria-required` and `autocomplete` from the original input. No visual change.
+
 ## [5.3.0] - 2026-11-10
 
 ### Added
