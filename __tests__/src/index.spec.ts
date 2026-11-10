@@ -1122,7 +1122,9 @@ describe("flatpickr", () => {
       });
       fp.open();
 
-      expect(fp.calendarContainer.querySelector(".flatpickr-titlebar")).toBeNull();
+      expect(
+        fp.calendarContainer.querySelector(".flatpickr-titlebar")
+      ).toBeNull();
     });
 
     it("renders a custom calendar title when provided", () => {
@@ -1150,9 +1152,7 @@ describe("flatpickr", () => {
 
       expect(fp.monthsDropdownContainer.tagName).toBe("SELECT");
       expect(fp.monthsDropdownContainer.options.length).toBeGreaterThan(0);
-      expect(fp.monthsDropdownContainer.value).toBe(
-        fp.currentMonth.toString()
-      );
+      expect(fp.monthsDropdownContainer.value).toBe(fp.currentMonth.toString());
     });
 
     it("initialDayFocus selected prioritizes selected day", () => {
@@ -2468,7 +2468,9 @@ describe("flatpickr", () => {
 
       expect(fp.currentMonth).toEqual(8);
       expect(monthControl.options.length).toEqual(9);
-      expect(monthControl.options[monthControl.options.length - 1].textContent).toEqual("September");
+      expect(
+        monthControl.options[monthControl.options.length - 1].textContent
+      ).toEqual("September");
     });
 
     it("month control should change month on select change", () => {
@@ -2515,6 +2517,29 @@ describe("flatpickr", () => {
 
       createInstance();
       expect(fp.l10n.months.longhand[0]).toEqual("January");
+    });
+
+    it("uses the locale text as calendar title", () => {
+      createInstance({ locale: German });
+      expect(fp.calendarContainer.getAttribute("aria-label")).toEqual(
+        "Kalender"
+      );
+      const title = fp.calendarContainer.querySelector(".flatpickr-title");
+      expect(title && title.textContent).toEqual("Kalender");
+      expect(fp.l10n.yearAriaLabel).toEqual("Jahr");
+      expect(fp.l10n.hourAriaLabel).toEqual("Stunde");
+
+      createInstance();
+      expect(fp.calendarContainer.getAttribute("aria-label")).toEqual(
+        "Calendar"
+      );
+    });
+
+    it("prefers an explicit calendarTitle option", () => {
+      createInstance({ locale: German, calendarTitle: "Wunschtermin" });
+      expect(fp.calendarContainer.getAttribute("aria-label")).toEqual(
+        "Wunschtermin"
+      );
     });
 
     it("By overriding default locale", () => {

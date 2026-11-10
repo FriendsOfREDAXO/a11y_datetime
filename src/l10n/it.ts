@@ -54,6 +54,7 @@ export const Italian: CustomLocale = {
     ],
   },
   firstDayOfWeek: 1,
+  calendarTitle: "Calendario",
   ordinal: () => "°",
   rangeSeparator: " al ",
   weekAbbreviation: "Se",

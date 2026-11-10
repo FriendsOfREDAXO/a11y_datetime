@@ -103,7 +103,7 @@ export interface BaseOptions {
   /* Whether calendar should close after date selection */
   closeOnSelect: boolean;
 
-  /* Title shown in the calendar title bar. */
+  /* Title shown in the calendar title bar. Empty = locale text (l10n.calendarTitle). */
   calendarTitle: string;
 
   /* Whether to render the calendar title bar. */
@@ -405,14 +405,17 @@ export const defaults: ParsedOptions = {
   animate:
     typeof window === "object" &&
     window.navigator.userAgent.indexOf("MSIE") === -1 &&
-    !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
+    !(
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ),
   announceChanges: true,
   ariaDateFormat: "F j, Y",
   autoFillDefaultTime: true,
   focusOpens: false,
   clickOpens: true,
   closeOnSelect: true,
-  calendarTitle: "Calendar",
+  calendarTitle: "",
   showTitleBar: true,
   showCloseButton: true,
   conjunction: ", ",

@@ -11,6 +11,7 @@ const fp =
 
 export const French: CustomLocale = {
   firstDayOfWeek: 1,
+  calendarTitle: "Calendrier",
 
   weekdays: {
     shorthand: ["dim", "lun", "mar", "mer", "jeu", "ven", "sam"],
@@ -68,8 +69,10 @@ export const French: CustomLocale = {
   keyboardHelpAriaLabel: "Aide clavier",
   keyboardShortcutsTitle: "Raccourcis clavier",
   keyboardShortcutFocus: "Tab / Maj+Tab : déplacer le focus",
-  keyboardShortcutArrows: "Flèches : naviguer entre jours ou valeurs du sélecteur",
-  keyboardShortcutPage: "Page préc./Page suiv. : changer mois/année dans le sélecteur",
+  keyboardShortcutArrows:
+    "Flèches : naviguer entre jours ou valeurs du sélecteur",
+  keyboardShortcutPage:
+    "Page préc./Page suiv. : changer mois/année dans le sélecteur",
   keyboardShortcutHomeEnd: "Début / Fin : premier/dernier mois ou année",
   keyboardShortcutSelect: "Entrée / Espace : sélectionner ou confirmer",
   keyboardShortcutEscape: "Échap : fermer la fenêtre/calendrier",
