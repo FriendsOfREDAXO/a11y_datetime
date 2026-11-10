@@ -405,7 +405,10 @@ export const defaults: ParsedOptions = {
   animate:
     typeof window === "object" &&
     window.navigator.userAgent.indexOf("MSIE") === -1 &&
-    !(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
+    !(
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ),
   announceChanges: true,
   ariaDateFormat: "F j, Y",
   autoFillDefaultTime: true,
