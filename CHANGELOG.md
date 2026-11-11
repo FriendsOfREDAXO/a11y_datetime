@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+## [5.3.3] - 2026-11-11
 
 ### Fixed
 - Visible alternative input (`altInput: true`): it lost the association with the original input's `<label>` because the original becomes `type="hidden"` – screen readers announced the field the user actually types into without a name, and axe/Lighthouse reported "Form elements do not have associated labels". The altInput is now labelled like the mobile input since 5.3.1: it references the original label(s) via `aria-labelledby` (an id is generated for the label if needed) and takes over `aria-label`, `aria-describedby`, `aria-invalid`, `aria-required` and `autocomplete`. Both inputs share one helper (`linkReplacementInputLabel`). No visual change.
