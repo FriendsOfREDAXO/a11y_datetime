@@ -2664,6 +2664,27 @@ describe("flatpickr", () => {
       expect(fp.l10n.months.longhand[0]).toEqual("Январь");
     });
 
+    it("labels the visible altInput like the original input", () => {
+      const wrap = document.createElement("div");
+      wrap.innerHTML =
+        '<label for="fp-alt-a11y">Eröffnung</label><input id="fp-alt-a11y" aria-describedby="fp-alt-help"><p id="fp-alt-help">z. B. 13.11.2026</p>';
+      document.body.appendChild(wrap);
+      const input = wrap.querySelector("input") as HTMLInputElement;
+
+      createInstance({ altInput: true, altFormat: "d.m.Y" }, input);
+
+      const altInput = fp.altInput as HTMLInputElement;
+      const label = wrap.querySelector("label") as HTMLLabelElement;
+
+      expect(input.type).toBe("hidden");
+      expect(label.id).not.toBe("");
+      expect(altInput.getAttribute("aria-labelledby")).toBe(label.id);
+      expect(altInput.getAttribute("aria-describedby")).toBe("fp-alt-help");
+
+      destroyInstance();
+      document.body.removeChild(wrap);
+    });
+
     it("correctly formats altInput", () => {
       createInstance({
         locale: Russian,
